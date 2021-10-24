@@ -23,9 +23,25 @@ def student_dash():
 def instructor_dash():
     return "Instructor Dashboard"
 
-@app.route("/registrar_dash")
+@app.route("/registrar_default_dash")
 def registrar_dash():
-    return "Registrar Dashboard"
+    return "Registrar Default Dashboard"
+
+@app.route("/registrar_class_set_up")
+def registrar_dash():
+    return "Registrar Class Set Up"
+
+@app.route("/registrar_course_reg")
+def registrar_dash():
+    return "Registrar Course Registration"
+
+@app.route("/registrar_class run_period")
+def registrar_dash():
+    return "Registrar Class Running Period"
+
+@app.route("/registrar_grading_period")
+def registrar_dash():
+    return "Registrar Grading Period"
 
 @app.route("/<name>")
 def user(name):
