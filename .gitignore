@@ -1,3 +1,4 @@
 flask/bin/
 flask/lib/
 pyvenv.cfg
+env/
