@@ -1,6 +1,41 @@
-<!--This file will inherit from base.html-->
 {% extends "base.html" %}
-{% block title %}Home Page{%endblock %}
+
+{% block navbar %}
+    <a class="nav-item nav-link active" href="/">Statistics</a>
+    <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false">
+          Apply
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="#">Student</a>
+          <a class="dropdown-item" href="#">Instructor</a>
+        </div>
+    </div>
+{% endblock %}
+
 {% block content %}
-<h1>TEST</h1>
-{% endblock %}p
+    
+    <div class="container">
+        <div class="row gy-5 align-items-center">
+            <div class="col-xs-7 col-md-6 heading animate__animated animate__fadeInLeft">
+                <h1>APPLY. LEARN. EXCEL.</h1>
+                <p>A college to fulfill your academic ambitions-whether that be gaining industry skills or furthering your journey in Education!</p>
+                <a href="#"><button  class="bg-dark-blue btn btn-outline-white btn-md text-white">sign in</button> </a>
+            </div>
+            <div class="col-xs-7 col-md-6 heading">
+                <div class="row animate__animated animate__fadeInRight img-padding">
+                    <img
+                        class="shadow-lg"
+                        style="border-radius: 20px;"
+                        src="../static/images/city_college.jpeg"
+                        alt="city college"
+                        width="700"
+                        height="500"
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+    
+{% endblock content %}
+
