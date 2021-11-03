@@ -59,11 +59,11 @@ h2 {
 html,body {
   margin: 0;
   height: 100%;
-  background: var(--light-blue);
+  background: var(--purple);
 }
 
 .navbar, .container-fluid.index, .footer-container {
-  background-color: var(--dark-blue) !important;
+  background-color: var(--ebony) !important;
 }
 
 .content {
