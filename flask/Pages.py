@@ -1,4 +1,6 @@
-from flask import Flask, redirect, url_for, render_template
+from flask import Flask, redirect, url_for, render_template, request, session
+from forms import ApplicationForm, StudentAppplicationForm, LoginForm
+from datetime import timedelta
 
 app = Flask(__name__)
 
@@ -9,14 +11,22 @@ def home():
     return render_template("index.html")
 
 
+@app.route("/login/", methods=['POST', 'GET'])
+def login():
+    login_form = LoginForm()
+    return render_template('login.html', title='Login', form=login_form)
+
+
 @app.route("/student_app")
 def student_app():
-    return "Student Application"
+    student_app_form = StudentAppplicationForm()
+    return render_template('student_app.html', title='Student Application', form=student_app_form)
 
 
 @app.route("/instructor_app")
 def instructor_app():
-    return "Instructor Application"
+    instructor_app_form = ApplicationForm()
+    return render_template('instructor_app.html', title='Instructor Application', form=instructor_app_form)
 
 
 @app.route("/student_dash")
