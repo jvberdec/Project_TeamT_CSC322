@@ -2,3 +2,5 @@ flask/bin/
 flask/lib/
 pyvenv.cfg
 env/
+.env
+flask/__pycache__/
