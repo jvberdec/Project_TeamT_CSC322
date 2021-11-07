@@ -1,7 +1,7 @@
 *, *::before, *::after {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  --purple: #aca0da;
+  --light-purple: #aca0da;
   --ebony: #281C2D;
   --violet: #8155BA;
   --grey: #D3D3D3;
@@ -24,7 +24,7 @@ h2 {
 }
 
 .bg-purple {
-  background-color: var(--purple) !important;
+  background-color: var(--light-purple) !important;
 }
 
 .bg-ebony {
@@ -59,7 +59,7 @@ h2 {
 html,body {
   margin: 0;
   height: 100%;
-  background: var(--purple);
+  background: var(--light-purple);
 }
 
 .navbar, .container-fluid.index, .footer-container {

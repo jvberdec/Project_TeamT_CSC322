@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, redirect, url_for, render_template, request, session, flash
-from forms import ApplicationForm, StudentApplicationForm, LoginForm
+from forms import InstructorApplicationForm, StudentApplicationForm, LoginForm
 from datetime import timedelta
 load_dotenv()
 app = Flask(__name__)
@@ -20,7 +20,6 @@ def login():
     login_form = LoginForm()
     if login_form.validate_on_submit():
         if login_form.user_type.data == 'student':
-            flash('You have been logged in!', 'success')
             return redirect(url_for('student_dash'))
         elif login_form.user_type.data == 'instructor':
             return redirect(url_for('instructor_dash'))
@@ -31,15 +30,21 @@ def login():
     return render_template('login.html', title='Login', form=login_form)
 
 
-@app.route("/student_app")
+@app.route("/student_app", methods=['POST', 'GET'])
 def student_app():
     student_app_form = StudentApplicationForm()
+    if student_app_form.validate_on_submit():
+        flash('Account created successfully!', 'success')
+        return redirect(url_for('login'))
     return render_template('student_app.html', title='Student Application', form=student_app_form)
 
 
-@app.route("/instructor_app")
+@app.route("/instructor_app", methods=['POST', 'GET'])
 def instructor_app():
-    instructor_app_form = ApplicationForm()
+    instructor_app_form = InstructorApplicationForm()
+    if instructor_app_form.validate_on_submit():
+        flash('Account created successfully!', 'success')
+        return redirect(url_for('login'))
     return render_template('instructor_app.html', title='Instructor Application', form=instructor_app_form)
 
 
