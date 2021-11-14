@@ -47,15 +47,23 @@ def instructor_app():
         return redirect(url_for('login'))
     return render_template('instructor_app.html', title='Instructor Application', form=instructor_app_form)
 
+@app.route("/statistics_page", methods=['POST', 'GET'])
+def statistics_page():
+    if request.method == 'POST':
+        return redirect(url_for('index'))
+    return render_template("statistics_page.html")
+
 
 @app.route("/student_dash")
 def student_dash():
     return "Student Dashboard"
 
 
-@app.route("/instructor_dash")
+@app.route("/instructor_dash", methods=['POST', 'GET'])
 def instructor_dash():
-    return "Instructor Dashboard"
+    if request.method == 'POST':
+        return redirect(url_for('index'))
+    return render_template("instructor_dash.html")
 
 
 @app.route("/registrar_default_dash")
@@ -81,6 +89,7 @@ def registrar_class_run_period():
 @app.route("/registrar_grading_period")
 def registrar_grading_period():
     return "Registrar Grading Period"
+
 
 
 @app.route("/<name>")

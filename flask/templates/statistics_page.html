@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+    <a class="nav-item nav-link" href="{{url_for('statistics_page')}}">Statistics</a>
+    <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false">
+          Apply
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="{{url_for('student_app')}}">Student</a>
+          <a class="dropdown-item" href="{{url_for('instructor_app')}}">Instructor</a>
+        </div>
+    </div>
+    <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="{{url_for('login')}}" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false">
+          Sign In
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="#">Student</a>
+          <a class="dropdown-item" href="{{url_for('instructor_dash')}}">Instructor</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div>
+    <h1 class="font-weight-bolder" style="text-align:center">STATISTICS</h1>
+</div>
+    <div class="container">
+        <h3><a id="highest-ranking" name="highest-ranking"></a>Highest Ranking</h3>
+        <div class="table-responsive"><table class="table table-hover" style="border-collapse: collapse;">
+            
+            <tbody style="text-align: center;">
+                <tr>
+                    <th style="width: 140px;">&nbsp;</th>
+                    <th style="width: 120px;">Fall 2016</th>
+                    <th style="width: 120px;">Fall 2017</th>
+                    <th style="width: 120px;">Fall 2018</th>
+                    <th style="width: 120px;">Fall 2019</th>
+                    <th style="width: 120px;">Fall 2020</th>
+                    <th style="width: 120px;">Fall 2021</th>
+                </tr>
+                <tr>
+                    <td style="width: 140px;">Clinical Psychology</td>
+                    <td style="width: 120px;">1,105</td>
+                    <td style="width: 120px;">1,123</td>
+                    <td style="width: 120px;">1,054</td>
+                    <td style="width: 120px;">1,021</td>
+                    <td style="width: 120px;">1,057</td>
+                    <td style="width: 120px;">1260</td>
+                </tr>
+                <tr>
+                    <td style="width: 140px;">Computer Engineering</td>
+                    <td style="width: 120px;">305</td>
+                    <td style="width: 120px;">301</td>
+                    <td style="width: 120px;">273</td>
+                    <td style="width: 120px;">276</td>
+                    <td style="width: 120px;">261</td>
+                    <td style="width: 120px;">275</td>
+                </tr>
+                <tr>
+                    <td style="width: 140px;">Data Science and Engineering</td>
+                    <td style="width: 120px;">142</td>
+                    <td style="width: 120px;">191</td>
+                    <td style="width: 120px;">259</td>
+                    <td style="width: 120px;">308</td>
+                    <td style="width: 120px;">316</td>
+                    <td style="width: 120px;">313</td>
+                </tr>
+                <tr>
+                    <td style="width: 140px;">Jazz Studies</td>
+                    <td style="width: 120px;">-</td>
+                    <td style="width: 120px;">-</td>
+                    <td style="width: 120px;">-</td>
+                    <td style="width: 120px;">10</td>
+                    <td style="width: 120px;">30</td>
+                    <td style="width: 120px;">39</td>
+                </tr>
+                <tr>
+                    <td style="width: 140px;">Translational Medicine</td>
+                    <td style="width: 120px;">-</td>
+                    <td style="width: 120px;">-</td>
+                    <td style="width: 120px;">-</td>
+                    <td style="width: 120px;">-</td>
+                    <td style="width: 120px;">-</td>
+                    <td style="width: 120px;">1</td>
+                </tr>
+                <tr>
+                </tbody>
+                </table>
+                </div>
+
+                <h3><a id="lowest-ranking" name="lowest-ranking"></a>Lowest Ranking</h3>
+                
+                <div class="table-responsive"><table class="table table-hover" style="border-collapse: collapse;">
+                    
+                    <tbody style="text-align: center;">
+                        <tr>
+                            <th style="width: 140px;">&nbsp;</th>
+                            <th style="width: 120px;">Fall 2016</th>
+                            <th style="width: 120px;">Fall 2017</th>
+                            <th style="width: 120px;">Fall 2018</th>
+                            <th style="width: 120px;">Fall 2019</th>
+                            <th style="width: 120px;">Fall 2020</th>
+                            <th style="width: 120px;">Fall 2021</th>
+                        </tr>
+                        <tr>
+                            <td style="width: 140px;">Clinical Psychology</td>
+                            <td style="width: 120px;">1,105</td>
+                            <td style="width: 120px;">1,123</td>
+                            <td style="width: 120px;">1,054</td>
+                            <td style="width: 120px;">1,021</td>
+                            <td style="width: 120px;">1,057</td>
+                            <td style="width: 120px;">1260</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 140px;">Computer Engineering</td>
+                            <td style="width: 120px;">305</td>
+                            <td style="width: 120px;">301</td>
+                            <td style="width: 120px;">273</td>
+                            <td style="width: 120px;">276</td>
+                            <td style="width: 120px;">261</td>
+                            <td style="width: 120px;">275</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 140px;">Data Science and Engineering</td>
+                            <td style="width: 120px;">142</td>
+                            <td style="width: 120px;">191</td>
+                            <td style="width: 120px;">259</td>
+                            <td style="width: 120px;">308</td>
+                            <td style="width: 120px;">316</td>
+                            <td style="width: 120px;">313</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 140px;">Jazz Studies</td>
+                            <td style="width: 120px;">-</td>
+                            <td style="width: 120px;">-</td>
+                            <td style="width: 120px;">-</td>
+                            <td style="width: 120px;">10</td>
+                            <td style="width: 120px;">30</td>
+                            <td style="width: 120px;">39</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 140px;">Translational Medicine</td>
+                            <td style="width: 120px;">-</td>
+                            <td style="width: 120px;">-</td>
+                            <td style="width: 120px;">-</td>
+                            <td style="width: 120px;">-</td>
+                            <td style="width: 120px;">-</td>
+                            <td style="width: 120px;">1</td>
+                        </tr>
+                        <tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h3><a id="top--honors--student" name="top--honors--student"></a>Top Honors Student of 2020-21 school year</h3>
+                
+                <div class="table-responsive"><table class="table table-hover" style="border-collapse: collapse;">
+                    <div class="silc-grid__col silc-grid__col--6-400">
+                        <tbody style="text-align: center;">
+                            <tr>
+                                <th style="width: 120px;">Name</th>
+                                <th style="width: 120px;">GPA</th>
+                                <th style="width: 120px;">Department</th>
+                            </tr>
+                            <tr>
+                                <td style="width: 140px;">Jianting Zhang</td>
+                                <td style="width: 120px;">4.0</td>
+                                <td style="width: 120px;">Computer Engineering</td>
+
+                            </tr>
+                            <tr>
+                                <td style="width: 140px;">William Skeith</td>
+                                <td style="width: 120px;">4.0</td>
+                                <td style="width: 120px;">Computer Engineering</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 140px;">Nikita Acharaia</td>
+                                <td style="width: 120px;">3.99</td>
+                                <td style="width: 120px;">Data Science and Engineering</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 140px;">Zaid Al-Mashadani</td>
+                                <td style="width: 120px;">3.99</td>
+                                <td style="width: 120px;">Transitional Medicine</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 140px;">Michael Vulis</td>
+                                <td style="width: 120px;">3.97</td>
+                                <td style="width: 120px;">Clinical Psychology</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 140px;">Ahmet Yuksel</td>
+                                <td style="width: 120px;">3.97</td>
+                                <td style="width: 120px;">Computer Engineering</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 140px;">Peter Brass</td>
+                                <td style="width: 120px;">3.97</td>
+                                <td style="width: 120px;">Clinical Psychology</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 140px;">Benjamin Dynkin</td>
+                                <td style="width: 120px;">3.96</td>
+                                <td style="width: 120px;">Jazz Studies</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 140px;">Jie Wei</td>
+                                <td style="width: 120px;">3.96</td>
+                                <td style="width: 120px;">Computer Engineering</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 140px;">Akira Kawaguchi</td>
+                                <td style="width: 120px;">3.96</td>
+                                <td style="width: 120px;">Clinical Psychology</td>
+                            </tr>
+                    </div>
+                </div>
+            </table>
+            <br>
+                <br>
+                    <p style="font-size: 15px"><em>According to the<strong>&nbsp;<a href="/" target="_blank">Administration Office</a></strong>.</em></p>
+            </div>
+        </div>
+
+{% endblock content %}

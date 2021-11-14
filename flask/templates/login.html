@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block navbar %}
-    <a class="nav-item nav-link" href="/">Statistics</a>
+    <a class="nav-item nav-link" href="{{url_for('statistics_page')}}">Statistics</a>
     <div class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false">
           Apply
@@ -9,6 +9,15 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="{{url_for('student_app')}}">Student</a>
           <a class="dropdown-item" href="{{url_for('instructor_app')}}">Instructor</a>
+        </div>
+    </div>
+    <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="{{url_for('login')}}" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false">
+          Sign In
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="#">Student</a>
+          <a class="dropdown-item" href="{{url_for('instructor_dash')}}">Instructor</a>
         </div>
     </div>
 {% endblock %}
