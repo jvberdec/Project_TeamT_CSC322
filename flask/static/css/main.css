@@ -139,9 +139,45 @@ html,body {
     line-height: 1;
 }
 .featurette-divider {
-    margin: 6rem 0; /* Space out the Bootstrap <hr> more */
+    margin: 4rem 0; /* Space out the Bootstrap <hr> more */
 }
 
 .bg-blur {
   background-color: rgba(0, 0, 0, 0.1);
+}
+
+.student-container .row{
+  height: 500px;
+  background-image: url("../images/Team\ sm.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+}       
+.welcome-card {
+  width: 241px;
+  border-radius: 20px;
+}
+
+.container_ul{
+  display: flex;
+  justify-content: center;
+}
+
+.modified_li {
+  display: inline-block;
+  height: 100px;
+  width: 200px;
+  text-align:center;
+  padding: auto !important;
+}
+
+li.list-group-item{
+  padding: 40px 20px !important;
+}
+
+.strong_font{
+  font-weight: 900;
+}
+
+.medium_font{
+  font-weight: 500;
 }

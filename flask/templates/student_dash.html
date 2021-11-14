@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+    <a class="nav-item nav-link" href="#">Review Courses</a>
+    <a class="nav-item nav-link" href="#">Submit Complaints</a>
+    <a class="nav-item nav-link" href="#">Enroll</a>
+    <a class="nav-item nav-link" href="/">Statistics</a>
+    <a class="nav-item nav-link" href="{{url_for('login')}}">Sign Out</a>
+{% endblock %}
+
+{% block content %}
+<div class="container marketing">
+
+    <div class="container about-container mt-3" >
+        <div class="row justify-content-center align-items-end">
+            <div class="col-sm-4 ">
+                <div class="animate__animated animate__bounce animate__fast card bg-blur shadow-lg welcome-card p-3">
+                    <div class="card-heading">
+                        <h1 class="text-center">Student Dashboard</h1>
+                        <h4 class="text-center">___________</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="featurette-divider">
+
+    <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+        <i class="fas fa-book-open fa-3x"></i>
+        <h1 class="display-4">Grades</h1>
+    </div>
+
+    <div class="container">
+        <ul class="list-group list-group-horizontal-xl container_ul">
+            <li class="list-group-item modified_li lead strong_font bg-ebony text-white">CLASS NAME</li>
+            <li class="list-group-item modified_li lead strong_font bg-ebony text-white">GRADE</li>
+        </ul>
+        <ul class="list-group list-group-horizontal-xl container_ul">
+            <li class="list-group-item modified_li medium_font">Science</li>
+            <li class="list-group-item modified_li medium_font">A</li>
+        </ul>
+        <ul class="list-group list-group-horizontal-xl container_ul">
+            <li class="list-group-item modified_li medium_font">Math</li>
+            <li class="list-group-item modified_li medium_font">A</li>
+        </ul>
+        <ul class="list-group list-group-horizontal-xl container_ul">
+            <li class="list-group-item modified_li medium_font">Computer Science</li>
+            <li class="list-group-item modified_li medium_font">A</li>
+        </ul>
+        <ul class="list-group list-group-horizontal-xl container_ul">
+            <li class="list-group-item modified_li medium_font">English</li>
+            <li class="list-group-item modified_li medium_font">A</li>
+        </ul>
+    </div>
+
+    <hr class="featurette-divider">
+
+    <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+        <i class="fas fa-atom fa-3x"></i>
+        <h1 class="display-4">Current Courses</h1>
+    </div>
+
+    <div class="container">
+        <ul class="list-group list-group-horizontal-sm container_ul">
+            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
+                <span class="text-left">Science</span>
+                <button class="btn text-white bg-ebony">Drop</button>
+            </li>
+        </ul>
+        <ul class="list-group list-group-horizontal-sm container_ul">
+            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
+                <span class="text-left">Math</span>
+                <button class="btn text-white bg-ebony">Drop</button>
+            </li>
+        </ul>
+        <ul class="list-group list-group-horizontal-sm container_ul">
+            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
+                <span class="text-left">Computer Science</span>
+                <button class="btn text-white bg-ebony">Drop</button>
+            </li>
+        </ul>
+        <ul class="list-group list-group-horizontal-sm container_ul">
+            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
+                <span class="text-left">English</span>
+                <button class="btn text-white bg-ebony">Drop</button>
+            </li>
+        </ul>
+    </div>
+
+    <hr class="featurette-divider">
+
+    <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+        <i class="fas fa-exclamation-circle fa-3x"></i>
+        <h1 class="display-4">Warnings</h1>
+    </div>
+
+    <div class="container">
+        <ul class="list-group list-group-horizontal-sm container_ul">
+            <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center lead medium_font" style="width: 50%">
+                <span class="text-left">Missed Midterm for Science</span>
+            </li>
+        </ul>
+        <ul class="list-group list-group-horizontal-sm container_ul">
+            <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center lead medium_font" style="width: 50%">
+                <span class="text-left">Missed Computer Science Class 5 times</span>
+            </li>
+        </ul>
+        <ul class="list-group list-group-horizontal-sm container_ul">
+            <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center lead medium_font" style="width: 50%">
+                <span class="text-left">WARNINGS WARNINGS WARNINGS</span>
+            </li>
+        </ul>
+        <ul class="list-group list-group-horizontal-sm container_ul">
+            <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center lead medium_font" style="width: 50%">
+                <span class="text-left">MORE WARNINGS MORE WARNINGS</span>
+            </li>
+        </ul>
+    </div>
+
+</div>
+{% endblock content %}
