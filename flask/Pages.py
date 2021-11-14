@@ -63,7 +63,7 @@ def student_dash():
 def instructor_dash():
     if request.method == 'POST':
         return redirect(url_for('index'))
-    return render_template("instructor_dash.html")
+    return render_template('instructor_dash.html', title='Instructor Dashboard')
 
 
 @app.route("/registrar_default_dash")
