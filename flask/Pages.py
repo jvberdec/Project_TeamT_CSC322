@@ -56,7 +56,7 @@ def statistics_page():
 
 @app.route("/student_dash")
 def student_dash():
-    return "Student Dashboard"
+    return render_template('student_dash.html', title='Student Dashboard')
 
 
 @app.route("/instructor_dash", methods=['POST', 'GET'])
