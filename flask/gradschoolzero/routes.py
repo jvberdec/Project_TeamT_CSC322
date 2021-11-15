@@ -3,6 +3,7 @@ from gradschoolzero import app, db, bcrypt
 from gradschoolzero.forms import InstructorApplicationForm, StudentApplicationForm, LoginForm
 from gradschoolzero.models import *
 
+
 @app.route("/")
 @app.route("/home")
 def home():
