@@ -3,4 +3,5 @@ flask/lib/
 pyvenv.cfg
 env/
 .env
-flask/__pycache__/
+flask/gradschoolzero/__pycache__/
+flask/gradschoolzero/site.db

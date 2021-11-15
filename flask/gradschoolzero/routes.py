@@ -1,21 +1,16 @@
-import os
-from dotenv import load_dotenv
-from flask import Flask, redirect, url_for, render_template, request, session, flash
-from forms import InstructorApplicationForm, StudentApplicationForm, LoginForm
-from datetime import timedelta
-load_dotenv()
-app = Flask(__name__)
-
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-
+from flask import redirect, url_for, render_template, request, session, flash
+from gradschoolzero import app
+from gradschoolzero.forms import InstructorApplicationForm, StudentApplicationForm, LoginForm
+from gradschoolzero.models import *
 
 @app.route("/")
+@app.route("/home")
 def home():
     # return "Home Page"
     return render_template("index.html")
 
 
-@app.route("/login", methods=['POST', 'GET'])
+@app.route("/login/", methods=['POST', 'GET'])
 def login():
     login_form = LoginForm()
     if login_form.validate_on_submit():
@@ -100,7 +95,3 @@ def user(name):
 @app.route("/admin")
 def admin():
     return redirect(url_for("home"))
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
