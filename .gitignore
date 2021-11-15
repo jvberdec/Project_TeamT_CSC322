@@ -5,3 +5,4 @@ env/
 .env
 flask/gradschoolzero/__pycache__/
 flask/gradschoolzero/site.db
+__pycache__/
