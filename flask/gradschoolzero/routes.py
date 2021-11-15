@@ -1,5 +1,5 @@
 from flask import redirect, url_for, render_template, request, session, flash
-from gradschoolzero import app
+from gradschoolzero import app, db, bcrypt
 from gradschoolzero.forms import InstructorApplicationForm, StudentApplicationForm, LoginForm
 from gradschoolzero.models import *
 
@@ -29,7 +29,14 @@ def login():
 def student_app():
     student_app_form = StudentApplicationForm()
     if student_app_form.validate_on_submit():
-        flash('Account created successfully!', 'success')
+        student_applicant = StudentApplicant(first_name=student_app_form.first_name.data, 
+                                             last_name=student_app_form.last_name.data,
+                                             email=student_app_form.email.data, 
+                                             dob=student_app_form.dob.data,
+                                             gpa=student_app_form.gpa.data)
+        db.session.add(student_applicant)
+        db.session.commit()
+        flash('Application filed successfully! You will be notified via email of our decision.', 'success')
         return redirect(url_for('login'))
     return render_template('student_app.html', title='Student Application', form=student_app_form)
 
@@ -38,6 +45,13 @@ def student_app():
 def instructor_app():
     instructor_app_form = InstructorApplicationForm()
     if instructor_app_form.validate_on_submit():
+        instructor_applicant = InstructorApplicant(first_name=instructor_app_form.first_name.data, 
+                                                   last_name=instructor_app_form.last_name.data,
+                                                   email=instructor_app_form.email.data, 
+                                                   dob=instructor_app_form.dob.data,
+                                                   discipline=instructor_app_form.discipline.data)
+        db.session.add(instructor_applicant)
+        db.session.commit()
         flash('Account created successfully!', 'success')
         return redirect(url_for('login'))
     return render_template('instructor_app.html', title='Instructor Application', form=instructor_app_form)
@@ -84,7 +98,6 @@ def registrar_class_run_period():
 @app.route("/registrar_grading_period")
 def registrar_grading_period():
     return "Registrar Grading Period"
-
 
 
 @app.route("/<name>")

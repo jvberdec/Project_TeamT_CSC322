@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from gradschoolzero import db
 
 class StudentApplicant(db.Model):
@@ -6,6 +6,8 @@ class StudentApplicant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    dob = db.Column(db.Date, nullable=False)
     gpa = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
@@ -17,17 +19,20 @@ class InstructorApplicant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    dob = db.Column(db.Date, nullable=False)
+    discipline = db.Column(db.String(20), nullable=False)
 
 
 class StudentCourseEnrollment(db.Model):
     __tablename__ = 'student_course_enrollment'
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
-    course_section_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
+    course_section_id = db.Column(db.Integer, db.ForeignKey('course_section.id'), nullable=False)
     grade = db.Column(db.String(1))
 
     students = db.relationship('Student', back_populates='courses_enrolled')
-    courses = db.relationship('Course', back_populates='students_enrolled')
+    courses = db.relationship('CourseSection', back_populates='students_enrolled')
 
     def __repr__(self):
         return f"StudentCourseEnrollment('{self.id}', '{self.student_id}', '{self.course_section_id}', '{self.grade}')"
@@ -47,7 +52,7 @@ class Student(db.Model):
 
     courses_enrolled = db.relationship('StudentCourseEnrollment', back_populates='students')
     complaints_filed = db.relationship('StudentComplaint', back_populates='students')
-    warnings = db.relationship('StudentWarnings', backref='student')
+    warnings = db.relationship('StudentWarning', backref='student')
 
 
     def __repr__(self):
@@ -64,7 +69,7 @@ class Instructor(db.Model):
     logged_in_before = db.Column(db.Boolean, nullable=False, default=False)
     status = db.Column(db.String, nullable=False)
 
-    courses = db.relationship('Course', backref='instructor', lazy=True)
+    courses = db.relationship('CourseSection', backref='instructor', lazy=True)
     complaints_filed = db.relationship('InstructorComplaint', back_populates='instructors')
     warnings = db.relationship('InstructorWarning', backref='instructor', lazy=True)
 
@@ -89,7 +94,7 @@ class CourseSection(db.Model):
 
     instructors = db.relationship('Instructor', backref='section')
     courses = db.relationship('Course', backref='section')
-    students = db.relationship('Student', backref='section')
+    students_enrolled = db.relationship('StudentCourseEnrollment', back_populates='courses')
 
     
 class CensorWords(db.Model):
@@ -145,3 +150,11 @@ class InstructorWarning(db.Model):
     date_received = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     warning = db.Column(db.Text, nullable=False)
     instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id'), nullable=False)
+
+
+def init_db():
+    db.create_all()
+
+
+if __name__ == '__main__':
+    init_db()
