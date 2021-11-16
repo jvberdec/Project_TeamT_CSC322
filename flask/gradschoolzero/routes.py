@@ -1,7 +1,7 @@
 import smtplib
 from email.message import EmailMessage
 from flask import redirect, url_for, render_template, request, session, flash
-from gradschoolzero import app, db, bcrypt
+from gradschoolzero import app, db, bcrypt, EMAIL_ADDRESS, EMAIL_PASSWORD
 from gradschoolzero.forms import InstructorApplicationForm, StudentApplicationForm, LoginForm
 from gradschoolzero.models import *
 from flask_login import login_user, current_user, logout_user, login_required
@@ -10,13 +10,13 @@ from flask_login import login_user, current_user, logout_user, login_required
 def send_email(recipient, content):
     msg = EmailMessage()
     msg['Subject'] = 'GradSchoolZero Admissions'
-    msg['From'] = app.config['EMAIL_ADDRESS']
+    msg['From'] = EMAIL_ADDRESS
     msg['To'] = recipient
     msg.set_content(content)
 
 
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(app.config['EMAIL_ADDRESS'], app.config['EMAIL_PASSWORD'])
+        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         smtp.send_message(msg)
 
 
