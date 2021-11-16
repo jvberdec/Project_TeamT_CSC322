@@ -1,10 +1,19 @@
 import smtplib
 from email.message import EmailMessage
+from secrets import choice
+from string import ascii_letters, digits, punctuation
 from flask import redirect, url_for, render_template, request, session, flash
 from gradschoolzero import app, db, bcrypt, EMAIL_ADDRESS, EMAIL_PASSWORD
 from gradschoolzero.forms import InstructorApplicationForm, StudentApplicationForm, LoginForm
 from gradschoolzero.models import *
 from flask_login import login_user, current_user, logout_user, login_required
+
+
+def password_generator():
+    characters = ascii_letters + digits + punctuation
+    password = ''.join(choice(characters) for i in range(32))
+
+    return password
 
 
 def send_email(recipient, content):
@@ -146,10 +155,10 @@ def user(name):
 @app.route("/admin")
 @login_required
 def admin():
-    return redirect(url_for("home"))
+    return 'admin'
 
 
 @app.route("/logout")
 def logout():
     logout_user()
-
+    return redirect(url_for("home"))
