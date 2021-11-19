@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+    <a class="nav-item nav-link" href="{{url_for('statistics_page')}}">Statistics</a>
+    <a class="nav-item nav-link" href="{{url_for('registrar_default_dash')}}">Dashboard</a>
+    <a class="nav-item nav-link" href="{{url_for('login')}}">Sign Out</a>
+{% endblock %}
+
+{% block content %}
+<div class="container marketing">
+    <div class="animate__animated animate__fadeIn animate__slow text-center mt-5 mb-5">
+        <i class="fas fa-exclamation-circle fa-3x"></i>
+        <h1 class="font-weight-bolder text-white">Warnings</h1>
+    </div>
+
+    <hr class="featurette-divider">
+
+    <div class="container ">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1 class="mx-auto text-center text-white pb-3">Canceled Courses</h1>
+            
+                <div class="card mx-auto card_border bg-ebony text-white mb-3">
+                  <div class="card-body">
+                    <h5 class="card-title text-center">Computer Science: Computer Graphics</h5>
+                    <div class="card-text text-center">
+                      <p>Instructor: Bob the Builder</p>
+                    </div>
+                  </div>
+                </div>
+            
+                <div class="card mx-auto card_border bg-ebony text-white mb-3">
+                    <div class="card-body">
+                    <h5 class="card-title text-center">Science: the universal language</h5>
+                    <div class="card-text text-center">
+                        <p>Instructor: Bob the Builder</p>
+                    </div>
+                    </div>
+                </div>
+            
+                <div class="card mx-auto card_border bg-ebony text-white mb-3">
+                    <div class="card-body">
+                    <h5 class="card-title text-center">English: The Natural Language</h5>
+                    <div class="card-text text-center">
+                        <p>Instructor: Bob the Builder</p>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <h1 class="mx-auto text-center text-white pb-3">Warned Students</h1>
+            
+                <div class="card mx-auto card_border bg-ebony text-white mb-3">
+                  <div class="card-body text-center">
+                    <h5 class="card-title text-center">Bobby Bob</h5>
+                  </div>
+                </div>
+
+                <div class="card mx-auto card_border bg-ebony text-white mb-3">
+                    <div class="card-body text-center">
+                      <h5 class="card-title text-center">Bobby Bob</h5>
+                    </div>
+                 </div>
+
+                <div class="card mx-auto card_border bg-ebony text-white mb-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-center">Bobby Bob</h5>
+                    </div>
+                </div>
+
+                <div class="card mx-auto card_border bg-ebony text-white mb-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-center">Bobby Bob</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="featurette-divider">
+
+        <div class="row">
+            <div class="col-sm-6">
+                <h1 class="mx-auto text-center text-white pb-3">Warned Instructors</h1>
+            
+                <div class="card mx-auto card_border bg-ebony text-white mb-3" >
+                  <div class="card-body text-center">
+                    <h5 class="card-title text-center">Bobby Bob</h5>
+                  </div>
+                </div>
+
+                <div class="card mx-auto card_border bg-ebony text-white mb-3">
+                    <div class="card-body text-center">
+                      <h5 class="card-title text-center">Bobby Bob</h5>
+                    </div>
+                 </div>
+
+                <div class="card mx-auto card_border bg-ebony text-white mb-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-center">Bobby Bob</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <h1 class="mx-auto text-center text-white pb-3">Suspended Instructors</h1>
+            
+                <div class="card mx-auto card_border bg-ebony text-white mb-3" >
+                  <div class="card-body text-center">
+                    <h5 class="card-title text-center">Bobby Bob</h5>
+                  </div>
+                </div>
+
+                <div class="card mx-auto card_border bg-ebony text-white mb-3">
+                    <div class="card-body text-center">
+                      <h5 class="card-title text-center">Bobby Bob</h5>
+                    </div>
+                 </div>
+
+                <div class="card mx-auto card_border bg-ebony text-white mb-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-center">Bobby Bob</h5>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

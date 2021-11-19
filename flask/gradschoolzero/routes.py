@@ -5,7 +5,7 @@ from string import ascii_letters, digits, punctuation
 from flask import redirect, url_for, render_template, request, session, flash
 from gradschoolzero import app, db, bcrypt, EMAIL_ADDRESS, EMAIL_PASSWORD
 from gradschoolzero.forms import InstructorApplicationForm, StudentApplicationForm, LoginForm
-from gradschoolzero.forms import ClassSetUpForm
+from gradschoolzero.forms import ClassSetUpForm, ChangePeriodForm, StudentClassEnrollForm
 from gradschoolzero.models import *
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -117,10 +117,13 @@ def instructor_dash():
     return render_template('instructor_dash.html', title='Instructor Dashboard')
 
 
-@app.route("/registrar_default_dash")
+@app.route("/registrar_default_dash", methods=['POST', 'GET'])
 #@login_required
 def registrar_default_dash():
-    return render_template('registrar_dash.html', title='Registrar Dashboard')
+    change_period_form = ChangePeriodForm()
+    if change_period_form.validate_on_submit():
+        flash('Period changed successfully!', 'success')
+    return render_template('registrar_dash.html', title='Registrar Dashboard', form=change_period_form)
 
 
 @app.route("/registrar_class_setup", methods=['POST', 'GET'])
@@ -130,24 +133,38 @@ def registrar_class_setup():
     if class_setup_form.validate_on_submit():
         flash('Course submitted successfully!', 'success')
         return redirect(url_for('registrar_default_dash'))
-    return render_template('class_setUp.html', title='Class Set-up', form=class_setup_form)
+    return render_template('create_course_section.html', title='Class Set-up', form=class_setup_form)
 
-@app.route("/student_course_reg")
+@app.route("/student_course_reg", methods=['POST', 'GET'])
 #@login_required
 def student_course_reg():
-    return render_template('enroll.html', title='Student Course Registration')
+    student_class_enroll_form = StudentClassEnrollForm()
+    if student_class_enroll_form.validate_on_submit():
+        flash('Enrolled in course successfully!', 'success')
+    return render_template('enroll.html', title='Student Course Registration', form=student_class_enroll_form)
 
 
-@app.route("/registrar_course_reg")
+# @app.route("/registrar_course_reg")
+# #@login_required
+# def registrar_course_reg():
+#     return render_template('course_reg.html', title='Class Registration')
+
+@app.route("/view_courses")
 #@login_required
-def registrar_course_reg():
-    return render_template('course_reg.html', title='Class Registration')
+def view_courses():
+    return render_template('view_courses.html', title='View Courses')
 
 
-@app.route("/registrar_class_run_period")
+@app.route("/warned_stu_instr")
 #@login_required
-def registrar_class_run_period():
-    return render_template('course_running.html', title='Class Running')
+def warned_stu_instr():
+    return render_template('warned_stu_instr.html', title='View Courses')
+
+
+# @app.route("/registrar_class_run_period")
+# #@login_required
+# def registrar_class_run_period():
+#     return render_template('course_running.html', title='Class Running')
 
 
 @app.route("/registrar_grading_period")
@@ -155,6 +172,10 @@ def registrar_class_run_period():
 def registrar_grading_period():
     return render_template('course_grading.html', title='Class Running')
 
+@app.route("/registrar_view_applicants")
+#@login_required
+def registrar_view_applicants():
+    return render_template('view_applicants.html', title='View Applicants')
 
 @app.route("/<name>")
 @login_required

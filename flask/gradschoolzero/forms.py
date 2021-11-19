@@ -53,3 +53,36 @@ class ClassSetUpForm(FlaskForm):
     start_time = TimeField('Start Time (Hours:Minutes)', format='%H:%M', validators=[DataRequired()])
     end_time = TimeField('Start Time (Hours:Minutes)', format='%H:%M', validators=[DataRequired()])
     submit = SubmitField('Submit Course')
+
+class ChangePeriodForm(FlaskForm):
+    period = SelectField(u'Change period', choices=[('class_set_up', 'Class Set-up'), 
+                                                   ('course_registration', 'Course Registration'), 
+                                                   ('class_running', 'Class Running'),
+                                                   ('grading', 'Grading')], validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+class StudentClassEnrollForm(FlaskForm):
+    #these lists will have to be populated from the database
+    class_list = [  ('science', 'Science'),
+                    ('math', 'Math'),
+                    ('cs_science', 'Computer Science'),
+                    ('English', 'English'),
+                    ('philosophy', 'Philosophy'),
+                ]
+
+    instructor_list = [  ('bob_builder', 'Bob Builder'),
+                        ('bobby_brown', 'Bobby Brown'),
+                        ('bobby_bobby', 'Bobby Bobby'),
+                        ('bob_bob', 'Bob Bob'),
+                        ('builder_bob', 'Builder Bob'),
+                    ]
+
+    section_list = [    ('section_a', 'Section A (11-12pm)'),
+                        ('section_b', 'Section B (2-3:40pm)'),
+                        ('section_c', 'Section C (5-6:30pm)'),
+                    ]
+    class_name = SelectField(u'Class Name', choices=class_list, validators=[DataRequired()])
+    instructor_name = SelectField(u'Instructor Name', choices=instructor_list, validators=[DataRequired()])
+    section_name = SelectField(u'Section Name', choices=section_list, validators=[DataRequired()])
+    submit = SubmitField('Submit')

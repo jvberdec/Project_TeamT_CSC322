@@ -185,3 +185,17 @@ li.list-group-item{
 .medium_font{
   font-weight: 500;
 }
+
+.card_border {
+  border-style: solid;
+  border-color: white;
+  border-width: 3px;
+  border-radius: 25px;
+}
+
+.card_border2 {
+  border-style: solid;
+  border-color: var(--ebony);
+  border-width: 3px;
+  border-radius: 25px;
+}

@@ -1,17 +1,6 @@
 {% extends "base.html" %}
 
 {% block navbar %}
-    <div class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false">
-          Periods
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="{{url_for('registrar_class_setup')}}">Class Set-up</a>
-          <a class="dropdown-item" href="{{url_for('registrar_course_reg')}}">Course Registration</a>
-          <a class="dropdown-item" href="{{url_for('registrar_class_run_period')}}">Class Running</a>
-          <a class="dropdown-item" href="{{url_for('registrar_grading_period')}}">Grading</a>
-        </div>
-    </div>
     <a class="nav-item nav-link" href="{{url_for('statistics_page')}}">Statistics</a>
     <a class="nav-item nav-link" href="{{url_for('login')}}">Sign Out</a>
 {% endblock %}
@@ -24,8 +13,9 @@
             <div class="col-sm-4 ">
                 <div class="animate__animated animate__bounce animate__fast card bg-blur shadow-lg welcome-card p-3">
                     <div class="card-heading">
-                        <h1 class="text-center">Registrar Dashboard</h1>
-                        <h4 class="text-center">___________</h4>
+                        <h1 class="text-center text-white">Registrar Dashboard</h1>
+                        <h4 class="text-center">Currently in the Class Set-up Period</h3>
+                        <h4 class="text-center text-white">___________</h4>
                     </div>
                 </div>
             </div>
@@ -34,42 +24,228 @@
 
     <hr class="featurette-divider">
 
-    <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
-        <i class="fas fa-book-open fa-3x"></i>
-        <h1 class="display-4">Students</h1>
-    </div>
+    <div class="container ">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+                    <i class="fas fa-exchange-alt fa-3x"></i>
+                    <h1 class="display-4">Change Period</h1>
+                </div>
+                <form method="POST" class="card bg-blur p-3 mt-3" style="border-radius: 10px; width: 50%; margin: 0 auto;">
+                    {{ form.hidden_tag() }}
+                    <fieldset class="form-group">
+                        <div class="form-group">
+                            {{ form.period.label(class="form-control-label") }}
+                            {% if form.period.errors %}
+                                {{ form.period(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.period.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.period(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-lg text-white bg-ebony") }}
+                    </div>
+                </form>
+            </div>
+        </div>
 
-    <div class="container">
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 50%">NAME</li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item modified_li strong_font" style="width: 50%;">Bill Billy</li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item modified_li strong_font" style="width: 50%">Bob Bobby</li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item modified_li strong_font" style="width: 50%">Bob the builder</li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item modified_li strong_font" style="width: 50%">Bill the builder</li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item modified_li strong_font" style="width: 50%">Bill the builder</li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item modified_li strong_font" style="width: 50%">Bill the builder</li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item modified_li strong_font" style="width: 50%">Bob the builder</li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item modified_li strong_font" style="width: 50%">Bob the builder</li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item modified_li strong_font" style="width: 50%">Bill the builder</li>
-        </ul>
+        <hr class="featurette-divider">
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+                    <i class="fas fa-chalkboard-teacher fa-3x"></i>
+                    <h1 class="display-4">Registrar Pages</h1>
+                </div>
+
+                <div class="card text-white card_border bg-ebony mx-auto mb-3" style="width: 18rem;">
+                    <div class="card-body">
+                    <h5 class="card-title text-center">
+                        <a href="{{url_for('registrar_view_applicants')}}" class="btn text-white"><strong>View Applicants</strong></a>              
+                    </h5>               
+                    </div>
+                </div>
+
+                <div class="card text-white card_border bg-ebony mx-auto mb-3" style="width: 18rem;">
+                    <div class="card-body">
+                    <h5 class="card-title text-center">
+                        <a href="{{url_for('registrar_class_setup')}}" class="btn text-white"><strong>Create Course Section</strong></a>              
+                    </h5>               
+                    </div>
+                </div>
+
+                <div class="card text-white card_border bg-ebony mx-auto mb-3" style="width: 18rem;">
+                    <div class="card-body">
+                    <h5 class="card-title text-center">
+                        <a href="{{url_for('view_courses')}}" class="btn text-white"><strong>View Course Sections</strong></a>              
+                    </h5>               
+                    </div>
+                </div>
+
+                <div class="card text-white card_border bg-ebony mx-auto mb-3" style="width: 18rem;">
+                    <div class="card-body">
+                    <h5 class="card-title text-center">
+                        <a href="{{url_for('registrar_grading_period')}}" class="btn text-white"><strong>Course Grading</strong></a>              
+                    </h5>               
+                    </div>
+                </div>
+
+                <div class="card text-white card_border bg-ebony mx-auto mb-3" style="width: 18rem;">
+                    <div class="card-body">
+                    <h5 class="card-title text-center">
+                        <a href="{{url_for('warned_stu_instr')}}" class="btn text-white"><strong>Warnings</strong></a>              
+                    </h5>               
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="featurette-divider">
+        <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+            <i class="fas fa-user-graduate fa-3x"></i>
+            <h1 class="display-4">Students</h1>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+              <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
+                <div class="card-body">
+                <h5 class="card-title">
+                    Bob the Builder                
+                    <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
+                    <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
+                        <p>Email: bob@builder.com</p>
+                        <p>GPA: 4.0</p>
+                    </div>
+                </h5>               
+                </div>
+              </div>
+
+              <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
+                <div class="card-body">
+                <h5 class="card-title">
+                    Bob the Builder                
+                    <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
+                    <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
+                        <p>Email: bob@builder.com</p>
+                        <p>GPA: 4.0</p>
+                    </div>
+                </h5>               
+                </div>
+              </div>
+
+              <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
+                <div class="card-body">
+                <h5 class="card-title">
+                    Bob the Builder                
+                    <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
+                    <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
+                        <p>Email: bob@builder.com</p>
+                        <p>GPA: 4.0</p>
+                    </div>
+                </h5>               
+                </div>
+              </div>
+              
+              <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
+                <div class="card-body">
+                <h5 class="card-title">
+                    Bob the Builder                
+                    <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
+                    <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
+                        <p>Email: bob@builder.com</p>
+                        <p>GPA: 4.0</p>
+                    </div>
+                </h5>               
+                </div>
+              </div>
+
+              <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
+                <div class="card-body">
+                <h5 class="card-title">
+                    Bob the Builder                
+                    <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
+                    <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
+                        <p>Email: bob@builder.com</p>
+                        <p>GPA: 4.0</p>
+                    </div>
+                </h5>               
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
+                  <div class="card-body">
+                  <h5 class="card-title">
+                      Bob the Builder                
+                      <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
+                      <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
+                          <p>Email: bob@builder.com</p>
+                          <p>GPA: 4.0</p>
+                      </div>
+                  </h5>               
+                  </div>
+                </div>
+  
+                <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
+                  <div class="card-body">
+                  <h5 class="card-title">
+                      Bob the Builder                
+                      <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
+                      <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
+                          <p>Email: bob@builder.com</p>
+                          <p>GPA: 4.0</p>
+                      </div>
+                  </h5>               
+                  </div>
+                </div>
+  
+                <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
+                  <div class="card-body">
+                  <h5 class="card-title">
+                      Bob the Builder                
+                      <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
+                      <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
+                          <p>Email: bob@builder.com</p>
+                          <p>GPA: 4.0</p>
+                      </div>
+                  </h5>               
+                  </div>
+                </div>
+                
+                <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
+                  <div class="card-body">
+                  <h5 class="card-title">
+                      Bob the Builder                
+                      <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
+                      <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
+                          <p>Email: bob@builder.com</p>
+                          <p>GPA: 4.0</p>
+                      </div>
+                  </h5>               
+                  </div>
+                </div>
+  
+                <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
+                  <div class="card-body">
+                  <h5 class="card-title">
+                      Bob the Builder                
+                      <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
+                      <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
+                          <p>Email: bob@builder.com</p>
+                          <p>GPA: 4.0</p>
+                      </div>
+                  </h5>               
+                  </div>
+                </div>
+              </div>
+            </div>
     </div>
 </div>
 {% endblock content %}
