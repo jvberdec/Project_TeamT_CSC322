@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, DecimalField, PasswordField, SubmitField
-from wtforms import BooleanField, SelectField, DateField
+from wtforms import BooleanField, SelectField, DateField, TimeField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, NumberRange, ValidationError
 from gradschoolzero.models import Applicant, User
 
@@ -44,3 +44,12 @@ class LoginForm(FlaskForm):
                                                    ('registrar', 'Registrar')], validators=[DataRequired()])
     submit = SubmitField('sign in')
 
+class ClassSetUpForm(FlaskForm):
+    course_name = StringField('Course Name', validators=[DataRequired(), Length(min=2, max=20)])
+    instructor_name = StringField('Instructor Name', validators=[DataRequired(), Length(min=2, max=20)])
+    class_size = IntegerField('Class Size', validators=[DataRequired()])
+    start_date = DateField('Start Date (mm-dd-yyyy)', format='%m-%d-%Y', validators=[DataRequired()])
+    end_date = DateField('End Date (mm-dd-yyyy)', format='%m-%d-%Y', validators=[DataRequired()])
+    start_time = TimeField('Start Time (Hours:Minutes)', format='%H:%M', validators=[DataRequired()])
+    end_time = TimeField('Start Time (Hours:Minutes)', format='%H:%M', validators=[DataRequired()])
+    submit = SubmitField('Submit Course')

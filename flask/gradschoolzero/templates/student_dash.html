@@ -1,9 +1,16 @@
 {% extends "base.html" %}
 
 {% block navbar %}
-    <a class="nav-item nav-link" href="#">Review Courses</a>
-    <a class="nav-item nav-link" href="#">Submit Complaints</a>
-    <a class="nav-item nav-link" href="#">Enroll</a>
+    <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false">
+          Actions
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="#">Review Courses</a>
+          <a class="dropdown-item" href="#">Submit Complaints</a>
+          <a class="dropdown-item" href="{{url_for('student_course_reg')}}">Enroll</a>
+        </div>
+    </div>
     <a class="nav-item nav-link" href="{{url_for('statistics_page')}}">Statistics</a>
     <a class="nav-item nav-link" href="{{url_for('login')}}">Sign Out</a>
 {% endblock %}

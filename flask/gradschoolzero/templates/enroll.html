@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+    <a class="nav-item nav-link" href="{{url_for('statistics_page')}}">Statistics</a>
+    <a class="nav-item nav-link" href="{{url_for('student_dash')}}">Dashboard</a>
+    <a class="nav-item nav-link" href="{{url_for('login')}}">Sign Out</a>
+{% endblock %}
+
+{% block content %}
+<div class="container marketing">
+    <div class="animate__animated animate__fadeIn animate__slow text-center mt-5 mb-5">
+        <h1 class="font-weight-bolder">Enroll</h1>
+    </div>
+    <div class="container">
+        <ul class="list-group list-group-horizontal-sm container_ul">
+            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
+                <span class="text-left">Science: the search for the truth</span>
+                <button class="btn text-white bg-ebony">Enroll</button>
+            </li>
+        </ul>
+        <ul class="list-group list-group-horizontal-sm container_ul">
+            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
+                <span class="text-left">Math: the universal language</span>
+                <button class="btn text-white bg-ebony">Enroll</button>
+            </li>
+        </ul>
+        <ul class="list-group list-group-horizontal-sm container_ul">
+            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
+                <span class="text-left">Computer Science: Data Structures</span>
+                <button class="btn text-white bg-ebony">Enroll</button>
+            </li>
+        </ul>
+        <ul class="list-group list-group-horizontal-sm container_ul">
+            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
+                <span class="text-left">English: Introduction to Literary Studies</span>
+                <button class="btn text-white bg-ebony">Enroll</button>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock content %}

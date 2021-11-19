@@ -3,6 +3,7 @@ from email.message import EmailMessage
 from flask import redirect, url_for, render_template, request, session, flash
 from gradschoolzero import app, db, bcrypt, EMAIL_ADDRESS, EMAIL_PASSWORD
 from gradschoolzero.forms import InstructorApplicationForm, StudentApplicationForm, LoginForm
+from gradschoolzero.forms import ClassSetUpForm
 from gradschoolzero.models import *
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -94,7 +95,7 @@ def statistics_page():
 
 
 @app.route("/student_dash")
-@login_required
+#@login_required
 def student_dash():
     return render_template('student_dash.html', title='Student Dashboard')
 
@@ -108,33 +109,42 @@ def instructor_dash():
 
 
 @app.route("/registrar_default_dash")
-@login_required
+#@login_required
 def registrar_default_dash():
-    return "Registrar Default Dashboard"
+    return render_template('registrar_dash.html', title='Registrar Dashboard')
 
 
-@app.route("/registrar_class_setup")
-@login_required
+@app.route("/registrar_class_setup", methods=['POST', 'GET'])
+#@login_required
 def registrar_class_setup():
-    return "Registrar Class Set Up"
+    class_setup_form = ClassSetUpForm()
+    if class_setup_form.validate_on_submit():
+        flash('Course submitted successfully!', 'success')
+        return redirect(url_for('registrar_default_dash'))
+    return render_template('class_setUp.html', title='Class Set-up', form=class_setup_form)
+
+@app.route("/student_course_reg")
+#@login_required
+def student_course_reg():
+    return render_template('enroll.html', title='Student Course Registration')
 
 
 @app.route("/registrar_course_reg")
-@login_required
+#@login_required
 def registrar_course_reg():
-    return "Registrar Course Registration"
+    return render_template('course_reg.html', title='Class Registration')
 
 
 @app.route("/registrar_class_run_period")
-@login_required
+#@login_required
 def registrar_class_run_period():
-    return "Registrar Class Running Period"
+    return render_template('course_running.html', title='Class Running')
 
 
 @app.route("/registrar_grading_period")
-@login_required
+#@login_required
 def registrar_grading_period():
-    return "Registrar Grading Period"
+    return render_template('course_grading.html', title='Class Running')
 
 
 @app.route("/<name>")
