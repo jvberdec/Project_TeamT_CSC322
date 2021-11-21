@@ -10,9 +10,59 @@
 <div class="container marketing">
     <div class="animate__animated animate__fadeIn animate__slow text-center mt-5 mb-5">
         <i class="fas fa-exclamation-circle fa-3x"></i>
-        <h1 class="font-weight-bolder text-white">Warnings</h1>
+        <h1 class="font-weight-bolder">Warnings</h1>
     </div>
 
+    <hr class="featurette-divider">
+
+    <h1 class="mx-auto text-center text-white pb-3">Submit Warning</h1>
+    <form method="POST" class="card bg-blur p-3 mt-3" style="border-radius: 10px; width: 50%; margin: 0 auto;">
+      {{ form.hidden_tag() }}
+      <fieldset class="form-group">
+          <div class="form-group">
+              {{ form.username.label(class="form-control-label") }}
+              {% if form.username.errors %}
+                  {{ form.username(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in form.username.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ form.username(class="form-control form-control-lg") }}
+              {% endif %}
+          </div>
+          <div class="form-group">
+              {{ form.user_type.label(class="form-control-label") }}
+              {% if form.user_type.errors %}
+                  {{ form.user_type(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in form.user_type.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ form.user_type(class="form-control form-control-lg") }}
+              {% endif %}
+          </div>
+          <div class="form-group">
+              {{ form.warning_text.label(class="form-control-label") }}
+              {% if form.warning_text.errors %}
+                  {{ form.warning_text(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in form.warning_text.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ form.warning_text(class="form-control form-control-lg") }}
+              {% endif %}
+          </div>
+      </fieldset>
+      <div class="form-group">
+        {{ form.submit(class="btn btn-lg text-white bg-ebony") }}
+      </div>
+    </form>
     <hr class="featurette-divider">
 
     <div class="container ">

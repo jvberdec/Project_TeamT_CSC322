@@ -30,287 +30,60 @@
                 <i class="fas fa-user-graduate fa-3x"></i>
                 <h1 class="display-4">Students</h1>
               </div>
-              
-              <div class="card mx-auto mb-3" style="width: 18rem;">
-                <div class="card-body">
-                  <h5 class="card-title">Bob the Builder</h5>
-                  <div class="card-text">
-                    <p>Email: bob@builder.com</p>
-                    <p>GPA: 4.0</p>
-                  </div>
-                  <a href="#"><button  class="bg-ebony btn btn-outline-white btn-md text-white">Accept</button> </a>
-                  <button  class="bg-ebony btn btn-outline-white btn-md text-white dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
-                    Reject
-                  </button>
-                  <div class="dropdown-menu">
-                    <form class="px-4 py-3">
-                      <div class="form-group">
-                        <label for="rejectComment"><strong>Rejection Reason:</strong></label>
-                        <input type="text" class="form-control" id="rejectComment" placeholder="Reason...">
-                      </div>
-                      <button type="submit" class="btn btn-danger">Submit</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="card mx-auto mb-3" style="width: 18rem;">
-                <div class="card-body">
-                  <h5 class="card-title">Bob the Builder</h5>
-                  <div class="card-text">
-                    <p>Email: bob@builder.com</p>
-                    <p>GPA: 4.0</p>
-                  </div>
-                  <a href="#"><button  class="bg-ebony btn btn-outline-white btn-md text-white">Accept</button> </a>
-                  <button  class="bg-ebony btn btn-outline-white btn-md text-white dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
-                    Reject
-                  </button>
-                  <div class="dropdown-menu">
-                    <form class="px-4 py-3">
-                      <div class="form-group">
-                        <label for="rejectComment"><strong>Rejection Reason:</strong></label>
-                        <input type="text" class="form-control" id="rejectComment" placeholder="Reason...">
-                      </div>
-                      <button type="submit" class="btn btn-danger">Submit</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
 
-              <div class="card mx-auto mb-3" style="width: 18rem;">
-                <div class="card-body">
-                  <h5 class="card-title">Bob the Builder</h5>
-                  <div class="card-text">
-                    <p>Email: bob@builder.com</p>
-                    <p>GPA: 4.0</p>
-                  </div>
-                  <a href="#"><button  class="bg-ebony btn btn-outline-white btn-md text-white">Accept</button> </a>
-                  <button  class="bg-ebony btn btn-outline-white btn-md text-white dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
-                    Reject
-                  </button>
-                  <div class="dropdown-menu">
-                    <form class="px-4 py-3">
-                      <div class="form-group">
-                        <label for="rejectComment"><strong>Rejection Reason:</strong></label>
-                        <input type="text" class="form-control" id="rejectComment" placeholder="Reason...">
-                      </div>
-                      <button type="submit" class="btn btn-danger">Submit</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-
-              <div class="card mx-auto mb-3" style="width: 18rem;">
-                <div class="card-body">
-                  <h5 class="card-title">Bob the Builder</h5>
-                  <div class="card-text">
-                    <p>Email: bob@builder.com</p>
-                    <p>GPA: 4.0</p>
-                  </div>
-                  <a href="#"><button  class="bg-ebony btn btn-outline-white btn-md text-white">Accept</button> </a>
-                  <button  class="bg-ebony btn btn-outline-white btn-md text-white dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
-                    Reject
-                  </button>
-                  <div class="dropdown-menu">
-                    <form class="px-4 py-3">
-                      <div class="form-group">
-                        <label for="rejectComment"><strong>Rejection Reason:</strong></label>
-                        <input type="text" class="form-control" id="rejectComment" placeholder="Reason...">
-                      </div>
-                      <button type="submit" class="btn btn-danger">Submit</button>
-                    </form>
+              {% if student_applicants %}
+                {% for applicant in student_applicants: %}
+                <div class="card mx-auto mb-3" style="width: 18rem;">
+                  <div class="card-body">
+                    <h5 class="card-title">{{applicant.first_name}} {{applicant.last_name}}</h5>
+                    <div class="card-text">
+                      <p>Email: {{applicant.email}}</p>
+                      <p>GPA: {{applicant.gpa}}</p>
+                    </div>
+                    <a href="/student_app_accept/{{applicant.id}}"><button  class="bg-ebony btn btn-outline-white btn-md text-white">Accept</button> </a>
+                    <button  class="bg-ebony btn btn-outline-white btn-md text-white dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
+                      Reject
+                    </button>
+                    <div class="dropdown-menu">
+                      <form method="POST" action="/student_app_delete/{{applicant.id}}" class="px-4 py-3">
+                        <div class="form-group">
+                          <label for="rejectComment"><strong>Rejection Reason:</strong></label>
+                          <input type="text" class="form-control" name="rejectComment" id="rejectComment" required placeholder="Reason...">
+                        </div>
+                        <button type="submit" class="btn btn-danger">Submit</button>
+                      </form>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              <div class="card mx-auto mb-3" style="width: 18rem;">
-                <div class="card-body">
-                  <h5 class="card-title">Bob the Builder</h5>
-                  <div class="card-text">
-                    <p>Email: bob@builder.com</p>
-                    <p>GPA: 4.0</p>
-                  </div>
-                  <a href="#"><button  class="bg-ebony btn btn-outline-white btn-md text-white">Accept</button> </a>
-                  <button  class="bg-ebony btn btn-outline-white btn-md text-white dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
-                    Reject
-                  </button>
-                  <div class="dropdown-menu">
-                    <form class="px-4 py-3">
-                      <div class="form-group">
-                        <label for="rejectComment"><strong>Rejection Reason:</strong></label>
-                        <input type="text" class="form-control" id="rejectComment" placeholder="Reason...">
-                      </div>
-                      <button type="submit" class="btn btn-danger">Submit</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-
-              <div class="card mx-auto mb-3" style="width: 18rem;">
-                <div class="card-body">
-                  <h5 class="card-title">Bob the Builder</h5>
-                  <div class="card-text">
-                    <p>Email: bob@builder.com</p>
-                    <p>GPA: 4.0</p>
-                  </div>
-                  <a href="#"><button  class="bg-ebony btn btn-outline-white btn-md text-white">Accept</button> </a>
-                  <button  class="bg-ebony btn btn-outline-white btn-md text-white dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
-                    Reject
-                  </button>
-                  <div class="dropdown-menu">
-                    <form class="px-4 py-3">
-                      <div class="form-group">
-                        <label for="rejectComment"><strong>Rejection Reason:</strong></label>
-                        <input type="text" class="form-control" id="rejectComment" placeholder="Reason...">
-                      </div>
-                      <button type="submit" class="btn btn-danger">Submit</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
+                {% endfor %}
+              {% endif %}
             </div>
+
             <div class="col-sm-6">
               <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
                 <i class="fas fa-chalkboard-teacher fa-3x"></i>
                 <h1 class="display-4">Instructors</h1>
               </div>
-              <div class="card mx-auto mb-3" style="width: 18rem;">
-                <div class="card-body">
-                  <h5 class="card-title">Billy Bobby</h5>
-                  <div class="card-text">
-                    <p>Email: billy@bobby.com</p>
-                    <p>Discipline: Computer Science</p>
-                  </div>
-                  <a href="#"><button  class="bg-ebony btn btn-outline-white btn-md text-white">Accept</button> </a>
-                  <button  class="bg-ebony btn btn-outline-white btn-md text-white dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
-                    Reject
-                  </button>
-                  <div class="dropdown-menu">
-                    <form class="px-4 py-3">
-                      <div class="form-group">
-                        <label for="rejectComment"><strong>Rejection Reason:</strong></label>
-                        <input type="text" class="form-control" id="rejectComment" placeholder="Reason...">
-                      </div>
-                      <button type="submit" class="btn btn-danger">Submit</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
 
-              <div class="card mx-auto mb-3" style="width: 18rem;">
-                <div class="card-body">
-                  <h5 class="card-title">Billy Bobby</h5>
-                  <div class="card-text">
-                    <p>Email: billy@bobby.com</p>
-                    <p>Discipline: Computer Science</p>
-                  </div>
-                  <a href="#"><button  class="bg-ebony btn btn-outline-white btn-md text-white">Accept</button> </a>
-                  <button  class="bg-ebony btn btn-outline-white btn-md text-white dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
-                    Reject
-                  </button>
-                  <div class="dropdown-menu">
-                    <form class="px-4 py-3">
-                      <div class="form-group">
-                        <label for="rejectComment"><strong>Rejection Reason:</strong></label>
-                        <input type="text" class="form-control" id="rejectComment" placeholder="Reason...">
-                      </div>
-                      <button type="submit" class="btn btn-danger">Submit</button>
-                    </form>
-                  </div>
+              {% if instruc_applicants %}
+                {% for applicant in instruc_applicants: %}
+                <div class="card mx-auto mb-3" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{applicant.first_name}} {{applicant.last_name}}</h5>
+                        <div class="card-text">
+                            <p>Email: {{applicant.email}}</p>
+                            <p>Discipline: {{applicant.discipline}}</p>
+                        </div>
+                        <!-- <form method="post" action="/">
+                            <a href="#" class="bg-ebony btn btn-outline-white btn-md text-white">Accept</a>
+                            <a href="/instruc_app_delete/{{applicant.id}}" class="bg-ebony btn btn-outline-white btn-md text-white">Reject</a>
+                        </form> -->
+                        <a href="#" class="bg-ebony btn btn-outline-white btn-md text-white">Accept</a>
+                        <a href="/instruc_app_delete/{{applicant.id}}" class="bg-ebony btn btn-outline-white btn-md text-white">Reject</a>
+                    </div>
                 </div>
-              </div>
-
-              <div class="card mx-auto mb-3" style="width: 18rem;">
-                <div class="card-body">
-                  <h5 class="card-title">Billy Bobby</h5>
-                  <div class="card-text">
-                    <p>Email: billy@bobby.com</p>
-                    <p>Discipline: Computer Science</p>
-                  </div>
-                  <a href="#"><button  class="bg-ebony btn btn-outline-white btn-md text-white">Accept</button> </a>
-                  <button  class="bg-ebony btn btn-outline-white btn-md text-white dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
-                    Reject
-                  </button>
-                  <div class="dropdown-menu">
-                    <form class="px-4 py-3">
-                      <div class="form-group">
-                        <label for="rejectComment"><strong>Rejection Reason:</strong></label>
-                        <input type="text" class="form-control" id="rejectComment" placeholder="Reason...">
-                      </div>
-                      <button type="submit" class="btn btn-danger">Submit</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-
-              <div class="card mx-auto mb-3" style="width: 18rem;">
-                <div class="card-body">
-                  <h5 class="card-title">Billy Bobby</h5>
-                  <div class="card-text">
-                    <p>Email: billy@bobby.com</p>
-                    <p>Discipline: Computer Science</p>
-                  </div>
-                  <a href="#"><button  class="bg-ebony btn btn-outline-white btn-md text-white">Accept</button> </a>
-                  <button  class="bg-ebony btn btn-outline-white btn-md text-white dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
-                    Reject
-                  </button>
-                  <div class="dropdown-menu">
-                    <form class="px-4 py-3">
-                      <div class="form-group">
-                        <label for="rejectComment"><strong>Rejection Reason:</strong></label>
-                        <input type="text" class="form-control" id="rejectComment" placeholder="Reason...">
-                      </div>
-                      <button type="submit" class="btn btn-danger">Submit</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-
-              <div class="card mx-auto mb-3" style="width: 18rem;">
-                <div class="card-body">
-                  <h5 class="card-title">Billy Bobby</h5>
-                  <div class="card-text">
-                    <p>Email: billy@bobby.com</p>
-                    <p>Discipline: Computer Science</p>
-                  </div>
-                  <a href="#"><button  class="bg-ebony btn btn-outline-white btn-md text-white">Accept</button> </a>
-                  <button  class="bg-ebony btn btn-outline-white btn-md text-white dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
-                    Reject
-                  </button>
-                  <div class="dropdown-menu">
-                    <form class="px-4 py-3">
-                      <div class="form-group">
-                        <label for="rejectComment"><strong>Rejection Reason:</strong></label>
-                        <input type="text" class="form-control" id="rejectComment" placeholder="Reason...">
-                      </div>
-                      <button type="submit" class="btn btn-danger">Submit</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-
-              <div class="card mx-auto mb-3" style="width: 18rem;">
-                <div class="card-body">
-                  <h5 class="card-title">Billy Bobby</h5>
-                  <div class="card-text">
-                    <p>Email: billy@bobby.com</p>
-                    <p>Discipline: Computer Science</p>
-                  </div>
-                  <a href="#"><button  class="bg-ebony btn btn-outline-white btn-md text-white">Accept</button> </a>
-                  <button  class="bg-ebony btn btn-outline-white btn-md text-white dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="false">
-                    Reject
-                  </button>
-                  <div class="dropdown-menu">
-                    <form class="px-4 py-3">
-                      <div class="form-group">
-                        <label for="rejectComment"><strong>Rejection Reason:</strong></label>
-                        <input type="text" class="form-control" id="rejectComment" placeholder="Reason...">
-                      </div>
-                      <button type="submit" class="btn btn-danger">Submit</button>
-                    </form>
-                  </div>
-                </div>
-                </div>
+                {% endfor %}
+              {% endif %}
               </div>
           </div>
     </div>

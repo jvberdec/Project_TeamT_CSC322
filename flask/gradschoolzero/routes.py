@@ -5,7 +5,7 @@ from string import ascii_letters, digits, punctuation
 from flask import redirect, url_for, render_template, request, session, flash
 from gradschoolzero import app, db, bcrypt, EMAIL_ADDRESS, EMAIL_PASSWORD
 from gradschoolzero.forms import InstructorApplicationForm, StudentApplicationForm, LoginForm
-from gradschoolzero.forms import ClassSetUpForm, ChangePeriodForm, StudentClassEnrollForm
+from gradschoolzero.forms import ClassSetUpForm, ChangePeriodForm, StudentClassEnrollForm, WarningForm
 from gradschoolzero.models import *
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -82,7 +82,7 @@ def student_app():
 def instructor_app():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-        
+   
     instructor_app_form = InstructorApplicationForm()
     if instructor_app_form.validate_on_submit():
         instructor_applicant = InstructorApplicant(first_name=instructor_app_form.first_name.data, 
@@ -94,6 +94,7 @@ def instructor_app():
         db.session.commit()
         flash('Application filed successfully! You will be notified via email of our decision.', 'success')
         return redirect(url_for('login'))
+
     return render_template('instructor_app.html', title='Instructor Application', form=instructor_app_form)
 
 @app.route("/statistics_page", methods=['POST', 'GET'])
@@ -158,7 +159,10 @@ def view_courses():
 @app.route("/warned_stu_instr")
 #@login_required
 def warned_stu_instr():
-    return render_template('warned_stu_instr.html', title='View Courses')
+    warning_form = WarningForm()
+    if warning_form.validate_on_submit():
+        flash('Enrolled in course successfully!', 'success')
+    return render_template('warned_stu_instr.html', title='View Courses', form=warning_form)
 
 
 # @app.route("/registrar_class_run_period")
@@ -175,8 +179,59 @@ def registrar_grading_period():
 @app.route("/registrar_view_applicants")
 #@login_required
 def registrar_view_applicants():
-    return render_template('view_applicants.html', title='View Applicants')
+    
+    instruc_apps = InstructorApplicant.query.filter().all()
+    student_apps = StudentApplicant.query.filter().all()
 
+    return render_template('view_applicants.html', title='View Applicants', 
+                                                   student_applicants = student_apps,
+                                                   instruc_applicants=instruc_apps)
+
+
+@app.route("/student_app_accept/<int:index>")
+def student_app_accept(index):
+    # applicant = StudentApplicant.query.filter_by(id=index).first()
+
+    # # print(applicant.first_name)
+    # # print(applicant.last_name)
+    # # print(applicant.email)
+    # # print(applicant.gpa)
+    
+    # student_user = Student(first_name=applicant.first_name, 
+    #                         last_name=applicant.last_name,
+    #                         email=applicant.email,
+    #                         gpa=applicant.gpa)
+
+    # db.session.add(student_user)
+    # db.session.delete(applicant)
+    # db.session.commit()
+    return redirect(url_for('registrar_view_applicants'))
+
+
+@app.route("/instruc_app_delete/<int:index>")
+def instruc_app_delete(index):
+
+    applicant = InstructorApplicant.query.filter_by(id=index).first()
+    #print(applicant)
+    db.session.delete(applicant)
+    db.session.commit()
+    return redirect(url_for('registrar_view_applicants'))
+
+
+@app.route("/student_app_delete/<int:index>", methods=['POST'])
+def student_app_delete(index):
+
+    if request.method == 'POST':
+        comment = request.form['rejectComment']
+        #print(comment)
+        applicant = StudentApplicant.query.filter_by(id=index).first()
+        db.session.delete(applicant)
+        db.session.commit()
+        return redirect(url_for('registrar_view_applicants'))
+
+
+
+#------------------------------------------------------------------------------------
 @app.route("/<name>")
 @login_required
 def user(name):

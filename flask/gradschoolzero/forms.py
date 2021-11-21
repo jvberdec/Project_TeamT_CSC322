@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, DecimalField, PasswordField, SubmitField
-from wtforms import BooleanField, SelectField, DateField, TimeField, IntegerField
+from wtforms import BooleanField, SelectField, DateField, TimeField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, NumberRange, ValidationError
 from gradschoolzero.models import Applicant, User
 
@@ -85,4 +85,13 @@ class StudentClassEnrollForm(FlaskForm):
     class_name = SelectField(u'Class Name', choices=class_list, validators=[DataRequired()])
     instructor_name = SelectField(u'Instructor Name', choices=instructor_list, validators=[DataRequired()])
     section_name = SelectField(u'Section Name', choices=section_list, validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+
+class WarningForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    user_type = SelectField(u'User Type', choices=[('student', 'Student'), 
+                                                   ('instructor', 'Instructor')], validators=[DataRequired()])
+    warning_text = TextAreaField('Warning Text', validators=[DataRequired()])
     submit = SubmitField('Submit')
