@@ -2,7 +2,8 @@
 
 {% block navbar %}
     <a class="nav-item nav-link" href="{{url_for('statistics_page')}}">Statistics</a>
-    <a class="nav-item nav-link" href="{{url_for('registrar_default_dash')}}">Dashboard</a>
+   <!-- Need to change the URL depending on the user -->
+   <!-- <a class="nav-item nav-link" href="{{url_for('student_dash')}}">Dashboard</a> -->
     <a class="nav-item nav-link" href="{{url_for('login')}}">Sign Out</a>
 {% endblock %}
 
