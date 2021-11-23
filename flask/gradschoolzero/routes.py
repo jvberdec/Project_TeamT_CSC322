@@ -110,11 +110,9 @@ def student_dash():
     return render_template('student_dash.html', title='Student Dashboard')
 
 
-@app.route("/instructor_dash", methods=['POST', 'GET'])
-@login_required
+@app.route("/instructor_dash")
+#@login_required
 def instructor_dash():
-    if request.method == 'POST':
-        return redirect(url_for('index'))
     return render_template('instructor_dash.html', title='Instructor Dashboard')
 
 

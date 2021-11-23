@@ -1,18 +1,197 @@
 {% extends "base.html" %}
+
 {% block navbar %}
-    <a class="nav-item nav-link" href="{{url_for('statistics_page')}}">Statistics</a>
-    <a class="nav-item nav-link" href="{{url_for('login')}}">Sign In</a>
     <div class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false">
-          Apply
+          Actions
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="{{url_for('student_app')}}">Student</a>
-          <a class="dropdown-item" href="{{url_for('instructor_app')}}">Instructor</a>
+          <a class="dropdown-item" href="{{url_for('view_courses')}}">Review Courses</a>
+          <a class="dropdown-item" href="#">Submit Complaints</a>
+          <a class="dropdown-item" href="{{url_for('student_course_reg')}}">Enroll</a>
         </div>
     </div>
+    <a class="nav-item nav-link" href="{{url_for('statistics_page')}}">Statistics</a>
+    <a class="nav-item nav-link" href="{{url_for('login')}}">Sign Out</a>
 {% endblock %}
 
 {% block content %}
+<div class="container marketing">
+
+  <div class="courses">
+
+  <div class="instructor-container mt-3" >
+      <div class="row justify-content-center align-items-end">
+          <div class="col-sm-4">
+              <div class="animate__animated animate__bounce animate__fast card bg-blur shadow-lg welcome-instructor-card p-3">
+                  <div class="card-heading">
+                      <h1 class="text-center text-white">Instructor Dashboard</h1>
+                      <h4 class="text-center text-white">___________</h4>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <hr class="featurette-divider">
+
+    <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+        <i class="fas fa-atom fa-4x"></i>
+        <h1 class="display-4">CURRENT COURSES</h1>
+    </div>
+
+    <div class="container">
+        <ul class="list-group list-group-horizontal-sm container_ul">
+            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
+                <span class="text-left">Software Engineering</span>
+                <button class="btn text-white bg-ebony">Assign Grade</button>
+            </li>
+        </ul>
+        <ul class="list-group list-group-horizontal-sm container_ul">
+            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
+                <span class="text-left">Operating Systems</span>
+                <button class="btn text-white bg-ebony">Assign Grade</button>
+            </li>
+        </ul>
+        <ul class="list-group list-group-horizontal-sm container_ul">
+            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
+                <span class="text-left">Database Systems</span>
+                <button class="btn text-white bg-ebony">Assign Grade</button>
+            </li>
+        </ul>
+    </div>
+
+  <hr class="featurette-divider">
+
+  <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+      <i class="fas fa-book-open fa-4x"></i>
+      <h1 class="display-4">COURSE RANKING</h1>
+  </div>
+
+  <div class="float-parent-element">
+    <div class="float-child-element">
+      <div class="container">
+      <ul class="list-group list-group-horizontal-xl container_ul">
+          <li class="list-group-item modified_li lead strong_font bg-ebony text-white">HIGHEST RATED COURSES</li>
+          <li class="list-group-item modified_li lead strong_font bg-ebony text-white">RATE</li>
+      </ul>
+      <ul class="list-group list-group-horizontal-xl container_ul">
+          <li class="list-group-item modified_li medium_font">Science</li>
+          <li class="list-group-item modified_li medium_font">99%</li>
+      </ul>
+      <ul class="list-group list-group-horizontal-xl container_ul">
+          <li class="list-group-item modified_li medium_font">Math</li>
+          <li class="list-group-item modified_li medium_font">98%</li>
+      </ul>
+      <ul class="list-group list-group-horizontal-xl container_ul">
+          <li class="list-group-item modified_li medium_font">Computer Science</li>
+          <li class="list-group-item modified_li medium_font">98%</li>
+      </ul>
+      <ul class="list-group list-group-horizontal-xl container_ul">
+          <li class="list-group-item modified_li medium_font">English</li>
+          <li class="list-group-item modified_li medium_font">97.5%</li>
+      </ul>
+  </div>
+  </div>
+
+  <div class="float-child-element">
+    <div class="container">
+    <ul class="list-group list-group-horizontal-xl container_ul">
+        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">LOWEST RATED COURSES</li>
+        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">RATE</li>
+    </ul>
+    <ul class="list-group list-group-horizontal-xl container_ul">
+        <li class="list-group-item modified_li medium_font">Science</li>
+        <li class="list-group-item modified_li medium_font">99%</li>
+    </ul>
+    <ul class="list-group list-group-horizontal-xl container_ul">
+        <li class="list-group-item modified_li medium_font">Math</li>
+        <li class="list-group-item modified_li medium_font">98%</li>
+    </ul>
+    <ul class="list-group list-group-horizontal-xl container_ul">
+        <li class="list-group-item modified_li medium_font">Computer Science</li>
+        <li class="list-group-item modified_li medium_font">98%</li>
+    </ul>
+    <ul class="list-group list-group-horizontal-xl container_ul">
+        <li class="list-group-item modified_li medium_font">English</li>
+        <li class="list-group-item modified_li medium_font">97.5%</li>
+    </ul>
+</div>
+</div>
+
+</div>
+</div>
+<div class="students">
+  <hr class="featurette-honors-divider">
+  <hr class="featurette-divider">
+  <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+      <i class="fas fa-user-graduate fa-4x"></i>
+      <h1 class="display-4">TOP HONORS STUDENTS</h1>
+  </div>
+
+  <div class="container">
+    <ul class="list-group list-group-horizontal-xl container_ul">
+        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">STUDENT NAME</li>
+        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">GPA</li>
+        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">MAJOR</li>
+        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">COURSE ENROLLED</li>
+    </ul>
+    <ul class="list-group list-group-horizontal-xl container_ul">
+        <li class="list-group-item modified_li medium_font">JULIA V BERDECIA</li>
+        <li class="list-group-item modified_li medium_font">99.5%</li>
+        <li class="list-group-item modified_li medium_font">COMPUTER SCIENCE</li>
+        <li class="list-group-item modified_li medium_font">CSC 32200</li>
+    </ul>
+    <ul class="list-group list-group-horizontal-xl container_ul">
+        <li class="list-group-item modified_li medium_font">BAISHAKHI DEBI</li>
+        <li class="list-group-item modified_li medium_font">99.5%</li>
+        <li class="list-group-item modified_li medium_font">COMPUTER SCIENCE</li>
+        <li class="list-group-item modified_li medium_font">CSC 32200</li>
+    </ul>
+    <ul class="list-group list-group-horizontal-xl container_ul">
+        <li class="list-group-item modified_li medium_font">DANIEL AGUILAR RODRIGUEZ</li>
+        <li class="list-group-item modified_li medium_font">99.4%</li>
+        <li class="list-group-item modified_li medium_font">COMPUTER SCIENCE</li>
+        <li class="list-group-item modified_li medium_font">CSC 32200</li>
+    </ul>
+    <ul class="list-group list-group-horizontal-xl container_ul">
+        <li class="list-group-item modified_li medium_font">FARNAZ ZINNAH</li>
+        <li class="list-group-item modified_li medium_font">99.2%</li>
+        <li class="list-group-item modified_li medium_font">COMPUTER ENGINEERING</li>
+        <li class="list-group-item modified_li medium_font">CSC 32200</li>
+    </ul>
+</div>
+
+</div>  
+
+<hr class="featurette-divider">
+  <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+      <i class="fas fa-exclamation-circle fa-4x"></i>
+      <h1 class="display-4">WARNINGS</h1>
+  </div>
+
+  <div class="container">
+      <ul class="list-group list-group-horizontal-sm container_ul">
+          <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center lead medium_font" style="width: 50%">
+              <span class="text-left">Post Project Details for Project II</span>
+          </li>
+      </ul>
+      <ul class="list-group list-group-horizontal-sm container_ul">
+          <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center lead medium_font" style="width: 50%">
+              <span class="text-left">Grade Midterm II</span>
+          </li>
+      </ul>
+  </div>
+
+  <hr class="featurette-divider">
+
+  <div class="complaint">
+    <a class="link" href="#" target="_blank">
+      Instructor Complaint Form →
+    </a>
+      <br>
+    </div>
+
+</div>
 
 {% endblock content %}

@@ -199,3 +199,56 @@ li.list-group-item{
   border-width: 3px;
   border-radius: 25px;
 }
+
+
+/*Instructor Dashboard Page*/
+
+.instructor-container .row{
+  height: 650px;
+  background-image: url("../images/instructors.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  white-space: nowrap;
+} 
+
+.welcome-instructor-card{
+  width: 405px;
+  border-radius: 20px;
+}
+
+
+.float-parent-element{
+  width: 100%;
+}
+
+.float-child-element{
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  float: left;
+  width: 50%;
+}
+
+.featurette-honors-divider {
+  margin: 17em 0; /* Space out the Bootstrap <hr> more */
+  visibility: hidden;
+}
+
+.complaint{
+  text-align: center;
+  margin: 0 0 2.5em 0;
+  padding: 1em 2em;
+  font: bolder;
+  border: 5px solid;
+  background-color:rgb(167, 86, 167);
+  text-decoration: underline;
+}
+
+.link {
+  color:yellow;
+}
+.link:hover{
+  color: #00FF00;
+}
+
