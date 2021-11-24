@@ -2,7 +2,9 @@ import smtplib
 from email.message import EmailMessage
 from secrets import choice
 from string import ascii_letters, digits, punctuation
+import re
 from flask import redirect, url_for, render_template, request, session, flash
+from werkzeug.wrappers import response
 from gradschoolzero import app, db, bcrypt, EMAIL_ADDRESS, EMAIL_PASSWORD
 from gradschoolzero.forms import InstructorApplicationForm, StudentApplicationForm, LoginForm
 from gradschoolzero.forms import ClassSetUpForm, ChangePeriodForm, StudentClassEnrollForm, WarningForm
@@ -10,11 +12,45 @@ from gradschoolzero.models import *
 from flask_login import login_user, current_user, logout_user, login_required
 
 
-def password_generator():
+def generate_username(first_name, last_name):
+    first_initial = first_name[0]
+    last_six = last_name[:6]
+
+    partial_username = (first_initial + last_six).lower()
+
+    existing_students = Student.query.filter(Student.username.startswith(partial_username)).all()
+
+    if existing_students:
+        last_student_username = existing_students[-1].username
+        username = re.sub(r'[0-9]+$',
+                          lambda x: f"{str(int(x.group())+1).zfill(len(x.group()))}",
+                          last_student_username)
+
+    else:
+        username = partial_username + '000'
+
+    return username
+
+
+def generate_password():
     characters = ascii_letters + digits + punctuation
-    password = ''.join(choice(characters) for i in range(32))
+    password = ''.join(choice(characters) for i in range(16))
 
     return password
+
+
+def generate_email_content(response_dict):
+    if response_dict['response'] == 'accepted':
+        content = (f'Congratulations on being accepted to GradSchoolZero! Below is your login information to access your student dashboard:\n\n'
+                   f'Username: {response_dict["username"]}\n'
+                   f'Password: {response_dict["password"]}')
+
+    elif response_dict['response'] == 'rejected':
+        content = (f'Unfortunately you have not been accepted to GradSchoolZero.\n\n'
+                   f'Reason:\n'
+                   f'{response_dict["reason"]}')
+
+    return content
 
 
 def send_email(recipient, content):
@@ -57,6 +93,13 @@ def login():
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', title='Login', form=login_form)
+
+
+
+@app.route("/change_password")
+def change_password():
+    # redirected to upon first login
+    return 'change password'
 
 
 @app.route("/student_app", methods=['POST', 'GET'])
@@ -182,27 +225,41 @@ def registrar_view_applicants():
     student_apps = StudentApplicant.query.filter().all()
 
     return render_template('view_applicants.html', title='View Applicants', 
-                                                   student_applicants = student_apps,
+                                                   student_applicants=student_apps,
                                                    instruc_applicants=instruc_apps)
 
 
 @app.route("/student_app_accept/<int:index>")
 def student_app_accept(index):
-    # applicant = StudentApplicant.query.filter_by(id=index).first()
+    applicant = StudentApplicant.query.filter_by(id=index).first()
 
-    # # print(applicant.first_name)
-    # # print(applicant.last_name)
-    # # print(applicant.email)
-    # # print(applicant.gpa)
-    
-    # student_user = Student(first_name=applicant.first_name, 
-    #                         last_name=applicant.last_name,
-    #                         email=applicant.email,
-    #                         gpa=applicant.gpa)
+    # print(applicant.first_name)
+    # print(applicant.last_name)
+    # print(applicant.email)
+    # print(applicant.gpa)
 
-    # db.session.add(student_user)
-    # db.session.delete(applicant)
-    # db.session.commit()
+    generated_username = generate_username(applicant.first_name, applicant.last_name)
+    generated_password = generate_password()
+    hashed_password = bcrypt.generate_password_hash(generated_password).decode('utf-8')
+
+    student_user = Student(username=generated_username,
+                           email=applicant.email,
+                           password=hashed_password,
+                           first_name=applicant.first_name, 
+                           last_name=applicant.last_name,
+                           gpa=applicant.gpa,
+                           type='student')
+
+    admission = {'response': 'accepted', 'username': generated_username, 'password': generated_password}
+
+    email_content = generate_email_content(admission)
+
+    send_email(applicant.email, email_content)
+
+    db.session.add(student_user)
+    db.session.delete(applicant)
+    db.session.commit()
+
     return redirect(url_for('registrar_view_applicants'))
 
 
@@ -226,7 +283,6 @@ def student_app_delete(index):
         db.session.delete(applicant)
         db.session.commit()
         return redirect(url_for('registrar_view_applicants'))
-
 
 
 #------------------------------------------------------------------------------------
