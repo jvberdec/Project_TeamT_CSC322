@@ -31,27 +31,182 @@
         <h1 class="display-4">CURRENT COURSES</h1>
     </div>
 
-    <div class="container">
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
-                <span class="text-left">Software Engineering</span>
-                <button class="btn text-white bg-ebony">Assign Grade</button>
-            </li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
-                <span class="text-left">Operating Systems</span>
-                <button class="btn text-white bg-ebony">Assign Grade</button>
-            </li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
-                <span class="text-left">Database Systems</span>
-                <button class="btn text-white bg-ebony">Assign Grade</button>
-            </li>
-        </ul>
-    </div>
+    <div class="accordion p-3 mt-3" id="accordionExample">
 
+        <div class="card lg-shadow">
+          <div class="card-header bg-white" id="headingOne">              
+              <button class="btn btn-block text-ebony text-left strong_font" style="box-shadow: 0 0 0 0rem rgb(0 123 255 / 25%)" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Software Engineering
+              </button>
+          </div> 
+        </div>
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div class="card-body bg-ebony text-white">
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">John Doe</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">Alexander Mike</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">Gladys Fernandez</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">Kevin Straughter</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+            </div>
+          </div>
+
+
+        <div class="card">
+            <div class="card-header  bg-white" id="headingTwo">
+                <button class="btn btn-block text-ebony text-left collapsed strong_font" style="box-shadow: 0 0 0 0rem rgb(0 123 255 / 25%)" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  Intro to Machine Learning
+                </button>
+            </div>
+          </div>
+          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+            <div class="card-body bg-ebony text-white">
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">Donna Little</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">Robert Patrick</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">Patria DelaRosa</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">Michael Clarke</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+            </div>
+          </div>
+
+
+          <div class="card">
+            <div class="card-header  bg-white" id="headingThree">
+                <button class="btn btn-block text-ebony text-left collapsed strong_font" style="box-shadow: 0 0 0 0rem rgb(0 123 255 / 25%)" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                  Data Structures
+            </div>
+          </div>
+          <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+            <div class="card-body bg-ebony text-white">
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">John Doe</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">Alexander Mike</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">Gladys Fernandez</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">Kevin Straughter</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+            </div>
+          </div>
+
+
+          <div class="card">
+            <div class="card-header  bg-white" id="headingFour">
+                <button class="btn btn-block text-ebony text-left collapsed strong_font" style="box-shadow: 0 0 0 0rem rgb(0 123 255 / 25%)" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                  Database Systems
+                </button>
+            </div>
+          </div>
+          <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+            <div class="card-body bg-ebony text-white">
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">John Doe</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">Alexander Mike</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">Gladys Fernandez</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">Kevin Straughter</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+            </div>
+          </div>
+
+
+          <div class="card">
+            <div class="card-header  bg-white" id="headingFive">
+                <button class="btn btn-block text-ebony text-left collapsed strong_font" style="box-shadow: 0 0 0 0rem rgb(0 123 255 / 25%)" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                  Algorithms
+                </button>
+            </div>
+          </div>
+          <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
+            <div class="card-body bg-ebony text-white">
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">John Doe</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">Alexander Mike</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">Gladys Fernandez</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+                <li class="d-flex justify-content-between align-items-center">
+                    <span class="text-ebony">Kevin Straughter</span>
+                    <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                </li>
+            </div>
+          </div>
+
+
+          <div class="card">
+            <div class="card-header  bg-white" id="headingSix">
+                <button class="btn btn-block text-ebony text-left collapsed strong_font" style="box-shadow: 0 0 0 0rem rgb(0 123 255 / 25%)" type="button" data-toggle="collapse" data-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                  Operating Systems
+                </button>
+            </div>
+            <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordionExample">
+                <div class="card-body bg-ebony text-white">
+                    <li class="d-flex justify-content-between align-items-center">
+                        <span class="text-ebony">John Doe</span>
+                        <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                    </li>
+                    <li class="d-flex justify-content-between align-items-center">
+                        <span class="text-ebony">Alexander Mike</span>
+                        <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                    </li>
+                    <li class="d-flex justify-content-between align-items-center">
+                        <span class="text-ebony">Gladys Fernandez</span>
+                        <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                    </li>
+                    <li class="d-flex justify-content-between align-items-center">
+                        <span class="text-ebony">Kevin Straughter</span>
+                        <button class="btn text-ebony bg-white" style="margin: 4px;">Assign Grade</button>
+                    </li>
+                </div>
+              </div>
+          </div>
+        </div>
+
+ 
   <hr class="featurette-divider">
 
   <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
@@ -63,15 +218,11 @@
     <div class="float-child-element">
       <div class="container">
       <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li lead strong_font bg-ebony text-white">HIGHEST RATED COURSES</li>
+          <li class="list-group-item modified_li lead strong_font bg-ebony text-white">HIGHEST RATED</li>
           <li class="list-group-item modified_li lead strong_font bg-ebony text-white">RATE</li>
       </ul>
       <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li medium_font">Computer Science</li>
-          <li class="list-group-item modified_li medium_font">99%</li>
-      </ul>
-      <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li medium_font">Discrete Math</li>
+          <li class="list-group-item modified_li medium_font">Software Engineering</li>
           <li class="list-group-item modified_li medium_font">98%</li>
       </ul>
       <ul class="list-group list-group-horizontal-xl container_ul">
@@ -88,11 +239,11 @@
   <div class="float-child-element">
     <div class="container">
     <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">LOWEST RATED COURSES</li>
+        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">LOWEST RATED</li>
         <li class="list-group-item modified_li lead strong_font bg-ebony text-white">RATE</li>
     </ul>
     <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font">Artificial Intelligence</li>
+        <li class="list-group-item modified_li medium_font">Operating Systems</li>
         <li class="list-group-item modified_li medium_font">96%</li>
     </ul>
     <ul class="list-group list-group-horizontal-xl container_ul">
@@ -102,10 +253,6 @@
     <ul class="list-group list-group-horizontal-xl container_ul">
         <li class="list-group-item modified_li medium_font">Intro to Machine Learning</li>
         <li class="list-group-item modified_li medium_font">95%</li>
-    </ul>
-    <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font">Intro to Theoretical Computer Science</li>
-        <li class="list-group-item modified_li medium_font">93.5%</li>
     </ul>
 </div>
 </div>
