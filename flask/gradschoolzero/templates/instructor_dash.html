@@ -1,17 +1,8 @@
 {% extends "base.html" %}
 
 {% block navbar %}
-    <div class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false">
-          Actions
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="{{url_for('view_courses')}}">Review Courses</a>
-          <a class="dropdown-item" href="#">Submit Complaints</a>
-          <a class="dropdown-item" href="{{url_for('student_course_reg')}}">Enroll</a>
-        </div>
-    </div>
     <a class="nav-item nav-link" href="{{url_for('statistics_page')}}">Statistics</a>
+    <a class="nav-item nav-link" href="#">Submit Complaint</a>
     <a class="nav-item nav-link" href="{{url_for('login')}}">Sign Out</a>
 {% endblock %}
 
@@ -76,19 +67,19 @@
           <li class="list-group-item modified_li lead strong_font bg-ebony text-white">RATE</li>
       </ul>
       <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li medium_font">Science</li>
+          <li class="list-group-item modified_li medium_font">Computer Science</li>
           <li class="list-group-item modified_li medium_font">99%</li>
       </ul>
       <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li medium_font">Math</li>
+          <li class="list-group-item modified_li medium_font">Discrete Math</li>
           <li class="list-group-item modified_li medium_font">98%</li>
       </ul>
       <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li medium_font">Computer Science</li>
+          <li class="list-group-item modified_li medium_font">Algorithms</li>
           <li class="list-group-item modified_li medium_font">98%</li>
       </ul>
       <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li medium_font">English</li>
+          <li class="list-group-item modified_li medium_font">Data Structures</li>
           <li class="list-group-item modified_li medium_font">97.5%</li>
       </ul>
   </div>
@@ -101,20 +92,20 @@
         <li class="list-group-item modified_li lead strong_font bg-ebony text-white">RATE</li>
     </ul>
     <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font">Science</li>
-        <li class="list-group-item modified_li medium_font">99%</li>
+        <li class="list-group-item modified_li medium_font">Artificial Intelligence</li>
+        <li class="list-group-item modified_li medium_font">96%</li>
     </ul>
     <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font">Math</li>
-        <li class="list-group-item modified_li medium_font">98%</li>
+        <li class="list-group-item modified_li medium_font">Database Systems</li>
+        <li class="list-group-item modified_li medium_font">95%</li>
     </ul>
     <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font">Computer Science</li>
-        <li class="list-group-item modified_li medium_font">98%</li>
+        <li class="list-group-item modified_li medium_font">Intro to Machine Learning</li>
+        <li class="list-group-item modified_li medium_font">95%</li>
     </ul>
     <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font">English</li>
-        <li class="list-group-item modified_li medium_font">97.5%</li>
+        <li class="list-group-item modified_li medium_font">Intro to Theoretical Computer Science</li>
+        <li class="list-group-item modified_li medium_font">93.5%</li>
     </ul>
 </div>
 </div>
@@ -137,27 +128,21 @@
         <li class="list-group-item modified_li lead strong_font bg-ebony text-white">COURSE ENROLLED</li>
     </ul>
     <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font">JULIA V BERDECIA</li>
+        <li class="list-group-item modified_li medium_font">John Doe</li>
         <li class="list-group-item modified_li medium_font">99.5%</li>
         <li class="list-group-item modified_li medium_font">COMPUTER SCIENCE</li>
         <li class="list-group-item modified_li medium_font">CSC 32200</li>
     </ul>
     <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font">BAISHAKHI DEBI</li>
+        <li class="list-group-item modified_li medium_font">Tamara Eisenberg</li>
         <li class="list-group-item modified_li medium_font">99.5%</li>
         <li class="list-group-item modified_li medium_font">COMPUTER SCIENCE</li>
         <li class="list-group-item modified_li medium_font">CSC 32200</li>
     </ul>
     <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font">DANIEL AGUILAR RODRIGUEZ</li>
+        <li class="list-group-item modified_li medium_font">Jacquline Fernandez</li>
         <li class="list-group-item modified_li medium_font">99.4%</li>
         <li class="list-group-item modified_li medium_font">COMPUTER SCIENCE</li>
-        <li class="list-group-item modified_li medium_font">CSC 32200</li>
-    </ul>
-    <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font">FARNAZ ZINNAH</li>
-        <li class="list-group-item modified_li medium_font">99.2%</li>
-        <li class="list-group-item modified_li medium_font">COMPUTER ENGINEERING</li>
         <li class="list-group-item modified_li medium_font">CSC 32200</li>
     </ul>
 </div>
@@ -182,15 +167,6 @@
           </li>
       </ul>
   </div>
-
-  <hr class="featurette-divider">
-
-  <div class="complaint">
-    <a class="link" href="#" target="_blank">
-      Instructor Complaint Form →
-    </a>
-      <br>
-    </div>
 
 </div>
 
