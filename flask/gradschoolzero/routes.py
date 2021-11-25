@@ -8,7 +8,7 @@ from werkzeug.wrappers import response
 from gradschoolzero import app, db, bcrypt, EMAIL_ADDRESS, EMAIL_PASSWORD
 from gradschoolzero.forms import InstructorApplicationForm, StudentApplicationForm, LoginForm
 from gradschoolzero.forms import ClassSetUpForm, ChangePeriodForm, StudentClassEnrollForm, WarningForm
-from gradschoolzero.forms import StudentComplaintForm, InstructorComplaintForm
+from gradschoolzero.forms import StudentComplaintForm, InstructorComplaintForm, StudentGraduationForm
 from gradschoolzero.models import *
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -217,6 +217,14 @@ def warned_stu_instr():
 #@login_required
 def registrar_grading_period():
     return render_template('course_grading.html', title='Class Running')
+
+@app.route("/student_graduation")
+#@login_required
+def student_graduation():
+    student_graduation_form = StudentGraduationForm()
+    if student_graduation_form.validate_on_submit():
+        flash("Form submitted successfully! You'll be notified with a decision. ", 'success')
+    return render_template('graduation_form.html', title='Graduation Form', form=student_graduation_form)
 
 @app.route("/registrar_view_applicants")
 #@login_required

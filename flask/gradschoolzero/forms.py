@@ -145,5 +145,11 @@ class InstructorComplaintForm(ComplaintForm):
     complaint_name = SelectField("Name of person you're complaining about", choices=student_list, validators=[DataRequired(), Length(min=2, max=20)])
 
 
+class StudentGraduationForm(FlaskForm):
+    username = StringField('Your Username', validators=[DataRequired(), Length(min=2, max=20)])
+    class_num = IntegerField('Number of classes taken', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
 
 
