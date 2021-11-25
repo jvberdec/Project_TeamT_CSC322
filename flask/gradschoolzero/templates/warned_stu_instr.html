@@ -33,6 +33,19 @@
               {% endif %}
           </div>
           <div class="form-group">
+            {{ form.warned_name.label(class="form-control-label") }}
+            {% if form.warned_name.errors %}
+                {{ form.warned_name(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.warned_name.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.warned_name(class="form-control form-control-lg") }}
+            {% endif %}
+        </div>
+          <div class="form-group">
               {{ form.user_type.label(class="form-control-label") }}
               {% if form.user_type.errors %}
                   {{ form.user_type(class="form-control form-control-lg is-invalid") }}

@@ -7,7 +7,7 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="{{url_for('view_courses')}}">Review Courses</a>
-          <a class="dropdown-item" href="#">Submit Complaints</a>
+          <a class="dropdown-item" href="{{url_for('student_complaint')}}">Submit Complaints</a>
           <a class="dropdown-item" href="{{url_for('student_course_reg')}}">Enroll</a>
         </div>
     </div>
@@ -60,6 +60,29 @@
             <li class="list-group-item modified_li medium_font">A</li>
         </ul>
     </div>
+
+    <!-- <hr class="featurette-divider">
+
+    {% if courses %}
+    <div class="accordion p-3 mt-3" id="accordionExample">
+        {% for course in courses %}
+        <div class="card lg-shadow mx-auto" style="width: 50%;">
+          <div class="card-header bg-ebony" id="courseHeader{{course.id}}">
+            <h2 class="mb-0">
+              <button class="btn btn-block text-white text-center text-left" style="box-shadow: 0 0 0 0rem rgb(0 123 255 / 25%)" type="button" data-toggle="collapse" data-target="#collapse{{course.id}}" aria-expanded="true" aria-controls="collapse{{course.id}}">
+                Science: the search for the truth
+              </button>
+            </h2>
+          </div>
+          <div id="collapse{{course.id}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+            <div class="card-body">
+              <p class="text-center">Grade: A</p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %} -->
 
     <hr class="featurette-divider">
 

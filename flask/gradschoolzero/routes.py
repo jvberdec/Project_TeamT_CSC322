@@ -8,6 +8,7 @@ from werkzeug.wrappers import response
 from gradschoolzero import app, db, bcrypt, EMAIL_ADDRESS, EMAIL_PASSWORD
 from gradschoolzero.forms import InstructorApplicationForm, StudentApplicationForm, LoginForm
 from gradschoolzero.forms import ClassSetUpForm, ChangePeriodForm, StudentClassEnrollForm, WarningForm
+from gradschoolzero.forms import StudentComplaintForm, InstructorComplaintForm
 from gradschoolzero.models import *
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -202,8 +203,8 @@ def view_courses():
 def warned_stu_instr():
     warning_form = WarningForm()
     if warning_form.validate_on_submit():
-        flash('Enrolled in course successfully!', 'success')
-    return render_template('warned_stu_instr.html', title='View Courses', form=warning_form)
+        flash('Warning created successfully!', 'success')
+    return render_template('warned_stu_instr.html', title='Warnings', form=warning_form)
 
 
 # @app.route("/registrar_class_run_period")
@@ -283,6 +284,22 @@ def student_app_delete(index):
         db.session.delete(applicant)
         db.session.commit()
         return redirect(url_for('registrar_view_applicants'))
+
+@app.route("/student_complaint")
+def student_complaint():
+    student_complaint_form = StudentComplaintForm()
+    if student_complaint_form.validate_on_submit():
+        flash('Complaint created successfully!', 'success')
+    return render_template('student_complaint.html', title='Student Complaint', form=student_complaint_form)
+
+
+@app.route("/instructor_complaint")
+def instructor_complaint():
+    instructor_complaint_form = InstructorComplaintForm()
+    if instructor_complaint_form.validate_on_submit():
+        flash('Complaint created successfully!', 'success')
+    return render_template('instructor_complaint.html', title='Instructor Complaint', form=instructor_complaint_form)
+
 
 
 #------------------------------------------------------------------------------------
