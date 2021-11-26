@@ -45,8 +45,8 @@ class User(db.Model, UserMixin):
 class Student(User):
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     gpa = db.Column(db.Float, nullable=False)
-    special_registration = db.Column(db.Boolean, nullable=False)
-    status = db.Column(db.String(20), nullable=False)
+    special_registration = db.Column(db.Boolean, nullable=False, default=False)
+    status = db.Column(db.String(20), nullable=False, default='GOOD STANDING')
 
     courses_enrolled = db.relationship('StudentCourseEnrollment', back_populates='students')
     complaints_filed = db.relationship('StudentComplaint', back_populates='students')
