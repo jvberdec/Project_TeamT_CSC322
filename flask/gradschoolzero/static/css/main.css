@@ -252,3 +252,12 @@ html,body {
   color: #00FF00;
 }
 
+
+.text-box {
+  width: 60px;
+  height: 30px;
+  border: solid white;
+  margin: 1px;
+  text-align: center;
+}
+
