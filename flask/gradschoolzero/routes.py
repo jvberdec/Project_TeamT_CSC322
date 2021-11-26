@@ -272,6 +272,33 @@ def student_app_accept(index):
     return redirect(url_for('registrar_view_applicants'))
 
 
+app.route("/instruc_app_accept/<int:index>")
+def instruc_app_accept(index):
+    applicant = InstructorApplicant.query.filter_by(id=index).first()
+
+    generated_username = generate_username(applicant.first_name, applicant.last_name)
+    generated_password = generate_password()
+    hashed_password = bcrypt.generate_password_hash(generated_password).decode('utf-8')
+
+    instructor_user = Instructor(username=generated_username,
+                                 email=applicant.email,
+                                 password=hashed_password,
+                                 first_name=applicant.first_name, 
+                                 last_name=applicant.last_name,
+                                 discipline=applicant.discipline,
+                                 type='instructor')
+
+    admission = {'response': 'accepted', 'username': generated_username, 'password': generated_password}
+
+    email_content = generate_email_content(admission)
+
+    send_email(applicant.email, email_content)
+
+    db.session.add(instructor_user)
+    db.session.delete(applicant)
+    db.session.commit()
+
+
 @app.route("/instruc_app_delete/<int:index>")
 def instruc_app_delete(index):
 
