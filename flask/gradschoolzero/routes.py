@@ -40,15 +40,18 @@ def generate_password():
 
 
 def generate_email_content(response_dict):
-    if response_dict['response'] == 'accepted':
-        content = (f'Congratulations on being accepted to GradSchoolZero! Below is your login information to access your student dashboard:\n\n'
+    content = ''
+    if response_dict['application'] == 'accepted':
+        content = (f'Congratulations on being accepted to GradSchoolZero! Below is your login information to access your {response_dict["type"]} dashboard:\n\n'
                    f'Username: {response_dict["username"]}\n'
                    f'Password: {response_dict["password"]}')
 
-    elif response_dict['response'] == 'rejected':
-        content = (f'Unfortunately you have not been accepted to GradSchoolZero.\n\n'
-                   f'Reason:\n'
-                   f'{response_dict["reason"]}')
+    elif response_dict['application'] == 'rejected':
+        content = f'Unfortunately you have not been accepted to GradSchoolZero.\n\n'
+        
+        if response_dict.has_key('reason'):
+            content = content + (f'Reason:\n'
+                                 f'{response_dict["reason"]}')
 
     return content
 
@@ -261,9 +264,12 @@ def student_app_accept(index):
                            gpa=applicant.gpa,
                            type='student')
 
-    admission = {'response': 'accepted', 'username': generated_username, 'password': generated_password}
+    response = {'applicaion': 'accepted', 
+                'type': 'student',
+                'username': generated_username, 
+                'password': generated_password}
 
-    email_content = generate_email_content(admission)
+    email_content = generate_email_content(response)
 
     send_email(applicant.email, email_content)
 
@@ -290,9 +296,12 @@ def instruc_app_accept(index):
                                  discipline=applicant.discipline,
                                  type='instructor')
 
-    admission = {'response': 'accepted', 'username': generated_username, 'password': generated_password}
+    response = {'application': 'accepted',
+                'type': 'instructor', 
+                'username': generated_username, 
+                'password': generated_password}
 
-    email_content = generate_email_content(admission)
+    email_content = generate_email_content(response)
 
     send_email(applicant.email, email_content)
 
@@ -305,7 +314,11 @@ def instruc_app_accept(index):
 def instruc_app_delete(index):
 
     applicant = InstructorApplicant.query.filter_by(id=index).first()
-    #print(applicant)
+
+    response = {'application': 'rejected'}
+    email_content = generate_email_content(response)
+    send_email(applicant.email, email_content)
+
     db.session.delete(applicant)
     db.session.commit()
     return redirect(url_for('registrar_view_applicants'))
@@ -318,6 +331,11 @@ def student_app_delete(index):
         comment = request.form['rejectComment']
         #print(comment)
         applicant = StudentApplicant.query.filter_by(id=index).first()
+
+        response = {'application': 'rejected', 'reason': comment}
+        email_content = generate_email_content(response)
+        send_email(applicant.email, email_content)
+        
         db.session.delete(applicant)
         db.session.commit()
         return redirect(url_for('registrar_view_applicants'))
