@@ -97,7 +97,8 @@ def login():
 
 
 
-@app.route("/change_password")
+@app.route("/change_password", methods=['POST', 'GET'])
+#@login_required
 def change_password():
     change_password_form = ChangePasswordForm()
     if change_password_form.validate_on_submit():
@@ -335,7 +336,7 @@ def student_app_delete(index):
         response = {'application': 'rejected', 'reason': comment}
         email_content = generate_email_content(response)
         send_email(applicant.email, email_content)
-        
+
         db.session.delete(applicant)
         db.session.commit()
         return redirect(url_for('registrar_view_applicants'))
