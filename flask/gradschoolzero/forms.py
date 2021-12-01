@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, DecimalField, PasswordField, SubmitField
 from wtforms import BooleanField, SelectField, DateField, TimeField, IntegerField, TextAreaField
-from wtforms.validators import DataRequired, Length, Email, NumberRange, ValidationError
+from wtforms.validators import DataRequired, Length, Email, NumberRange, ValidationError, EqualTo
 from gradschoolzero.models import Applicant, User
 
 
@@ -152,4 +152,8 @@ class StudentGraduationForm(FlaskForm):
 
 
 
-
+class ChangePasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Change Password')

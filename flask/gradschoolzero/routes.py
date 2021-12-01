@@ -1,16 +1,15 @@
-import smtplib
-from email.message import EmailMessage
 from secrets import choice
 from string import ascii_letters, digits, punctuation
 import re
 from flask import redirect, url_for, render_template, request, session, flash
 from werkzeug.wrappers import response
-from gradschoolzero import app, db, bcrypt, EMAIL_ADDRESS, EMAIL_PASSWORD
-from gradschoolzero.forms import InstructorApplicationForm, StudentApplicationForm, LoginForm
-from gradschoolzero.forms import ClassSetUpForm, ChangePeriodForm, StudentClassEnrollForm, WarningForm
-from gradschoolzero.forms import StudentComplaintForm, InstructorComplaintForm, StudentGraduationForm
+from gradschoolzero import app, db, bcrypt, mail
+from gradschoolzero.forms import (InstructorApplicationForm, StudentApplicationForm, LoginForm, 
+                                  ClassSetUpForm, ChangePeriodForm, StudentClassEnrollForm, WarningForm, 
+                                  StudentComplaintForm, InstructorComplaintForm, StudentGraduationForm, ChangePasswordForm)
 from gradschoolzero.models import *
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_mail import Message
 
 
 def generate_username(first_name, last_name):
@@ -54,17 +53,10 @@ def generate_email_content(response_dict):
     return content
 
 
-def send_email(recipient, content):
-    msg = EmailMessage()
-    msg['Subject'] = 'GradSchoolZero Admissions'
-    msg['From'] = EMAIL_ADDRESS
-    msg['To'] = recipient
-    msg.set_content(content)
-
-
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-        smtp.send_message(msg)
+def send_email(recipient, body):
+    msg = Message('GradSchoolZero Admissions', recipients=[recipient])
+    msg.body = body
+    mail.send(msg)
 
 
 @app.route("/")
@@ -81,15 +73,20 @@ def login():
 
     login_form = LoginForm()
     if login_form.validate_on_submit():
-        user = User.query.filter_by(username=login_form.username.data).first()
+        user = User.query.filter_by(username=login_form.username.data, type=login_form.user_type.data).first()
         if user and bcrypt.check_password_hash(user.password, login_form.password.data):
             login_user(user)
-
-            if login_form.user_type.data == 'student' and user.type == 'student':
-                return redirect(url_for('student_dash'))
-            elif login_form.user_type.data == 'instructor' and user.type == 'instructor':
-                return redirect(url_for('instructor_dash'))
-            elif login_form.user_type.data == 'registrar' and user.type == 'registrar':
+            if current_user.type == 'student':
+                if current_user.logged_in_before:
+                    return redirect(url_for('student_dash'))
+                else:
+                    return redirect(url_for('change_password'))
+            elif current_user.type == 'instructor':
+                if current_user.logged_in_before:
+                    return redirect(url_for('instructor_dash'))
+                else:
+                    return redirect(url_for('change_password'))
+            elif current_user.type == 'registrar':
                 return redirect(url_for('registrar_default_dash'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
@@ -99,8 +96,18 @@ def login():
 
 @app.route("/change_password")
 def change_password():
-    # redirected to upon first login
-    return 'change password'
+    change_password_form = ChangePasswordForm()
+    if change_password_form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(change_password_form.password.data).decode('utf-8')
+        current_user.password = hashed_password
+        current_user.logged_in_before = True
+        db.session.commit()
+        flash('Your password has been updated! You are now able to log in', 'success')
+        if current_user.type == 'student':
+            return redirect(url_for('student_dash'))
+        if current_user.type == 'instructor':
+            return redirect(url_for('instructor_dash'))
+    return render_template('change_password.html', title='Change Password', form=change_password_form)
 
 
 @app.route("/student_app", methods=['POST', 'GET'])
@@ -241,11 +248,6 @@ def registrar_view_applicants():
 @app.route("/student_app_accept/<int:index>")
 def student_app_accept(index):
     applicant = StudentApplicant.query.filter_by(id=index).first()
-
-    # print(applicant.first_name)
-    # print(applicant.last_name)
-    # print(applicant.email)
-    # print(applicant.gpa)
 
     generated_username = generate_username(applicant.first_name, applicant.last_name)
     generated_password = generate_password()
