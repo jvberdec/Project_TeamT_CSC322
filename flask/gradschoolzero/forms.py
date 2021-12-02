@@ -90,7 +90,7 @@ class ClassSetUpForm(FlaskForm):
 
 
 class ChangePeriodForm(FlaskForm):
-    period = SelectField(u'Change period', choices=[('class_set_up', 'Class Set-up'), 
+    period = SelectField(u'Change period', choices=[('class_set-up', 'Class Set-up'), 
                                                    ('course_registration', 'Course Registration'), 
                                                    ('class_running', 'Class Running'),
                                                    ('grading', 'Grading')], validators=[DataRequired()])

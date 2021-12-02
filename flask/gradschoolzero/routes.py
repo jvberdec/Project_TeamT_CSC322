@@ -173,9 +173,13 @@ def instructor_dash():
 #@login_required
 def registrar_default_dash():
     change_period_form = ChangePeriodForm()
+    period = Period.query.first()
     if change_period_form.validate_on_submit():
+        period.current_period = change_period_form.period.data
+        db.session.commit()
         flash('Period changed successfully!', 'success')
-    return render_template('registrar_dash.html', title='Registrar Dashboard', form=change_period_form)
+        
+    return render_template('registrar_dash.html', title='Registrar Dashboard', form=change_period_form, current_period=period)
 
 
 @app.route("/registrar_class_setup", methods=['POST', 'GET'])
@@ -201,7 +205,7 @@ def registrar_class_setup():
 
         db.session.add(semester)
         db.session.commit()
-        
+
         flash('Semester submitted successfully!', 'success')
         return redirect(url_for('registrar_class_setup'))
 

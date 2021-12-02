@@ -8,6 +8,17 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+class Period(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    current_period = db.Column(db.String(20), nullable=False, default='class set-up')
+
+    def __repr__(self):
+        return f'Period({self.current_period})'
+
+    def __str__(self):
+        return f"{self.current_period.replace('_', ' ').title()}"
+
+
 class Applicant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)

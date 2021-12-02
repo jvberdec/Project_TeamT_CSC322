@@ -1,9 +1,11 @@
 from gradschoolzero import app, db, bcrypt
-from gradschoolzero.models import User
+from gradschoolzero.models import Period, User
 
 if __name__ == "__main__":
     db.create_all()
     registrar = User.query.filter_by(username='admin', type='registrar').first()
+    period = Period.query.first()
+
     if registrar is None:
         hashed_password = bcrypt.generate_password_hash(app.config['MAIL_PASSWORD']).decode('utf-8')
         registrar = User(username='admin',
@@ -14,4 +16,10 @@ if __name__ == "__main__":
                          type='registrar')
         db.session.add(registrar)
         db.session.commit()
+
+    if period is None:
+        period = Period()
+        db.session.add(period)
+        db.session.commit()
+
     app.run(debug=True)
