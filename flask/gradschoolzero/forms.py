@@ -5,7 +5,7 @@ from wtforms import BooleanField, SelectField, DateField, TimeField, IntegerFiel
 from wtforms.validators import DataRequired, Length, Email, NumberRange, ValidationError, EqualTo
 from wtforms.widgets import CheckboxInput, ListWidget
 from wtforms_sqlalchemy.fields import QuerySelectField
-from gradschoolzero.models import Applicant, User, Course, Semester, Instructor
+from gradschoolzero.models import Applicant, User, Course, Semester, Instructor, CourseSection
 
 
 class ApplicationForm(FlaskForm):
@@ -87,13 +87,13 @@ class MultiCheckboxField(SelectMultipleField):
 
 
 class ClassSetUpForm(FlaskForm):
-    days_list = [('mon', 'Monday'),
-                 ('tue', 'Tuesday'),
-                 ('wed', 'Wednesday'),
-                 ('thu', 'Thursday'),
-                 ('fri', 'Friday'),
-                 ('sat', 'Saturday'),
-                 ('sun', 'Sunday')]
+    days_list = [('monday', 'Monday'),
+                 ('tuesday', 'Tuesday'),
+                 ('wednesday', 'Wednesday'),
+                 ('thursday', 'Thursday'),
+                 ('friday', 'Friday'),
+                 ('saturday', 'Saturday'),
+                 ('sunday', 'Sunday')]
 
     course = QuerySelectField('Course Name', validators=[DataRequired()], query_factory=all_courses)
     instructor_name = QuerySelectField('Instructor Name', validators=[DataRequired()], query_factory=all_instructors)
@@ -101,7 +101,7 @@ class ClassSetUpForm(FlaskForm):
     semester = QuerySelectField('Semester', validators=[DataRequired()], query_factory=all_semesters)
     start_time = TimeField('Start Time (Hours:Minutes)', format='%H:%M', validators=[DataRequired()])
     end_time = TimeField('Start Time (Hours:Minutes)', format='%H:%M', validators=[DataRequired()])
-    days = SelectMultipleField('Days', choices=days_list, option_widget=CheckboxInput())
+    day = SelectField('Day', choices=days_list)
     submit = SubmitField('Submit Section')
 
 
@@ -111,6 +111,10 @@ class ChangePeriodForm(FlaskForm):
                                                    ('class_running', 'Class Running'),
                                                    ('grading', 'Grading')], validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+
+def all_sections():
+    return CourseSection.query
 
 
 class StudentClassEnrollForm(FlaskForm):
@@ -133,9 +137,9 @@ class StudentClassEnrollForm(FlaskForm):
                         ('section_b', 'Section B (2-3:40pm)'),
                         ('section_c', 'Section C (5-6:30pm)'),
                     ]
-    class_name = SelectField(u'Class Name', choices=class_list, validators=[DataRequired()])
-    instructor_name = SelectField(u'Instructor Name', choices=instructor_list, validators=[DataRequired()])
-    section_name = SelectField(u'Section Name', choices=section_list, validators=[DataRequired()])
+    class_name = QuerySelectField('Course Name', validators=[DataRequired()], query_factory=all_courses)
+    instructor_name = QuerySelectField('Instructor Name', validators=[DataRequired()], query_factory=all_instructors)
+    section_name = QuerySelectField('Section', validators=[DataRequired()], query_factory=all_sections)
     submit = SubmitField('Submit')
 
 

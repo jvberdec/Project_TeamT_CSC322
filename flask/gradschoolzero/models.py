@@ -137,7 +137,7 @@ class CourseSection(db.Model):
     section_size = db.Column(db.Integer, nullable = False)
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
-    days = db.Column(db.String(27), nullable=False)
+    day = db.Column(db.String(9), nullable=False)
     semester_id = db.Column(db.Integer, db.ForeignKey('semester.id'), nullable=False)
     instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id'), nullable=False)
 
@@ -148,7 +148,7 @@ class CourseSection(db.Model):
     students_waitlisted = db.relationship('Waitlist', back_populates='courses')
 
     def __repr__(self):
-        return f'CourseSection({self.course_code}, {self.section_size}, {self.start_time}, {self.end_time}, {self.days})'
+        return f'CourseSection({self.course_code}, {self.section_size}, {self.start_time}, {self.end_time}, {self.day})'
 
 class StudentCourseEnrollment(db.Model):
     __tablename__ = 'student_course_enrollment'

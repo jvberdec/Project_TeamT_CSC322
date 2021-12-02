@@ -211,23 +211,19 @@ def registrar_class_setup():
         return redirect(url_for('registrar_class_setup'))
 
     if class_setup_form.validate_on_submit():
-        print(class_setup_form.course.data.id)
-        print(class_setup_form.instructor_name.data.id)
-        print(class_setup_form.class_size.data)
-        print(class_setup_form.semester.data.id)
-        print(class_setup_form.start_time.data)
-        print(class_setup_form.end_time.data)
-
-        '''
         section = CourseSection(course_code=class_setup_form.course.data.id,
                                 section_size=class_setup_form.class_size.data,
                                 start_time=class_setup_form.start_time.data,
                                 end_time=class_setup_form.end_time.data,
-                                days=class_setup_form.days.data,
+                                day=class_setup_form.day.data,
                                 semester_id=class_setup_form.semester.data.id,
                                 instructor_id=class_setup_form.instructor_name.data.id)
-        '''
+
+        db.session.add(section)
+        db.session.commit()
+
         flash('Course submitted successfully!', 'success')
+
         return redirect(url_for('registrar_class_setup'))
 
     return render_template('create_course_section.html', title='Class Set-up', create_course_form=create_course_form, 
