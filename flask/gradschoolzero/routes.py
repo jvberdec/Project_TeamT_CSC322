@@ -74,7 +74,7 @@ def login():
 
     login_form = LoginForm()
     if login_form.validate_on_submit():
-        user = User.query.filter_by(username=login_form.username.data, type=login_form.user_type.data).first()
+        user = User.query.filter_by(username=login_form.username.data.strip(), type=login_form.user_type.data).first()
         if user and bcrypt.check_password_hash(user.password, login_form.password.data):
             login_user(user)
             if current_user.type == 'student':
@@ -119,15 +119,17 @@ def student_app():
 
     student_app_form = StudentApplicationForm()
     if student_app_form.validate_on_submit():
-        student_applicant = StudentApplicant(first_name=student_app_form.first_name.data, 
-                                             last_name=student_app_form.last_name.data,
-                                             email=student_app_form.email.data, 
+        student_applicant = StudentApplicant(first_name=student_app_form.first_name.data.strip(), 
+                                             last_name=student_app_form.last_name.data.strip(),
+                                             email=student_app_form.email.data.strip(), 
                                              dob=student_app_form.dob.data,
                                              gpa=student_app_form.gpa.data)
         db.session.add(student_applicant)
         db.session.commit()
         flash('Application filed successfully! You will be notified via email of our decision.', 'success')
+
         return redirect(url_for('login'))
+
     return render_template('student_app.html', title='Student Application', form=student_app_form)
 
 
@@ -138,11 +140,11 @@ def instructor_app():
    
     instructor_app_form = InstructorApplicationForm()
     if instructor_app_form.validate_on_submit():
-        instructor_applicant = InstructorApplicant(first_name=instructor_app_form.first_name.data, 
-                                                   last_name=instructor_app_form.last_name.data,
-                                                   email=instructor_app_form.email.data, 
+        instructor_applicant = InstructorApplicant(first_name=instructor_app_form.first_name.data.strip(), 
+                                                   last_name=instructor_app_form.last_name.data.strip(),
+                                                   email=instructor_app_form.email.data.strip(), 
                                                    dob=instructor_app_form.dob.data,
-                                                   discipline=instructor_app_form.discipline.data)
+                                                   discipline=instructor_app_form.discipline.data.strip())
         db.session.add(instructor_applicant)
         db.session.commit()
         flash('Application filed successfully! You will be notified via email of our decision.', 'success')
@@ -178,7 +180,7 @@ def registrar_default_dash():
         period.current_period = change_period_form.period.data
         db.session.commit()
         flash('Period changed successfully!', 'success')
-        
+
     return render_template('registrar_dash.html', title='Registrar Dashboard', form=change_period_form, current_period=period)
 
 
@@ -190,7 +192,7 @@ def registrar_class_setup():
     class_setup_form = ClassSetUpForm()
     
     if create_course_form.validate_on_submit():
-        course = Course(id=create_course_form.course_code.data, course_name=create_course_form.course_name.data)
+        course = Course(id=create_course_form.course_code.data, course_name=create_course_form.course_name.data.strip())
         db.session.add(course)
         db.session.commit()
 
@@ -293,7 +295,7 @@ def student_app_accept(index):
                            gpa=applicant.gpa,
                            type='student')
 
-    response = {'applicaion': 'accepted', 
+    response = {'application': 'accepted', 
                 'type': 'student',
                 'username': generated_username, 
                 'password': generated_password}
