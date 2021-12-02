@@ -311,7 +311,7 @@ def student_app_accept(index):
     return redirect(url_for('registrar_view_applicants'))
 
 
-app.route("/instruc_app_accept/<int:index>")
+@app.route("/instruc_app_accept/<int:index>")
 def instruc_app_accept(index):
     applicant = InstructorApplicant.query.filter_by(id=index).first()
 
@@ -339,6 +339,7 @@ def instruc_app_accept(index):
     db.session.add(instructor_user)
     db.session.delete(applicant)
     db.session.commit()
+    return redirect(url_for('registrar_view_applicants'))
 
 
 @app.route("/instruc_app_delete/<int:index>")
