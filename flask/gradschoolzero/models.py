@@ -115,7 +115,7 @@ class Semester(db.Model):
         return f'Semester({self.semester_name}, {self.year}, {self.start_date}, {self.end_date})'
 
     def __str__(self):
-        return f'{self.semester_name} {self.year}'
+        return f'{self.semester_name} {self.year}'.title()
 
 
 class Course(db.Model):
@@ -127,7 +127,7 @@ class Course(db.Model):
         return f'Course({self.course_name}, {self.avg_rating})'
 
     def __str__(self):
-        return f'{self.id} {self.course_name}'
+        return f'{self.id} {self.course_name}'.title()
 
 
 class CourseSection(db.Model):

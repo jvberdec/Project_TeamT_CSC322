@@ -94,7 +94,6 @@ def login():
     return render_template('login.html', title='Login', form=login_form)
 
 
-
 @app.route("/change_password", methods=['POST', 'GET'])
 #@login_required
 def change_password():
@@ -104,7 +103,7 @@ def change_password():
         current_user.password = hashed_password
         current_user.logged_in_before = True
         db.session.commit()
-        flash('Your password has been updated! You are now able to log in', 'success')
+        flash('Your password has been updated!', 'success')
         if current_user.type == 'student':
             return redirect(url_for('student_dash'))
         if current_user.type == 'instructor':
@@ -212,6 +211,22 @@ def registrar_class_setup():
         return redirect(url_for('registrar_class_setup'))
 
     if class_setup_form.validate_on_submit():
+        print(class_setup_form.course.data.id)
+        print(class_setup_form.instructor_name.data.id)
+        print(class_setup_form.class_size.data)
+        print(class_setup_form.semester.data.id)
+        print(class_setup_form.start_time.data)
+        print(class_setup_form.end_time.data)
+
+        '''
+        section = CourseSection(course_code=class_setup_form.course.data.id,
+                                section_size=class_setup_form.class_size.data,
+                                start_time=class_setup_form.start_time.data,
+                                end_time=class_setup_form.end_time.data,
+                                days=class_setup_form.days.data,
+                                semester_id=class_setup_form.semester.data.id,
+                                instructor_id=class_setup_form.instructor_name.data.id)
+        '''
         flash('Course submitted successfully!', 'success')
         return redirect(url_for('registrar_class_setup'))
 

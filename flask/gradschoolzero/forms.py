@@ -1,7 +1,9 @@
+from secrets import choice
 from flask_wtf import FlaskForm
 from wtforms import StringField, DecimalField, PasswordField, SubmitField
-from wtforms import BooleanField, SelectField, DateField, TimeField, IntegerField, TextAreaField
+from wtforms import BooleanField, SelectField, DateField, TimeField, IntegerField, TextAreaField, SelectMultipleField
 from wtforms.validators import DataRequired, Length, Email, NumberRange, ValidationError, EqualTo
+from wtforms.widgets import CheckboxInput, ListWidget
 from wtforms_sqlalchemy.fields import QuerySelectField
 from gradschoolzero.models import Applicant, User, Course, Semester, Instructor
 
@@ -79,13 +81,27 @@ def all_instructors():
     return Instructor.query.order_by(Instructor.first_name)
 
 
+class MultiCheckboxField(SelectMultipleField):
+    widget = ListWidget(prefix_label=False)
+    option_widget = CheckboxInput()
+
+
 class ClassSetUpForm(FlaskForm):
+    days_list = [('mon', 'Monday'),
+                 ('tue', 'Tuesday'),
+                 ('wed', 'Wednesday'),
+                 ('thu', 'Thursday'),
+                 ('fri', 'Friday'),
+                 ('sat', 'Saturday'),
+                 ('sun', 'Sunday')]
+
     course = QuerySelectField('Course Name', validators=[DataRequired()], query_factory=all_courses)
     instructor_name = QuerySelectField('Instructor Name', validators=[DataRequired()], query_factory=all_instructors)
     class_size = IntegerField('Class Size', validators=[DataRequired()])
     semester = QuerySelectField('Semester', validators=[DataRequired()], query_factory=all_semesters)
     start_time = TimeField('Start Time (Hours:Minutes)', format='%H:%M', validators=[DataRequired()])
     end_time = TimeField('Start Time (Hours:Minutes)', format='%H:%M', validators=[DataRequired()])
+    days = SelectMultipleField('Days', choices=days_list, option_widget=CheckboxInput())
     submit = SubmitField('Submit Section')
 
 
