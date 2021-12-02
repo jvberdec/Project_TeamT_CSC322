@@ -2,7 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, DecimalField, PasswordField, SubmitField
 from wtforms import BooleanField, SelectField, DateField, TimeField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, NumberRange, ValidationError, EqualTo
-from gradschoolzero.models import Applicant, User
+from wtforms_sqlalchemy.fields import QuerySelectField
+from gradschoolzero.models import Applicant, User, Course, Semester, Instructor
 
 
 class ApplicationForm(FlaskForm):
@@ -44,15 +45,49 @@ class LoginForm(FlaskForm):
                                                    ('registrar', 'Registrar')], validators=[DataRequired()])
     submit = SubmitField('sign in')
 
-class ClassSetUpForm(FlaskForm):
-    course_name = StringField('Course Name', validators=[DataRequired(), Length(min=2, max=20)])
-    instructor_name = StringField('Instructor Name', validators=[DataRequired(), Length(min=2, max=20)])
-    class_size = IntegerField('Class Size', validators=[DataRequired()])
+
+class CreateCourseForm(FlaskForm):
+    course_code = IntegerField('Course Code', validators=[DataRequired()])
+    course_name = StringField('Course Name', validators=[DataRequired(), Length(min=2, max=50)])
+    submit = SubmitField('Submit Course')
+
+    def validate_course_code(self, course_code):
+        course_code = Course.query.filter_by(id=course_code.data).first()
+        if course_code:
+            raise ValidationError('Course code already exists. Please double check')
+
+
+class CreateSemesterForm(FlaskForm):
+    semester_name = SelectField(u'Semester', choices=[('fall', 'Fall'), ('spring', 'Spring')], validators=[DataRequired()])
     start_date = DateField('Start Date (mm-dd-yyyy)', format='%m-%d-%Y', validators=[DataRequired()])
     end_date = DateField('End Date (mm-dd-yyyy)', format='%m-%d-%Y', validators=[DataRequired()])
+    submit = SubmitField('Submit Semester')
+
+    def validate_semester(self, semester_name, start_date):
+        course_code = Semester.query.filter_by(semester_name=semester_name.data, year=start_date.year).first()
+        if course_code:
+            raise ValidationError('Semester already exists. Please double check')
+
+
+def all_courses():
+    return Course.query.order_by(Course.id)
+
+def all_semesters():
+    return Semester.query.order_by(Semester.year)
+
+def all_instructors():
+    return Instructor.query.order_by(Instructor.first_name)
+
+
+class ClassSetUpForm(FlaskForm):
+    course = QuerySelectField('Course Name', validators=[DataRequired()], query_factory=all_courses)
+    instructor_name = QuerySelectField('Instructor Name', validators=[DataRequired()], query_factory=all_instructors)
+    class_size = IntegerField('Class Size', validators=[DataRequired()])
+    semester = QuerySelectField('Semester', validators=[DataRequired()], query_factory=all_semesters)
     start_time = TimeField('Start Time (Hours:Minutes)', format='%H:%M', validators=[DataRequired()])
     end_time = TimeField('Start Time (Hours:Minutes)', format='%H:%M', validators=[DataRequired()])
-    submit = SubmitField('Submit Course')
+    submit = SubmitField('Submit Section')
+
 
 class ChangePeriodForm(FlaskForm):
     period = SelectField(u'Change period', choices=[('class_set_up', 'Class Set-up'), 

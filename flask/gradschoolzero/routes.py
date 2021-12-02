@@ -4,9 +4,7 @@ import re
 from flask import redirect, url_for, render_template, request, session, flash
 from werkzeug.wrappers import response
 from gradschoolzero import app, db, bcrypt, mail
-from gradschoolzero.forms import (InstructorApplicationForm, StudentApplicationForm, LoginForm, 
-                                  ClassSetUpForm, ChangePeriodForm, StudentClassEnrollForm, WarningForm, 
-                                  StudentComplaintForm, InstructorComplaintForm, StudentGraduationForm, ChangePasswordForm)
+from gradschoolzero.forms import *
 from gradschoolzero.models import *
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
@@ -183,11 +181,37 @@ def registrar_default_dash():
 @app.route("/registrar_class_setup", methods=['POST', 'GET'])
 #@login_required
 def registrar_class_setup():
+    create_course_form = CreateCourseForm()
+    create_semester_form = CreateSemesterForm()
     class_setup_form = ClassSetUpForm()
+    
+    if create_course_form.validate_on_submit():
+        course = Course(id=create_course_form.course_code.data, course_name=create_course_form.course_name.data)
+        db.session.add(course)
+        db.session.commit()
+
+        flash('Course submitted successfully!', 'success')
+        return redirect(url_for('registrar_class_setup'))
+
+    if create_semester_form.validate_on_submit():
+        semester = Semester(semester_name=create_semester_form.semester_name.data,
+                            year=create_semester_form.start_date.data.year,
+                            start_date=create_semester_form.start_date.data,
+                            end_date=create_semester_form.end_date.data)
+
+        db.session.add(semester)
+        db.session.commit()
+        
+        flash('Semester submitted successfully!', 'success')
+        return redirect(url_for('registrar_class_setup'))
+
     if class_setup_form.validate_on_submit():
         flash('Course submitted successfully!', 'success')
-        return redirect(url_for('registrar_default_dash'))
-    return render_template('create_course_section.html', title='Class Set-up', form=class_setup_form)
+        return redirect(url_for('registrar_class_setup'))
+
+    return render_template('create_course_section.html', title='Class Set-up', create_course_form=create_course_form, 
+                                                                               create_semester_form=create_semester_form, 
+                                                                               class_setup_form=class_setup_form)
 
 @app.route("/student_course_reg", methods=['POST', 'GET'])
 #@login_required
