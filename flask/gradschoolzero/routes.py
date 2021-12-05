@@ -192,14 +192,21 @@ def statistics_page():
 @app.route("/student_dash")
 @login_required
 def student_dash():
-    return render_template('student_dash.html', title='Student Dashboard')
+    if current_user.is_authenticated and current_user.type == "student":
+        return render_template('student_dash.html', title='Student Dashboard')
+    else:
+        flash("You're not allowed to view that page!", 'danger')
+        return redirect(url_for('home'))
 
 
 @app.route("/instructor_dash")
 @login_required
 def instructor_dash():
-    return render_template('instructor_dash.html', title='Instructor Dashboard')
-
+    if current_user.is_authenticated and current_user.type == "instructor":
+        return render_template('instructor_dash.html', title='Instructor Dashboard')
+    else:
+        flash("You're not allowed to view that page!", 'danger')
+        return redirect(url_for('home'))
 
 @app.route("/registrar_default_dash", methods=['POST', 'GET'])
 @login_required
@@ -210,9 +217,12 @@ def registrar_default_dash():
         period.current_period = change_period_form.period.data
         db.session.commit()
         flash('Period changed successfully!', 'success')
-
-    return render_template('registrar_dash.html', title='Registrar Dashboard', form=change_period_form, current_period=period)
-
+    
+    if current_user.is_authenticated and current_user.type == "registrar":
+        return render_template('registrar_dash.html', title='Registrar Dashboard', form=change_period_form, current_period=period)
+    else:
+        flash("You're not allowed to view that page!", 'danger')
+        return redirect(url_for('home'))
 
 @app.route("/registrar_class_setup", methods=['POST', 'GET'])
 @login_required
