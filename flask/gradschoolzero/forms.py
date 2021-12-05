@@ -137,10 +137,10 @@ class StudentClassEnrollForm(FlaskForm):
                         ('section_b', 'Section B (2-3:40pm)'),
                         ('section_c', 'Section C (5-6:30pm)'),
                     ]
-    class_name = QuerySelectField('Course Name', validators=[DataRequired()], query_factory=all_courses)
-    instructor_name = QuerySelectField('Instructor Name', validators=[DataRequired()], query_factory=all_instructors)
-    section_name = QuerySelectField('Section', validators=[DataRequired()], query_factory=all_sections)
-    submit = SubmitField('Submit')
+    class_name = QuerySelectField('Course Name', query_factory=all_courses, allow_blank=True)
+    instructor_name = QuerySelectField('Instructor Name', query_factory=all_instructors, allow_blank=True)
+    #section_name = QuerySelectField('Section', validators=[DataRequired()], query_factory=all_sections)
+    submit = SubmitField('Search')
 
 
 
@@ -204,7 +204,6 @@ class StudentGraduationForm(FlaskForm):
     username = StringField('Your Username', validators=[DataRequired(), Length(min=2, max=20)])
     class_num = IntegerField('Number of classes taken', validators=[DataRequired()])
     submit = SubmitField('Submit')
-
 
 
 class ChangePasswordForm(FlaskForm):

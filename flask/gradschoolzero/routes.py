@@ -271,13 +271,40 @@ def registrar_class_setup():
                                                                                create_semester_form=create_semester_form, 
                                                                                class_setup_form=class_setup_form)
 
+
 @app.route("/student_course_reg", methods=['POST', 'GET'])
 @login_required
 def student_course_reg():
     student_class_enroll_form = StudentClassEnrollForm()
+    section_results = None
+    print('section results:', section_results)
     if student_class_enroll_form.validate_on_submit():
+        print(student_class_enroll_form.class_name.data)
+        print(student_class_enroll_form.instructor_name.data)
+
+        if student_class_enroll_form.class_name.data and student_class_enroll_form.instructor_name.data:
+            print('first if')
+            section_results = CourseSection.query.filter_by(course_code=student_class_enroll_form.class_name.data.id, 
+                                                           instructor_id=student_class_enroll_form.instructor_name.data.id).all()
+            print(section_results)
+        
+        elif student_class_enroll_form.class_name.data:
+            print('second if')
+            section_results = CourseSection.query.filter_by(course_code=student_class_enroll_form.class_name.data.id).all()
+            print(section_results)
+
+        elif student_class_enroll_form.instructor_name.data:
+            print('third if')
+            section_results = CourseSection.query.filter_by(instructor_id=student_class_enroll_form.instructor_name.data.id).all()
+            print(section_results)
+
+        else:
+            print('else')
+            section_results=CourseSection.query.all()
+            print(section_results)
+        
         flash('Enrolled in course successfully!', 'success')
-    return render_template('enroll.html', title='Student Course Registration', form=student_class_enroll_form)
+    return render_template('enroll.html', title='Student Course Registration', form=student_class_enroll_form, section_results=section_results)
 
 
 # @app.route("/registrar_course_reg")
