@@ -69,7 +69,7 @@ class Student(User):
     special_registration = db.Column(db.Boolean, nullable=False, default=False)
     status = db.Column(db.String(20), nullable=False, default='GOOD STANDING')
 
-    courses_enrolled = db.relationship('StudentCourseEnrollment', back_populates='students')
+    courses_enrolled = db.relationship('StudentCourseEnrollment', back_populates='students', lazy='dynamic')
     courses_waitlisted = db.relationship('Waitlist', back_populates='students')
     complaints_filed = db.relationship('StudentComplaint', back_populates='students')
     warnings = db.relationship('StudentWarning', backref='student')
@@ -149,6 +149,7 @@ class CourseSection(db.Model):
 
     def __repr__(self):
         return f'CourseSection({self.course_code}, {self.section_size}, {self.start_time}, {self.end_time}, {self.day})'
+
 
 class StudentCourseEnrollment(db.Model):
     __tablename__ = 'student_course_enrollment'

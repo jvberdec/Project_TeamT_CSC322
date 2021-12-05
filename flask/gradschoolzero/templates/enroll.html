@@ -52,13 +52,18 @@
                         <p>End Time: {{ section.end_time.strftime("%I:%M%p") }}</p>
                         <p>Instructor: {{ section.instructor }}</p>
                     </div>
-                    <div class="text-center">
-                        <a href="#" class="bg-ebony btn btn-outline-white btn-md text-white" style="width: 10rem;">Enroll</a>
-                    </div>
+                    {% if sections_enrolled.filter_by(course_section_id=section.id).first() %}
+                        <div class="text-center">
+                            <button  class="bg-ebony btn btn-outline-white btn-md text-white" style="width: 10rem;">Already Enrolled</button>
+                        </div>
+                    {% else %}
+                        <div class="text-center">
+                            <a href="/student_course_reg/{{section.id}}"><button  class="bg-ebony btn btn-outline-white btn-md text-white" style="width: 10rem;">Enroll</button></a>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}
-    {% endif %}
-        
+    {% endif %}        
 </div>
 {% endblock content %}
