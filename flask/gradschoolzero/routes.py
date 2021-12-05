@@ -95,7 +95,7 @@ def login():
 
 
 @app.route("/change_password", methods=['POST', 'GET'])
-#@login_required
+@login_required
 def change_password():
     change_password_form = ChangePasswordForm()
     if change_password_form.validate_on_submit():
@@ -118,11 +118,16 @@ def student_app():
 
     student_app_form = StudentApplicationForm()
     if student_app_form.validate_on_submit():
-        student_applicant = StudentApplicant.query.filter_by(first_name=student_app_form.first_name.data.strip(), 
+        applicant_applied = StudentApplicant.query.filter_by(first_name=student_app_form.first_name.data.strip(), 
                                                     last_name=student_app_form.last_name.data.strip(),
                                                     email=student_app_form.email.data.strip(), 
                                                     dob=student_app_form.dob.data).first()
-        if student_applicant is None:
+        
+        applicant_enrolled = User.query.filter_by(first_name=student_app_form.first_name.data.strip(), 
+                                                last_name=student_app_form.last_name.data.strip(),
+                                                email=student_app_form.email.data.strip()).first()
+
+        if (applicant_applied is None) and (applicant_enrolled is None):
             student_applicant = StudentApplicant(first_name=student_app_form.first_name.data.strip(), 
                                                     last_name=student_app_form.last_name.data.strip(),
                                                     email=student_app_form.email.data.strip(), 
@@ -133,8 +138,11 @@ def student_app():
             flash('Application filed successfully! You will be notified via email of our decision.', 'success')
 
             return redirect(url_for('login'))
-        else:
+        elif applicant_applied:
             flash("You've already applied!", 'danger')
+            return redirect(url_for('home'))
+        elif applicant_enrolled:
+            flash("You are already enrolled!", 'danger')
             return redirect(url_for('home'))
 
     return render_template('student_app.html', title='Student Application', form=student_app_form)
@@ -147,11 +155,15 @@ def instructor_app():
    
     instructor_app_form = InstructorApplicationForm()
     if instructor_app_form.validate_on_submit():
-        instructor_applicant = InstructorApplicant.query.filter_by(first_name=instructor_app_form.first_name.data.strip(), 
+        applicant_applied = InstructorApplicant.query.filter_by(first_name=instructor_app_form.first_name.data.strip(), 
                                                                 last_name=instructor_app_form.last_name.data.strip(),
                                                                 email=instructor_app_form.email.data.strip(), 
                                                                 dob=instructor_app_form.dob.data).first()
-        if instructor_applicant is None:
+        applicant_enrolled = User.query.filter_by(first_name=instructor_app_form.first_name.data.strip(), 
+                                                last_name=instructor_app_form.last_name.data.strip(),
+                                                email=instructor_app_form.email.data.strip()).first()
+
+        if (applicant_applied is None) and (applicant_enrolled is None):
             instructor_applicant = InstructorApplicant(first_name=instructor_app_form.first_name.data.strip(), 
                                                     last_name=instructor_app_form.last_name.data.strip(),
                                                     email=instructor_app_form.email.data.strip(), 
@@ -161,8 +173,11 @@ def instructor_app():
             db.session.commit()
             flash('Application filed successfully! You will be notified via email of our decision.', 'success')
             return redirect(url_for('login'))
-        else:
+        elif applicant_applied:
             flash("You've already applied!", 'danger')
+            return redirect(url_for('home'))
+        elif applicant_enrolled:
+            flash("You are already enrolled!", 'danger')
             return redirect(url_for('home'))
 
     return render_template('instructor_app.html', title='Instructor Application', form=instructor_app_form)
@@ -175,19 +190,19 @@ def statistics_page():
 
 
 @app.route("/student_dash")
-#@login_required
+@login_required
 def student_dash():
     return render_template('student_dash.html', title='Student Dashboard')
 
 
 @app.route("/instructor_dash")
-#@login_required
+@login_required
 def instructor_dash():
     return render_template('instructor_dash.html', title='Instructor Dashboard')
 
 
 @app.route("/registrar_default_dash", methods=['POST', 'GET'])
-#@login_required
+@login_required
 def registrar_default_dash():
     change_period_form = ChangePeriodForm()
     period = Period.query.first()
@@ -200,7 +215,7 @@ def registrar_default_dash():
 
 
 @app.route("/registrar_class_setup", methods=['POST', 'GET'])
-#@login_required
+@login_required
 def registrar_class_setup():
     create_course_form = CreateCourseForm()
     create_semester_form = CreateSemesterForm()
@@ -247,7 +262,7 @@ def registrar_class_setup():
                                                                                class_setup_form=class_setup_form)
 
 @app.route("/student_course_reg", methods=['POST', 'GET'])
-#@login_required
+@login_required
 def student_course_reg():
     student_class_enroll_form = StudentClassEnrollForm()
     if student_class_enroll_form.validate_on_submit():
@@ -261,13 +276,13 @@ def student_course_reg():
 #     return render_template('course_reg.html', title='Class Registration')
 
 @app.route("/view_courses")
-#@login_required
+@login_required
 def view_courses():
     return render_template('view_courses.html', title='View Courses')
 
 
 @app.route("/warned_stu_instr")
-#@login_required
+@login_required
 def warned_stu_instr():
     warning_form = WarningForm()
     if warning_form.validate_on_submit():
@@ -282,12 +297,12 @@ def warned_stu_instr():
 
 
 @app.route("/registrar_grading_period")
-#@login_required
+@login_required
 def registrar_grading_period():
     return render_template('course_grading.html', title='Class Running')
 
 @app.route("/student_graduation")
-#@login_required
+@login_required
 def student_graduation():
     student_graduation_form = StudentGraduationForm()
     if student_graduation_form.validate_on_submit():
@@ -295,7 +310,7 @@ def student_graduation():
     return render_template('graduation_form.html', title='Graduation Form', form=student_graduation_form)
 
 @app.route("/registrar_view_applicants")
-#@login_required
+@login_required
 def registrar_view_applicants():
     
     instruc_apps = InstructorApplicant.query.filter().all()
@@ -307,6 +322,7 @@ def registrar_view_applicants():
 
 
 @app.route("/student_app_accept/<int:index>")
+@login_required
 def student_app_accept(index):
     applicant = StudentApplicant.query.filter_by(id=index).first()
 
@@ -339,6 +355,7 @@ def student_app_accept(index):
 
 
 @app.route("/instruc_app_accept/<int:index>")
+@login_required
 def instruc_app_accept(index):
     applicant = InstructorApplicant.query.filter_by(id=index).first()
 
@@ -370,6 +387,7 @@ def instruc_app_accept(index):
 
 
 @app.route("/instruc_app_delete/<int:index>")
+@login_required
 def instruc_app_delete(index):
 
     applicant = InstructorApplicant.query.filter_by(id=index).first()
@@ -384,6 +402,7 @@ def instruc_app_delete(index):
 
 
 @app.route("/student_app_delete/<int:index>", methods=['POST'])
+@login_required
 def student_app_delete(index):
 
     if request.method == 'POST':
@@ -400,6 +419,7 @@ def student_app_delete(index):
         return redirect(url_for('registrar_view_applicants'))
 
 @app.route("/student_complaint")
+@login_required
 def student_complaint():
     student_complaint_form = StudentComplaintForm()
     if student_complaint_form.validate_on_submit():
@@ -408,6 +428,7 @@ def student_complaint():
 
 
 @app.route("/instructor_complaint")
+@login_required
 def instructor_complaint():
     instructor_complaint_form = InstructorComplaintForm()
     if instructor_complaint_form.validate_on_submit():

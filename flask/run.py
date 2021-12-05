@@ -1,7 +1,12 @@
 from gradschoolzero import app, db, bcrypt
-from gradschoolzero.models import Period, User
+from gradschoolzero.models import Period, User, Instructor
 
 if __name__ == "__main__":
+    #drop just the instructor table
+    # Instructor.__table__.drop(db.engine)
+
+    #drop all tables
+    #db.drop_all()
     db.create_all()
     registrar = User.query.filter_by(username='admin', type='registrar').first()
     period = Period.query.first()
