@@ -56,6 +56,16 @@
                         <div class="text-center">
                             <button  class="bg-ebony btn btn-outline-white btn-md text-white" style="width: 10rem;">Already Enrolled</button>
                         </div>
+                    {% elif section.is_full %}
+                        {% if waitlist_joined.filter_by(course_section_id=section.id).first() %}
+                            <div class="text-center">
+                                <button  class="bg-ebony btn btn-outline-white btn-md text-white" style="width: 10rem;">Waitlist Joined</button>
+                            </div>
+                        {% else %}
+                            <div class="text-center">
+                                <a href="/join_waitlist/{{section.id}}"><button  class="bg-ebony btn btn-outline-white btn-md text-white" style="width: 10rem;">Join Waitlist</button></a>
+                            </div>
+                        {% endif %}
                     {% else %}
                         <div class="text-center">
                             <a href="/student_course_reg/{{section.id}}"><button  class="bg-ebony btn btn-outline-white btn-md text-white" style="width: 10rem;">Enroll</button></a>

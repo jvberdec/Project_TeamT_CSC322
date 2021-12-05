@@ -278,56 +278,53 @@ def student_course_reg():
     student_class_enroll_form = StudentClassEnrollForm()
     section_results = None
     student = Student.query.filter_by(id=current_user.id).first()
-    #sections_enrolled = StudentCourseEnrollment.query.filter_by(student_id=current_user.id).all()
     sections_enrolled_query = student.courses_enrolled
+    waitlist_joined_query = student.courses_waitlisted
+
     if student_class_enroll_form.validate_on_submit():
         print(student_class_enroll_form.class_name.data)
         print(student_class_enroll_form.instructor_name.data)
 
         if student_class_enroll_form.class_name.data and student_class_enroll_form.instructor_name.data:
-            print('first if')
             section_results = CourseSection.query.filter_by(course_code=student_class_enroll_form.class_name.data.id, 
-                                                           instructor_id=student_class_enroll_form.instructor_name.data.id).all()
-            print('section results:', section_results)
+                                                            instructor_id=student_class_enroll_form.instructor_name.data.id).all()
         
         elif student_class_enroll_form.class_name.data:
-            print('second if')
             section_results = CourseSection.query.filter_by(course_code=student_class_enroll_form.class_name.data.id).all()
-            print('section results:', section_results)
 
         elif student_class_enroll_form.instructor_name.data:
-            print('third if')
             section_results = CourseSection.query.filter_by(instructor_id=student_class_enroll_form.instructor_name.data.id).all()
-            print('section results:', section_results)
 
         else:
-            print('else')
-            section_results=CourseSection.query.all()
-            print('section results:', section_results)
-
-        print(section_results[0].students_enrolled)
-        
+            section_results=CourseSection.query.all() 
         
     return render_template('enroll.html', title='Student Course Registration', form=student_class_enroll_form, 
                                                                                section_results=section_results,
-                                                                               sections_enrolled=sections_enrolled_query)
+                                                                               sections_enrolled=sections_enrolled_query,
+                                                                               waitlist_joined=waitlist_joined_query)
 
 
 @app.route("/student_course_reg/<int:index>", methods=['POST', 'GET'])
 @login_required
 def student_section_enroll(index):
-    print('current user ID:',current_user.id)
-    print('index:', index)
-    student_section_enrolled = StudentCourseEnrollment.query.filter_by(student_id=current_user.id, course_section_id=index).first()
-    print(student_section_enrolled)
+    student_section_enrollment = StudentCourseEnrollment(student_id=current_user.id, course_section_id=index)
+    section_enrollment_count = StudentCourseEnrollment.query.filter_by(course_section_id=index).count()
+    section = CourseSection.query.filter_by(id=index).first()
+    if section_enrollment_count >= (section.section_size - 1):
+        section.is_full = True
+    db.session.add(student_section_enrollment)
+    db.session.commit()
+    flash('Enrolled in course successfully!', 'success')
+    return redirect(url_for('student_course_reg'))
 
-    if student_section_enrolled is None:
-        student_section_enrollment = StudentCourseEnrollment(student_id=current_user.id, course_section_id=index)
-        db.session.add(student_section_enrollment)
-        db.session.commit()
-        flash('Enrolled in course successfully!', 'success')
-    else:
-        flash('Already enrolled in course', 'warning')
+
+@app.route("/join_waitlist/<int:index>", methods=['POST', 'GET'])
+@login_required
+def join_waitlist(index):
+    student_section_waitlisted = Waitlist(student_id=current_user.id, course_section_id=index)
+    db.session.add(student_section_waitlisted)
+    db.session.commit()
+    flash('Waitlist joined', 'success')
     return redirect(url_for('student_course_reg'))
 
 

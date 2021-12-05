@@ -70,7 +70,7 @@ class Student(User):
     status = db.Column(db.String(20), nullable=False, default='GOOD STANDING')
 
     courses_enrolled = db.relationship('StudentCourseEnrollment', back_populates='students', lazy='dynamic')
-    courses_waitlisted = db.relationship('Waitlist', back_populates='students')
+    courses_waitlisted = db.relationship('Waitlist', back_populates='students', lazy='dynamic')
     complaints_filed = db.relationship('StudentComplaint', back_populates='students')
     warnings = db.relationship('StudentWarning', backref='student')
 
@@ -138,6 +138,7 @@ class CourseSection(db.Model):
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
     day = db.Column(db.String(9), nullable=False)
+    is_full = db.Column(db.Boolean, nullable=False, default=False)
     semester_id = db.Column(db.Integer, db.ForeignKey('semester.id'), nullable=False)
     instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id'), nullable=False)
 
