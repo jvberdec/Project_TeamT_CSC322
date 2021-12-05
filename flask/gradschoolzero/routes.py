@@ -47,7 +47,7 @@ def generate_email_content(response_dict):
     elif response_dict['application'] == 'rejected':
         content = f'Unfortunately you have not been accepted to GradSchoolZero.\n\n'
         
-        if response_dict.has_key('reason'):
+        if 'reason' in response_dict:
             content = content + (f'Reason:\n'
                                  f'{response_dict["reason"]}')
 
@@ -118,16 +118,24 @@ def student_app():
 
     student_app_form = StudentApplicationForm()
     if student_app_form.validate_on_submit():
-        student_applicant = StudentApplicant(first_name=student_app_form.first_name.data.strip(), 
-                                             last_name=student_app_form.last_name.data.strip(),
-                                             email=student_app_form.email.data.strip(), 
-                                             dob=student_app_form.dob.data,
-                                             gpa=student_app_form.gpa.data)
-        db.session.add(student_applicant)
-        db.session.commit()
-        flash('Application filed successfully! You will be notified via email of our decision.', 'success')
+        student_applicant = StudentApplicant.query.filter_by(first_name=student_app_form.first_name.data.strip(), 
+                                                    last_name=student_app_form.last_name.data.strip(),
+                                                    email=student_app_form.email.data.strip(), 
+                                                    dob=student_app_form.dob.data).first()
+        if student_applicant is None:
+            student_applicant = StudentApplicant(first_name=student_app_form.first_name.data.strip(), 
+                                                    last_name=student_app_form.last_name.data.strip(),
+                                                    email=student_app_form.email.data.strip(), 
+                                                    dob=student_app_form.dob.data,
+                                                    gpa=student_app_form.gpa.data)
+            db.session.add(student_applicant)
+            db.session.commit()
+            flash('Application filed successfully! You will be notified via email of our decision.', 'success')
 
-        return redirect(url_for('login'))
+            return redirect(url_for('login'))
+        else:
+            flash("You've already applied!", 'danger')
+            return redirect(url_for('home'))
 
     return render_template('student_app.html', title='Student Application', form=student_app_form)
 
@@ -139,15 +147,23 @@ def instructor_app():
    
     instructor_app_form = InstructorApplicationForm()
     if instructor_app_form.validate_on_submit():
-        instructor_applicant = InstructorApplicant(first_name=instructor_app_form.first_name.data.strip(), 
-                                                   last_name=instructor_app_form.last_name.data.strip(),
-                                                   email=instructor_app_form.email.data.strip(), 
-                                                   dob=instructor_app_form.dob.data,
-                                                   discipline=instructor_app_form.discipline.data.strip())
-        db.session.add(instructor_applicant)
-        db.session.commit()
-        flash('Application filed successfully! You will be notified via email of our decision.', 'success')
-        return redirect(url_for('login'))
+        instructor_applicant = InstructorApplicant.query.filter_by(first_name=instructor_app_form.first_name.data.strip(), 
+                                                                last_name=instructor_app_form.last_name.data.strip(),
+                                                                email=instructor_app_form.email.data.strip(), 
+                                                                dob=instructor_app_form.dob.data).first()
+        if instructor_applicant is None:
+            instructor_applicant = InstructorApplicant(first_name=instructor_app_form.first_name.data.strip(), 
+                                                    last_name=instructor_app_form.last_name.data.strip(),
+                                                    email=instructor_app_form.email.data.strip(), 
+                                                    dob=instructor_app_form.dob.data,
+                                                    discipline=instructor_app_form.discipline.data.strip())
+            db.session.add(instructor_applicant)
+            db.session.commit()
+            flash('Application filed successfully! You will be notified via email of our decision.', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash("You've already applied!", 'danger')
+            return redirect(url_for('home'))
 
     return render_template('instructor_app.html', title='Instructor Application', form=instructor_app_form)
 
