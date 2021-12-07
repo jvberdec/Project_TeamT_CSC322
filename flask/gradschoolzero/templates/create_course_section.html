@@ -37,34 +37,6 @@
         </div>
     </form>
     <div class="animate__animated animate__fadeIn animate__slow text-center mt-5 mb-5">
-        <h1 class="font-weight-bolder text-white">Create Semester</h1>
-    </div>
-    <form method="POST" class="card bg-blur p-3 mt-3" style="border-radius: 10px; width: 50%; margin: 0 auto;">
-        {{ create_semester_form.hidden_tag() }}
-        <fieldset class="form-group">
-            {% for field in create_semester_form %}
-                {% if (field.type != 'SubmitField') and (field.type != 'CSRFTokenField') %}
-                    <div class="form-group">
-                    {{ field.label(class="form-control-label") }}
-                    {% if field.errors %}
-                        {{ field(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in field.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ field(class="form-control form-control-lg") }}
-                    {% endif %}
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </fieldset>
-        <div class="form-group">
-            {{ create_semester_form.submit(class="btn btn-lg text-white bg-ebony") }}
-        </div>
-    </form>
-    <div class="animate__animated animate__fadeIn animate__slow text-center mt-5 mb-5">
         <h1 class="font-weight-bolder text-white">Create Section</h1>
     </div>
     <form method="POST" class="card bg-blur p-3 mt-3" style="border-radius: 10px; width: 50%; margin: 0 auto;">

@@ -212,7 +212,7 @@ def instructor_dash():
 @login_required
 def registrar_default_dash():
     change_period_form = ChangePeriodForm()
-    period = Period.query.first()
+    period = SemesterPeriod.query.first()
     if change_period_form.validate_on_submit():
         period.current_period = change_period_form.period.data
         db.session.commit()
@@ -222,13 +222,13 @@ def registrar_default_dash():
         return render_template('registrar_dash.html', title='Registrar Dashboard', form=change_period_form, current_period=period)
     else:
         flash("You're not allowed to view that page!", 'danger')
-        return redirect(url_for('home'))
+        return redirect(url_for('home'))         
+
 
 @app.route("/registrar_class_setup", methods=['POST', 'GET'])
 @login_required
 def registrar_class_setup():
     create_course_form = CreateCourseForm()
-    create_semester_form = CreateSemesterForm()
     class_setup_form = ClassSetUpForm()
     
     if create_course_form.validate_on_submit():
@@ -239,36 +239,40 @@ def registrar_class_setup():
         flash('Course submitted successfully!', 'success')
         return redirect(url_for('registrar_class_setup'))
 
-    if create_semester_form.validate_on_submit():
-        semester = Semester(semester_name=create_semester_form.semester_name.data,
-                            year=create_semester_form.start_date.data.year,
-                            start_date=create_semester_form.start_date.data,
-                            end_date=create_semester_form.end_date.data)
-
-        db.session.add(semester)
-        db.session.commit()
-
-        flash('Semester submitted successfully!', 'success')
-        return redirect(url_for('registrar_class_setup'))
-
     if class_setup_form.validate_on_submit():
-        section = CourseSection(course_code=class_setup_form.course.data.id,
-                                section_size=class_setup_form.class_size.data,
-                                start_time=class_setup_form.start_time.data,
-                                end_time=class_setup_form.end_time.data,
-                                day=class_setup_form.day.data,
-                                semester_id=class_setup_form.semester.data.id,
-                                instructor_id=class_setup_form.instructor_name.data.id)
+        start_time_data=class_setup_form.start_time.data
+        end_time_data=class_setup_form.end_time.data
+        overlap = False
+        possible_overlap_section = CourseSection.query.filter_by(instructor_id=class_setup_form.instructor_name.data.id,
+                                                                 day=class_setup_form.day.data).first()
 
-        db.session.add(section)
-        db.session.commit()
+        if possible_overlap_section:
+            print('possible overlap')
+            if (((start_time_data >= possible_overlap_section.start_time) and (start_time_data <= possible_overlap_section.end_time)) or 
+                ((end_time_data >= possible_overlap_section.start_time) and (end_time_data <= possible_overlap_section.end_time))):
+                overlap = True
 
-        flash('Course submitted successfully!', 'success')
+        if start_time_data > end_time_data:
+            flash('Start time must be before end time', 'danger')
+        elif overlap:
+            flash('Overlapping section. Please double check instructor, times, and day', 'danger')
+        else:
+            current_semester = SemesterPeriod.query.first()
+            section = CourseSection(course_code=class_setup_form.course.data.id,
+                                    section_size=class_setup_form.class_size.data,
+                                    start_time=class_setup_form.start_time.data,
+                                    end_time=class_setup_form.end_time.data,
+                                    day=class_setup_form.day.data,
+                                    semester_id=current_semester.id,
+                                    instructor_id=class_setup_form.instructor_name.data.id)
+
+            db.session.add(section)
+            db.session.commit()
+            flash('Course submitted successfully!', 'success')
 
         return redirect(url_for('registrar_class_setup'))
 
-    return render_template('create_course_section.html', title='Class Set-up', create_course_form=create_course_form, 
-                                                                               create_semester_form=create_semester_form, 
+    return render_template('create_course_section.html', title='Class Set-up', create_course_form=create_course_form,  
                                                                                class_setup_form=class_setup_form)
 
 
@@ -303,6 +307,18 @@ def student_course_reg():
                                                                                sections_enrolled=sections_enrolled_query,
                                                                                waitlist_joined=waitlist_joined_query)
 
+                                                                            
+def validate_not_repeating(course_section_id):
+    pass
+
+
+def validate_conflicting_time():
+    pass
+
+
+def validate_max_courses():
+    pass
+
 
 @app.route("/student_course_reg/<int:index>", methods=['POST', 'GET'])
 @login_required
@@ -310,8 +326,13 @@ def student_section_enroll(index):
     student_section_enrollment = StudentCourseEnrollment(student_id=current_user.id, course_section_id=index)
     section_enrollment_count = StudentCourseEnrollment.query.filter_by(course_section_id=index).count()
     section = CourseSection.query.filter_by(id=index).first()
+
+
     if section_enrollment_count >= (section.section_size - 1):
         section.is_full = True
+
+    
+
     db.session.add(student_section_enrollment)
     db.session.commit()
     flash('Enrolled in course successfully!', 'success')
@@ -417,6 +438,8 @@ def student_app_accept(index):
 def instruc_app_accept(index):
     applicant = InstructorApplicant.query.filter_by(id=index).first()
 
+    ##########################################################################################
+    ############# CREATE GENERATE INSTRUCTOR USERNAME ########################
     generated_username = generate_username(applicant.first_name, applicant.last_name)
     generated_password = generate_password()
     hashed_password = bcrypt.generate_password_hash(generated_password).decode('utf-8')

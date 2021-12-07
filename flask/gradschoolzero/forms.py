@@ -5,7 +5,7 @@ from wtforms import BooleanField, SelectField, DateField, TimeField, IntegerFiel
 from wtforms.validators import DataRequired, Length, Email, NumberRange, ValidationError, EqualTo
 from wtforms.widgets import CheckboxInput, ListWidget
 from wtforms_sqlalchemy.fields import QuerySelectField
-from gradschoolzero.models import Applicant, User, Course, Semester, Instructor, CourseSection
+from gradschoolzero.models import Applicant, User, Course, Instructor, CourseSection
 
 
 class ApplicationForm(FlaskForm):
@@ -14,23 +14,6 @@ class ApplicationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     dob = DateField('Date of Birth (mm-dd-yyyy)', format='%m-%d-%Y', validators=[DataRequired()])
     submit = SubmitField('Apply')
-
-    def validate_applicant(self, first_name, last_name, email, dob):
-        applicant = Applicant.query.filter_by(first_name=first_name.data, 
-                                              last_name=last_name.data, 
-                                              email=email.data, 
-                                              dob=dob.data).first()
-
-        if applicant:
-            raise ValidationError('You have already applied')
-
-        applicant = User.query.filter_by(first_name=first_name.data, 
-                                         last_name=last_name.data, 
-                                         email=email.data, 
-                                         dob=dob.data).first()
-
-        if applicant:
-            raise ValidationError('You are already enrolled')
 
 
 class StudentApplicationForm(ApplicationForm):
@@ -51,7 +34,7 @@ class LoginForm(FlaskForm):
 class CreateCourseForm(FlaskForm):
     course_code = IntegerField('Course Code', validators=[DataRequired()])
     course_name = StringField('Course Name', validators=[DataRequired(), Length(min=2, max=50)])
-    submit = SubmitField('Submit Course')
+    submit = SubmitField('Create Course')
 
     def validate_course_code(self, course_code):
         course_code = Course.query.filter_by(id=course_code.data).first()
@@ -59,23 +42,8 @@ class CreateCourseForm(FlaskForm):
             raise ValidationError('Course code already exists. Please double check')
 
 
-class CreateSemesterForm(FlaskForm):
-    semester_name = SelectField(u'Semester', choices=[('fall', 'Fall'), ('spring', 'Spring')], validators=[DataRequired()])
-    start_date = DateField('Start Date (mm-dd-yyyy)', format='%m-%d-%Y', validators=[DataRequired()])
-    end_date = DateField('End Date (mm-dd-yyyy)', format='%m-%d-%Y', validators=[DataRequired()])
-    submit = SubmitField('Submit Semester')
-
-    def validate_semester(self, semester_name, start_date):
-        course_code = Semester.query.filter_by(semester_name=semester_name.data, year=start_date.year).first()
-        if course_code:
-            raise ValidationError('Semester already exists. Please double check')
-
-
 def all_courses():
     return Course.query.order_by(Course.id)
-
-def all_semesters():
-    return Semester.query.order_by(Semester.year)
 
 def all_instructors():
     return Instructor.query.order_by(Instructor.first_name)
@@ -98,11 +66,10 @@ class ClassSetUpForm(FlaskForm):
     course = QuerySelectField('Course Name', validators=[DataRequired()], query_factory=all_courses)
     instructor_name = QuerySelectField('Instructor Name', validators=[DataRequired()], query_factory=all_instructors)
     class_size = IntegerField('Class Size', validators=[DataRequired()])
-    semester = QuerySelectField('Semester', validators=[DataRequired()], query_factory=all_semesters)
     start_time = TimeField('Start Time (Hours:Minutes)', format='%H:%M', validators=[DataRequired()])
-    end_time = TimeField('Start Time (Hours:Minutes)', format='%H:%M', validators=[DataRequired()])
+    end_time = TimeField('End Time (Hours:Minutes)', format='%H:%M', validators=[DataRequired()])
     day = SelectField('Day', choices=days_list)
-    submit = SubmitField('Submit Section')
+    submit = SubmitField('Create Section')
 
 
 class ChangePeriodForm(FlaskForm):

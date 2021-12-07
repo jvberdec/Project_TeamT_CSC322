@@ -8,12 +8,16 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-class Period(db.Model):
+class SemesterPeriod(db.Model):
+    __tablename__ = 'semester_period'
     id = db.Column(db.Integer, primary_key=True)
     current_period = db.Column(db.String(20), nullable=False, default='class set-up')
+    semester_id = db.Column(db.Integer, db.ForeignKey('semester.id'), nullable=False)
+
+    current_semester = db.relationship('Semester', back_populates='semester_period')
 
     def __repr__(self):
-        return f'Period({self.current_period})'
+        return f'Period({self.current_period}, {self.semester_id})'
 
     def __str__(self):
         return f"{self.current_period.replace('_', ' ').title()}"
@@ -106,13 +110,12 @@ class Semester(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     semester_name = db.Column(db.String(8), nullable=False)
     year = db.Column(db.Integer, nullable=False)
-    start_date = db.Column(db.Date, nullable=False)
-    end_date = db.Column(db.Date, nullable=False)
 
     sections = db.relationship('CourseSection', back_populates='semester')
+    semester_period = db.relationship('SemesterPeriod', back_populates='current_semester')
 
     def __repr__(self):
-        return f'Semester({self.semester_name}, {self.year}, {self.start_date}, {self.end_date})'
+        return f'Semester({self.semester_name}, {self.year})'
 
     def __str__(self):
         return f'{self.semester_name} {self.year}'.title()
