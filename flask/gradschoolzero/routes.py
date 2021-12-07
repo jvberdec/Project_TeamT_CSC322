@@ -194,7 +194,16 @@ def statistics_page():
 @login_required
 def student_dash():
     if current_user.is_authenticated and current_user.type == "student":
-        return render_template('student_dash.html', title='Student Dashboard')
+        student = Student.query.filter_by(id=current_user.id).first()
+        courses_taken = student.courses_enrolled.filter(StudentCourseEnrollment.grade != None).all()
+        current_courses = student.courses_enrolled.filter(StudentCourseEnrollment.grade == None).all()
+        warnings = student.warnings
+
+        return render_template('student_dash.html', 
+                               title='Student Dashboard', 
+                               courses_taken=courses_taken, 
+                               current_courses=current_courses,
+                               warnings=warnings)
     else:
         flash("You're not allowed to view that page!", 'danger')
         return redirect(url_for('home'))

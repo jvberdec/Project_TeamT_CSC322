@@ -44,22 +44,12 @@
             <li class="list-group-item modified_li lead strong_font bg-ebony text-white">CLASS NAME</li>
             <li class="list-group-item modified_li lead strong_font bg-ebony text-white">GRADE</li>
         </ul>
-        <ul class="list-group list-group-horizontal-xl container_ul">
-            <li class="list-group-item modified_li medium_font">Science</li>
-            <li class="list-group-item modified_li medium_font">A</li>
-        </ul>
-        <ul class="list-group list-group-horizontal-xl container_ul">
-            <li class="list-group-item modified_li medium_font">Math</li>
-            <li class="list-group-item modified_li medium_font">A</li>
-        </ul>
-        <ul class="list-group list-group-horizontal-xl container_ul">
-            <li class="list-group-item modified_li medium_font">Computer Science</li>
-            <li class="list-group-item modified_li medium_font">A</li>
-        </ul>
-        <ul class="list-group list-group-horizontal-xl container_ul">
-            <li class="list-group-item modified_li medium_font">English</li>
-            <li class="list-group-item modified_li medium_font">A</li>
-        </ul>
+        {% for enrolled in courses_taken %}
+            <ul class="list-group list-group-horizontal-xl container_ul">
+                <li class="list-group-item modified_li medium_font">{{enrolled.section.course}}</li>
+                <li class="list-group-item modified_li medium_font">{{enrolled.grade}}</li>
+            </ul>
+        {% endfor %}
     </div>
 
     <!-- <hr class="featurette-divider">
@@ -93,30 +83,14 @@
     </div>
 
     <div class="container">
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
-                <span class="text-left">Science</span>
-                <button class="btn text-white bg-ebony">Drop</button>
-            </li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
-                <span class="text-left">Math</span>
-                <button class="btn text-white bg-ebony">Drop</button>
-            </li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
-                <span class="text-left">Computer Science</span>
-                <button class="btn text-white bg-ebony">Drop</button>
-            </li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
-                <span class="text-left">English</span>
-                <button class="btn text-white bg-ebony">Drop</button>
-            </li>
-        </ul>
+        {% for enrolled in current_courses %}
+            <ul class="list-group list-group-horizontal-sm container_ul">
+                <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
+                    <span class="text-left">{{enrolled.section.course}}</span>
+                    <button class="btn text-white bg-ebony">Drop</button>
+                </li>
+            </ul>
+        {% endfor %}
     </div>
 
     <hr class="featurette-divider">
@@ -127,26 +101,13 @@
     </div>
 
     <div class="container">
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center lead medium_font" style="width: 50%">
-                <span class="text-left">Missed Midterm for Science</span>
-            </li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center lead medium_font" style="width: 50%">
-                <span class="text-left">Missed Computer Science Class 5 times</span>
-            </li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center lead medium_font" style="width: 50%">
-                <span class="text-left">WARNINGS WARNINGS WARNINGS</span>
-            </li>
-        </ul>
-        <ul class="list-group list-group-horizontal-sm container_ul">
-            <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center lead medium_font" style="width: 50%">
-                <span class="text-left">MORE WARNINGS MORE WARNINGS</span>
-            </li>
-        </ul>
+        {% for warning in warnings %}
+            <ul class="list-group list-group-horizontal-sm container_ul">
+                <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center lead medium_font" style="width: 50%">
+                    <span class="text-left">{{warning.warning}}</span>
+                </li>
+            </ul>
+        {% endfor %}
     </div>
 
 </div>
