@@ -200,29 +200,33 @@ def student_dash():
         return redirect(url_for('home'))
 
 
-@app.route("/instructor_dash")
+@app.route("/instructor_dash", methods=['POST', 'GET'])
 @login_required
 def instructor_dash():
     if current_user.is_authenticated and current_user.type == "instructor":
         semester_period = SemesterPeriod.query.first()
         current_semester_id = semester_period.semester_id
-        instructor = Instructor.query.filter_by(id=3).first()
-        print('instructor:',instructor)
-        print('instructor sections:',instructor.sections)
-
-        print('section in instructor sections')
-        for section in instructor.sections:
-            print(section)
-            if section.semester_id == current_semester_id:
-                for student in section.students_enrolled:
-                    print(student.student)
-
+        instructor = Instructor.query.filter_by(id=current_user.id).first()
 
         return render_template('instructor_dash.html', title='Instructor Dashboard', instructor_sections=instructor.sections, current_semester_id=current_semester_id)
 
     else:
         flash("You're not allowed to view that page!", 'danger')
         return redirect(url_for('home'))
+
+
+@app.route("/instructor_dash/accept_from_waitlist/<int:index>", methods=['POST', 'GET'])
+@login_required
+def accept_from_waitlist(index):
+    waitlisted_student = Waitlist.query.filter_by(id=index)
+    student_course_enrollment = StudentCourseEnrollment(student_id=waitlisted_student.student_id, course_section_id=waitlisted_student.course_section_id)
+
+    db.session.add(student_course_enrollment)
+    db.session.delete(waitlisted_student)
+    db.session.commit()
+
+    return redirect(url_for('instructor_dash'))
+
 
 @app.route("/registrar_default_dash", methods=['POST', 'GET'])
 @login_required
