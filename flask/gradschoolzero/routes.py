@@ -8,6 +8,7 @@ from gradschoolzero.forms import *
 from gradschoolzero.models import *
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
+from sqlalchemy import or_
 
 
 def generate_username(first_name, last_name):
@@ -244,13 +245,13 @@ def registrar_class_setup():
         end_time_data=class_setup_form.end_time.data
         overlap = False
         possible_overlap_section = CourseSection.query.filter_by(instructor_id=class_setup_form.instructor_name.data.id,
-                                                                 day=class_setup_form.day.data).first()
+                                                                 day=class_setup_form.day.data).all()
 
         if possible_overlap_section:
-            print('possible overlap')
-            if (((start_time_data >= possible_overlap_section.start_time) and (start_time_data <= possible_overlap_section.end_time)) or 
-                ((end_time_data >= possible_overlap_section.start_time) and (end_time_data <= possible_overlap_section.end_time))):
-                overlap = True
+            for section in possible_overlap_section:
+                if (((start_time_data >= section.start_time) and (start_time_data <= section.end_time)) or 
+                    ((end_time_data >= section.start_time) and (end_time_data <= section.end_time))):
+                    overlap = True
 
         if start_time_data > end_time_data:
             flash('Start time must be before end time', 'danger')
@@ -284,23 +285,24 @@ def student_course_reg():
     student = Student.query.filter_by(id=current_user.id).first()
     sections_enrolled_query = student.courses_enrolled
     waitlist_joined_query = student.courses_waitlisted
+    current_semester_id = SemesterPeriod.query.first().semester_id
 
     if student_class_enroll_form.validate_on_submit():
-        print(student_class_enroll_form.class_name.data)
-        print(student_class_enroll_form.instructor_name.data)
-
         if student_class_enroll_form.class_name.data and student_class_enroll_form.instructor_name.data:
             section_results = CourseSection.query.filter_by(course_code=student_class_enroll_form.class_name.data.id, 
-                                                            instructor_id=student_class_enroll_form.instructor_name.data.id).all()
+                                                            instructor_id=student_class_enroll_form.instructor_name.data.id,
+                                                            semester_id=current_semester_id).order_by(CourseSection.start_time).all()
         
         elif student_class_enroll_form.class_name.data:
-            section_results = CourseSection.query.filter_by(course_code=student_class_enroll_form.class_name.data.id).all()
+            section_results = CourseSection.query.filter_by(course_code=student_class_enroll_form.class_name.data.id,
+                                                            semester_id=current_semester_id).order_by(CourseSection.start_time).all()
 
         elif student_class_enroll_form.instructor_name.data:
-            section_results = CourseSection.query.filter_by(instructor_id=student_class_enroll_form.instructor_name.data.id).all()
+            section_results = CourseSection.query.filter_by(instructor_id=student_class_enroll_form.instructor_name.data.id,
+                                                            semester_id=current_semester_id).order_by(CourseSection.start_time).all()
 
         else:
-            section_results=CourseSection.query.all() 
+            section_results = CourseSection.query.filter_by(semester_id=current_semester_id).order_by(CourseSection.start_time).all()
         
     return render_template('enroll.html', title='Student Course Registration', form=student_class_enroll_form, 
                                                                                section_results=section_results,
@@ -323,19 +325,38 @@ def validate_max_courses():
 @app.route("/student_course_reg/<int:index>", methods=['POST', 'GET'])
 @login_required
 def student_section_enroll(index):
-    student_section_enrollment = StudentCourseEnrollment(student_id=current_user.id, course_section_id=index)
-    section_enrollment_count = StudentCourseEnrollment.query.filter_by(course_section_id=index).count()
+    overlap = False
     section = CourseSection.query.filter_by(id=index).first()
+    course_already_taken = StudentCourseEnrollment.query.filter(StudentCourseEnrollment.section.has(course_code=section.course_code)).first()
 
+    possible_overlap_sections = StudentCourseEnrollment.query.filter(StudentCourseEnrollment.student_id==current_user.id,
+                                                                     StudentCourseEnrollment.section.has(day=section.day),
+                                                                     or_(StudentCourseEnrollment.grade == None,    
+                                                                         StudentCourseEnrollment.grade == 'F')) \
+                                                             .join(CourseSection).order_by(CourseSection.start_time).all()
 
-    if section_enrollment_count >= (section.section_size - 1):
-        section.is_full = True
+    if possible_overlap_sections:
+            for s in possible_overlap_sections:
+                if (((section.start_time >= s.section.start_time) and (section.start_time <= s.section.end_time)) or 
+                    ((section.end_time >= s.section.start_time) and (section.end_time <= s.section.end_time))):
+                    overlap=True
 
-    
+    if StudentCourseEnrollment.query.filter_by(student_id=current_user.id, grade=None).count() >= 3:
+        flash('Already enrolled in 4 courses. Cannot enroll in anymore', 'warning')
+    elif course_already_taken:
+        flash('Already taken or enrolled in course. Please choose a different one', 'warning')
+    elif overlap:
+        flash("Can't enroll in course. Time conflicts with another course.", 'warning')
+    else:
+        student_section_enrollment = StudentCourseEnrollment(student_id=current_user.id, course_section_id=index)
+        section_enrollment_count = StudentCourseEnrollment.query.filter_by(course_section_id=index).count()
 
-    db.session.add(student_section_enrollment)
-    db.session.commit()
-    flash('Enrolled in course successfully!', 'success')
+        if section_enrollment_count >= (section.section_size - 1):
+            section.is_full = True    
+
+        db.session.add(student_section_enrollment)
+        db.session.commit()
+        flash('Enrolled in course successfully!', 'success')
     return redirect(url_for('student_course_reg'))
 
 

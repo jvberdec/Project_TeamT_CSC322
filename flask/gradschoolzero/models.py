@@ -73,7 +73,7 @@ class Student(User):
     special_registration = db.Column(db.Boolean, nullable=False, default=False)
     status = db.Column(db.String(20), nullable=False, default='GOOD STANDING')
 
-    courses_enrolled = db.relationship('StudentCourseEnrollment', back_populates='students', lazy='dynamic')
+    courses_enrolled = db.relationship('StudentCourseEnrollment', back_populates='student', lazy='dynamic')
     courses_waitlisted = db.relationship('Waitlist', back_populates='students', lazy='dynamic')
     complaints_filed = db.relationship('StudentComplaint', back_populates='students')
     warnings = db.relationship('StudentWarning', backref='student')
@@ -148,7 +148,7 @@ class CourseSection(db.Model):
     courses = db.relationship('Course', backref='section')
     semester = db.relationship('Semester', back_populates='sections')
     instructor = db.relationship('Instructor', back_populates='sections')
-    students_enrolled = db.relationship('StudentCourseEnrollment', back_populates='courses')
+    students_enrolled = db.relationship('StudentCourseEnrollment', back_populates='section')
     students_waitlisted = db.relationship('Waitlist', back_populates='courses')
 
     def __repr__(self):
@@ -162,8 +162,8 @@ class StudentCourseEnrollment(db.Model):
     course_section_id = db.Column(db.Integer, db.ForeignKey('course_section.id'), nullable=False)
     grade = db.Column(db.String(1))
 
-    students = db.relationship('Student', back_populates='courses_enrolled')
-    courses = db.relationship('CourseSection', back_populates='students_enrolled')
+    student = db.relationship('Student', back_populates='courses_enrolled')
+    section = db.relationship('CourseSection', back_populates='students_enrolled')
 
     def __repr__(self):
         return f'StudentCourseEnrollment({self.student_id}, {self.course_section_id}, {self.grade})'
