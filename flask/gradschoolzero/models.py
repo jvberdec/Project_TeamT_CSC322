@@ -62,9 +62,14 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(50), nullable=False)
     logged_in_before = db.Column(db.Boolean, nullable=False, default=False)
     type = db.Column(db.String(10), nullable=False)
+
+    warnings = db.relationship('Warning', back_populates='user')
     
     def __repr__(self):
         return f'User({self.username}, {self.email}, {self.first_name}, {self.last_name}, {self.logged_in_before}, {self.type})'
+
+    def __str__(self):
+        return f'{self.first_name} {self.last_name} | {self.type}'
     
 
 class Student(User):
@@ -76,7 +81,6 @@ class Student(User):
     courses_enrolled = db.relationship('StudentCourseEnrollment', back_populates='student', lazy='dynamic')
     courses_waitlisted = db.relationship('Waitlist', back_populates='students', lazy='dynamic')
     complaints_filed = db.relationship('StudentComplaint', back_populates='students')
-    warnings = db.relationship('StudentWarning', backref='student')
 
     def __repr__(self):
         return f'Student({self.username}, {self.email}, {self.first_name}, {self.last_name}, {self.logged_in_before}, {self.type}, {self.gpa}, {self.special_registration}, {self.status})'
@@ -92,7 +96,6 @@ class Instructor(User):
 
     sections = db.relationship('CourseSection', back_populates='instructor')
     complaints_filed = db.relationship('InstructorComplaint', back_populates='instructors')
-    warnings = db.relationship('InstructorWarning', backref='instructor')
 
     def __repr__(self):
         return f'Instructor({self.username}, {self.email}, {self.first_name}, {self.last_name}, {self.logged_in_before}, {self.type}, {self.discipline}, {self.status})'
@@ -240,26 +243,10 @@ class InstructorComplaint(db.Model):
 class Warning(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date_received = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    warning = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    warning = db.Column(db.Text, nullable=False)    
+
+    user = db.relationship('User', back_populates='warnings')
 
     def __repr__(self):
-        return f'Warning({self.date_received})'
-
-
-class StudentWarning(Warning):
-    __tablename__ = 'student_warning'
-    id = db.Column(db.Integer, db.ForeignKey('warning.id'), primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
-
-    def __repr__(self):
-        return f'StudentWarning({self.date_received}, {self.student_id})'
-
-
-class InstructorWarning(Warning):
-    __tablename__ = 'instructor_warning'
-    id = db.Column(db.Integer, db.ForeignKey('warning.id'), primary_key=True)
-    instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id'), nullable=False)
-
-    def __repr__(self):
-        return f'InstructorWarning({self.date_received}, {self.instructor_id})'
-
+        return f'Warning({self.date_received}, {self.user_id})'

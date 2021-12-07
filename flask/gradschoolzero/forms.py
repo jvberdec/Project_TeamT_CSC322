@@ -110,27 +110,12 @@ class StudentClassEnrollForm(FlaskForm):
     submit = SubmitField('Search')
 
 
+def all_users_except_registrar():
+    return User.query.filter(User.type != 'registrar').order_by(User.type, User.first_name)
+
 
 class WarningForm(FlaskForm):
-
-    instructor_list = [  ('bob_builder', 'Bob Builder'),
-                        ('bobby_bobby', 'Bobby Bobby'),
-                        ('bob_bob', 'Bob Bob'),
-                        ('builder_bob', 'Builder Bob'),
-                    ]
-
-    student_list = [  ('student1', 'Student1'),
-                        ('student2', 'Student2'),
-                        ('Student3', 'Student3'),      
-                    ]
-
-    instructor_list.extend(student_list)
-    all_users = instructor_list[:]
-
-    username = StringField('Your Username', validators=[DataRequired(), Length(min=2, max=20)])
-    warned_name = SelectField('Name of Warned Person', choices=all_users, validators=[DataRequired(), Length(min=2, max=20)])
-    user_type = SelectField(u'User Type of Warned Person', choices=[('student', 'Student'), ('instructor', 'Instructor')], 
-                                                            validators=[DataRequired()])
+    warned_user = QuerySelectField('Select user', validators=[DataRequired()], query_factory=all_users_except_registrar)
     warning_text = TextAreaField('Warning Text', validators=[DataRequired()])
     submit = SubmitField('Submit')
 

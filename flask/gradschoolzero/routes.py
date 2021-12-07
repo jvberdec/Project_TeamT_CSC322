@@ -388,11 +388,14 @@ def view_courses():
     return render_template('view_courses.html', title='View Courses')
 
 
-@app.route("/warned_stu_instr")
+@app.route("/warned_stu_instr", methods=['POST', 'GET'])
 @login_required
 def warned_stu_instr():
     warning_form = WarningForm()
     if warning_form.validate_on_submit():
+        warning = Warning(user_id=warning_form.warned_user.data.id, warning=warning_form.warning_text.data)
+        db.session.add(warning)
+        db.session.commit()
         flash('Warning created successfully!', 'success')
     return render_template('warned_stu_instr.html', title='Warnings', form=warning_form)
 
