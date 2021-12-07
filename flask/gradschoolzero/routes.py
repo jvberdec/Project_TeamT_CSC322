@@ -204,7 +204,22 @@ def student_dash():
 @login_required
 def instructor_dash():
     if current_user.is_authenticated and current_user.type == "instructor":
-        return render_template('instructor_dash.html', title='Instructor Dashboard')
+        semester_period = SemesterPeriod.query.first()
+        current_semester_id = semester_period.semester_id
+        instructor = Instructor.query.filter_by(id=3).first()
+        print('instructor:',instructor)
+        print('instructor sections:',instructor.sections)
+
+        print('section in instructor sections')
+        for section in instructor.sections:
+            print(section)
+            if section.semester_id == current_semester_id:
+                for student in section.students_enrolled:
+                    print(student.student)
+
+
+        return render_template('instructor_dash.html', title='Instructor Dashboard', instructor_sections=instructor.sections, current_semester_id=current_semester_id)
+
     else:
         flash("You're not allowed to view that page!", 'danger')
         return redirect(url_for('home'))
@@ -308,18 +323,6 @@ def student_course_reg():
                                                                                section_results=section_results,
                                                                                sections_enrolled=sections_enrolled_query,
                                                                                waitlist_joined=waitlist_joined_query)
-
-                                                                            
-def validate_not_repeating(course_section_id):
-    pass
-
-
-def validate_conflicting_time():
-    pass
-
-
-def validate_max_courses():
-    pass
 
 
 @app.route("/student_course_reg/<int:index>", methods=['POST', 'GET'])

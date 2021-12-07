@@ -81,6 +81,9 @@ class Student(User):
     def __repr__(self):
         return f'Student({self.username}, {self.email}, {self.first_name}, {self.last_name}, {self.logged_in_before}, {self.type}, {self.gpa}, {self.special_registration}, {self.status})'
 
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
 
 class Instructor(User):
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
@@ -89,7 +92,7 @@ class Instructor(User):
 
     sections = db.relationship('CourseSection', back_populates='instructor')
     complaints_filed = db.relationship('InstructorComplaint', back_populates='instructors')
-    warnings = db.relationship('InstructorWarning', backref='instructor', lazy=True)
+    warnings = db.relationship('InstructorWarning', backref='instructor')
 
     def __repr__(self):
         return f'Instructor({self.username}, {self.email}, {self.first_name}, {self.last_name}, {self.logged_in_before}, {self.type}, {self.discipline}, {self.status})'
@@ -145,7 +148,7 @@ class CourseSection(db.Model):
     semester_id = db.Column(db.Integer, db.ForeignKey('semester.id'), nullable=False)
     instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id'), nullable=False)
 
-    courses = db.relationship('Course', backref='section')
+    course = db.relationship('Course', backref='section')
     semester = db.relationship('Semester', back_populates='sections')
     instructor = db.relationship('Instructor', back_populates='sections')
     students_enrolled = db.relationship('StudentCourseEnrollment', back_populates='section')

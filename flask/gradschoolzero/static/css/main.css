@@ -142,6 +142,10 @@ html,body {
     margin: 4rem 0; /* Space out the Bootstrap <hr> more */
 }
 
+.featurette-divider2 {
+  margin: 2rem 0; /* Space out the Bootstrap <hr> more */
+}
+
 .bg-blur {
   background-color: rgba(0, 0, 0, 0.1);
 }
