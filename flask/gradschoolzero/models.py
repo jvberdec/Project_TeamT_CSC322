@@ -52,7 +52,6 @@ class InstructorApplicant(Applicant):
         return f'InstructorApplicant({self.first_name}, {self.last_name}, {self.email}, {self.dob}, {self.discipline})'
 
 
-
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
@@ -64,6 +63,8 @@ class User(db.Model, UserMixin):
     type = db.Column(db.String(10), nullable=False)
 
     warnings = db.relationship('Warning', back_populates='user')
+    complaints_filed_against = db.relationship('Complaint', foreign_keys='Complaint.complainee_id', back_populates='complainee')
+    complaints_filed = db.relationship('Complaint', foreign_keys='Complaint.filer_id', back_populates='filer')
     
     def __repr__(self):
         return f'User({self.username}, {self.email}, {self.first_name}, {self.last_name}, {self.logged_in_before}, {self.type})'
@@ -80,7 +81,6 @@ class Student(User):
 
     courses_enrolled = db.relationship('StudentCourseEnrollment', back_populates='student', lazy='dynamic')
     courses_waitlisted = db.relationship('Waitlist', back_populates='students', lazy='dynamic')
-    complaints_filed = db.relationship('StudentComplaint', back_populates='students')
 
     def __repr__(self):
         return f'Student({self.username}, {self.email}, {self.first_name}, {self.last_name}, {self.logged_in_before}, {self.type}, {self.gpa}, {self.special_registration}, {self.status})'
@@ -95,7 +95,6 @@ class Instructor(User):
     status = db.Column(db.String, nullable=False, default='GOOD STANDING')
 
     sections = db.relationship('CourseSection', back_populates='instructor')
-    complaints_filed = db.relationship('InstructorComplaint', back_populates='instructors')
 
     def __repr__(self):
         return f'Instructor({self.username}, {self.email}, {self.first_name}, {self.last_name}, {self.logged_in_before}, {self.type}, {self.discipline}, {self.status})'
@@ -209,35 +208,16 @@ class CourseReview(db.Model):
     def __repr__(self):
         return f'CourseReview({self.course_code}, {self.student_id})'
 
-    
-    
-class StudentComplaint(db.Model):
-    __tablename__ = 'student_complaint'
+
+class Complaint(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    date_filed = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     comlaint = db.Column(db.Text, nullable=False)
-    compainee_id = db.Column(db.Integer, nullable=False)
-    comlainee_type = db.Column(db.String(10), nullable=False)
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
-
-    students = db.relationship('Student', back_populates='complaints_filed')
-
-    def __repr__(self):
-        return f'StudentComplaint({self.date_filed}, {self.compainee_id}, {self.comlainee_type}, {self.student_id})'
-
-
-class InstructorComplaint(db.Model):
-    __tablename__ = 'instructor_complaint'
-    id = db.Column(db.Integer, primary_key=True)
     date_filed = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    comlaint = db.Column(db.Text, nullable=False)
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
-    instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id'), nullable=False)
+    complainee_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    filer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-    instructors = db.relationship('Instructor', back_populates='complaints_filed')
-
-    def __repr__(self):
-        return f'InstructorComplaint({self.date_filed}, {self.student_id}, {self.instructor_id})'
+    complainee = db.relationship('User', foreign_keys='Complaint.complainee_id', back_populates='complaints_filed_against')
+    filer = db.relationship('User', foreign_keys='Complaint.filer_id', back_populates='complaints_filed')
 
 
 class Warning(db.Model):
