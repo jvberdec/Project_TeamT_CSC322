@@ -33,47 +33,45 @@
     </div>
 
     <div class="accordion p-3 mt-3" id="accordionExample">
-        {% for section in instructor_sections %}
-            {% if section.semester_id == current_semester_id %}
-                <div class="card lg-shadow">
-                    <div class="card-header bg-white" id="heading{{section.id}}">
-                        <h2 class="mb-0">
-                            <button class="btn btn-block text-ebony text-left strong_font" style="box-shadow: 0 0 0 0rem rgb(0 123 255 / 25%)" type="button" data-toggle="collapse" data-target="#collapse{{section.id}}" aria-expanded="true" aria-controls="collapse{{section.id}}">
-                                {{section.course}}
-                                <h6>Start Time: {{section.start_time.strftime("%I:%M%p")}}, End Time: {{section.end_time.strftime("%I:%M%p")}}, Capacity: {{section.section_size}}, Students Enrolled: {{section.students_enrolled|length}}</h6>
-                            </button>
-                        </h2>         
-                    </div> 
+        {% for course in instructor_courses %}
+            <div class="card lg-shadow">
+                <div class="card-header bg-white" id="heading{{course.id}}">
+                    <h2 class="mb-0">
+                        <button class="btn btn-block text-ebony text-left strong_font" style="box-shadow: 0 0 0 0rem rgb(0 123 255 / 25%)" type="button" data-toggle="collapse" data-target="#collapse{{course.id}}" aria-expanded="true" aria-controls="collapse{{course.id}}">
+                            {{course}}
+                            <h6>Start Time: {{course.start_time.strftime("%I:%M%p")}}, End Time: {{course.end_time.strftime("%I:%M%p")}}, Capacity: {{course.capacity}}, Students Enrolled: {{course.students_enrolled|length}}</h6>
+                        </button>
+                    </h2>         
+                </div> 
+            </div>
+            <div id="collapse{{course.id}}" class="collapse" aria-labelledby="heading{{course.id}}" data-parent="#accordionExample">
+                <div class="card-body bg-ebony text-white">
+                    {% for student_enrolled in course.students_enrolled %}
+                        <li class="d-flex justify-content-between align-items-center">
+                            <span class="text-ebony mb-1">{{student_enrolled.student}}</span>
+                            <div class="mb-1">
+                                <form method="POST" action="#">
+                                    <input type="text" class="text-box" name="grade" id="grade" style="margin: 1px;" placeholder="Grade">
+                                    <input type="button" value="Assign Grade" name="gradeSubmit" id="gradeSubmit" class="btn text-ebony bg-white" style="margin: 1px;">
+                                </form>
+                            </div>
+                        </li>
+                    {% endfor %}
+                    
+                    {% if course.students_waitlisted %}
+                    <hr class="featurette-divider2">
+                    {% endif %}
+                    
+                    {% for student_waitlisted in course.students_waitlisted %}
+                        <li class="d-flex justify-content-between align-items-center">
+                            <span class="text-ebony mb-1">{{student_waitlisted.student}}</span>
+                            <div class="mb-1">
+                                <a href="/instructor_dash/accept_from_waitlist/{{student_waitlisted.id}}"><button class="bg-ebony btn btn-outline-white btn-md text-white">Remove from Waitlist</button></a>
+                            </div>
+                        </li>
+                    {% endfor %}
                 </div>
-                <div id="collapse{{section.id}}" class="collapse" aria-labelledby="heading{{section.id}}" data-parent="#accordionExample">
-                    <div class="card-body bg-ebony text-white">
-                        {% for student_enrolled in section.students_enrolled %}
-                            <li class="d-flex justify-content-between align-items-center">
-                                <span class="text-ebony mb-1">{{student_enrolled.student}}</span>
-                                <div class="mb-1">
-                                    <form method="POST" action="#">
-                                        <input type="text" class="text-box" name="grade" id="grade" style="margin: 1px;" placeholder="Grade">
-                                        <input type="button" value="Assign Grade" name="gradeSubmit" id="gradeSubmit" class="btn text-ebony bg-white" style="margin: 1px;">
-                                    </form>
-                                </div>
-                            </li>
-                        {% endfor %}
-                        
-                        {% if section.students_waitlisted %}
-                        <hr class="featurette-divider2">
-                        {% endif %}
-                        
-                        {% for student_waitlisted in section.students_waitlisted %}
-                            <li class="d-flex justify-content-between align-items-center">
-                                <span class="text-ebony mb-1">{{student_waitlisted.student}}</span>
-                                <div class="mb-1">
-                                    <a href="/instructor_dash/accept_from_waitlist/{{student_waitlisted.id}}"><button class="bg-ebony btn btn-outline-white btn-md text-white">Remove from Waitlist</button></a>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif%}
+            </div>
         {% endfor%}
 
 

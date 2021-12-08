@@ -1,11 +1,10 @@
 from secrets import choice
 from flask_wtf import FlaskForm
 from wtforms import StringField, DecimalField, PasswordField, SubmitField
-from wtforms import BooleanField, SelectField, DateField, TimeField, IntegerField, TextAreaField, SelectMultipleField
+from wtforms import BooleanField, SelectField, DateField, TimeField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, NumberRange, ValidationError, EqualTo
-from wtforms.widgets import CheckboxInput, ListWidget
 from wtforms_sqlalchemy.fields import QuerySelectField
-from gradschoolzero.models import Applicant, User, Course, Instructor, CourseSection
+from gradschoolzero.models import Applicant, User, Course, Instructor
 
 
 class ApplicationForm(FlaskForm):
@@ -31,27 +30,8 @@ class LoginForm(FlaskForm):
     submit = SubmitField('sign in')
 
 
-class CreateCourseForm(FlaskForm):
-    course_code = IntegerField('Course Code', validators=[DataRequired()])
-    course_name = StringField('Course Name', validators=[DataRequired(), Length(min=2, max=50)])
-    submit = SubmitField('Create Course')
-
-    def validate_course_code(self, course_code):
-        course_code = Course.query.filter_by(id=course_code.data).first()
-        if course_code:
-            raise ValidationError('Course code already exists. Please double check')
-
-
-def all_courses():
-    return Course.query.order_by(Course.id)
-
 def all_instructors():
     return Instructor.query.order_by(Instructor.first_name)
-
-
-class MultiCheckboxField(SelectMultipleField):
-    widget = ListWidget(prefix_label=False)
-    option_widget = CheckboxInput()
 
 
 class ClassSetUpForm(FlaskForm):
@@ -63,7 +43,8 @@ class ClassSetUpForm(FlaskForm):
                  ('saturday', 'Saturday'),
                  ('sunday', 'Sunday')]
 
-    course = QuerySelectField('Course Name', validators=[DataRequired()], query_factory=all_courses)
+    course_code = IntegerField('Course Code', validators=[DataRequired(), NumberRange(min=100, max=999)])
+    course_name = StringField('Course Name', validators=[DataRequired(), Length(min=2, max=50)])
     instructor_name = QuerySelectField('Instructor Name', validators=[DataRequired()], query_factory=all_instructors)
     class_size = IntegerField('Class Size', validators=[DataRequired()])
     start_time = TimeField('Start Time (Hours:Minutes)', format='%H:%M', validators=[DataRequired()])
@@ -80,14 +61,13 @@ class ChangePeriodForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
-def all_sections():
-    return CourseSection.query
+def all_courses():
+    return Course.query.order_by(Course.id)
 
 
 class StudentClassEnrollForm(FlaskForm):
     class_name = QuerySelectField('Course Name', query_factory=all_courses, allow_blank=True)
     instructor_name = QuerySelectField('Instructor Name', query_factory=all_instructors, allow_blank=True)
-    #section_name = QuerySelectField('Section', validators=[DataRequired()], query_factory=all_sections)
     submit = SubmitField('Search')
 
 
@@ -131,3 +111,9 @@ class ChangePasswordForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Change Password')
+
+
+class CourseReviewForm(FlaskForm):
+    review_text = TextAreaField('Review Text', validators=[DataRequired()])
+    star_rating = IntegerField('Star Rating (1-5)', validators=[DataRequired(), NumberRange(min=1, max=5)])
+    submit = SubmitField('Submit Course Review')

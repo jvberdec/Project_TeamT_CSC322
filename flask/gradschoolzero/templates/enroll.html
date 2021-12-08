@@ -40,35 +40,35 @@
 
     <hr class="featurette-divider">
 
-    {% if section_results != none %}
-        {% for section in section_results %}
+    {% if course_results != none %}
+        {% for course in course_results %}
             <div class="card mx-auto mb-3" style="width: 25rem;">
                 <div class="card-body">
-                    <h5 class="card-title text-center">{{ section.courses }}</h5>
+                    <h5 class="card-title text-center">{{ course }}</h5>
                     <div class="card-text text-center">
                         <!---<p>Section Code: A</p>--->
-                        <p>Day: {{ section.day.title() }}</p>
-                        <p>Start Time: {{ section.start_time.strftime("%I:%M%p") }}</p>
-                        <p>End Time: {{ section.end_time.strftime("%I:%M%p") }}</p>
-                        <p>Instructor: {{ section.instructor }}</p>
+                        <p>Day: {{ course.day.title() }}</p>
+                        <p>Start Time: {{ course.start_time.strftime("%I:%M%p") }}</p>
+                        <p>End Time: {{ course.end_time.strftime("%I:%M%p") }}</p>
+                        <p>Instructor: {{ course.instructor }}</p>
                     </div>
-                    {% if sections_enrolled.filter_by(course_section_id=section.id).first() %}
+                    {% if courses_enrolled.filter_by(course_id=course.id, grade=None).first() %}
                         <div class="text-center">
                             <button  class="bg-ebony btn btn-outline-white btn-md text-white" style="width: 10rem;">Already Enrolled</button>
                         </div>
-                    {% elif section.is_full %}
-                        {% if waitlist_joined.filter_by(course_section_id=section.id).first() %}
+                    {% elif course.is_full %}
+                        {% if waitlist_joined.filter_by(course_id=course.id).first() %}
                             <div class="text-center">
                                 <button  class="bg-ebony btn btn-outline-white btn-md text-white" style="width: 10rem;">Waitlist Joined</button>
                             </div>
                         {% else %}
                             <div class="text-center">
-                                <a href="/join_waitlist/{{section.id}}"><button  class="bg-ebony btn btn-outline-white btn-md text-white" style="width: 10rem;">Join Waitlist</button></a>
+                                <a href="/join_waitlist/{{course.id}}"><button  class="bg-ebony btn btn-outline-white btn-md text-white" style="width: 10rem;">Join Waitlist</button></a>
                             </div>
                         {% endif %}
                     {% else %}
                         <div class="text-center">
-                            <a href="/student_course_reg/{{section.id}}"><button  class="bg-ebony btn btn-outline-white btn-md text-white" style="width: 10rem;">Enroll</button></a>
+                            <a href="/student_course_reg/{{course.id}}"><button  class="bg-ebony btn btn-outline-white btn-md text-white" style="width: 10rem;">Enroll</button></a>
                         </div>
                     {% endif %}
                 </div>

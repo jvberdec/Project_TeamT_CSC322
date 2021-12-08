@@ -8,13 +8,10 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-class SemesterPeriod(db.Model):
+class Period(db.Model):
     __tablename__ = 'semester_period'
     id = db.Column(db.Integer, primary_key=True)
     current_period = db.Column(db.String(20), nullable=False, default='class set-up')
-    semester_id = db.Column(db.Integer, db.ForeignKey('semester.id'), nullable=False)
-
-    current_semester = db.relationship('Semester', back_populates='semester_period')
 
     def __repr__(self):
         return f'Period({self.current_period}, {self.semester_id})'
@@ -79,8 +76,9 @@ class Student(User):
     special_registration = db.Column(db.Boolean, nullable=False, default=False)
     status = db.Column(db.String(20), nullable=False, default='GOOD STANDING')
 
+    reviews = db.relationship('CourseReview', back_populates='author')
     courses_enrolled = db.relationship('StudentCourseEnrollment', back_populates='student', lazy='dynamic')
-    courses_waitlisted = db.relationship('Waitlist', back_populates='students', lazy='dynamic')
+    courses_waitlisted = db.relationship('Waitlist', back_populates='student', lazy='dynamic')
 
     def __repr__(self):
         return f'Student({self.username}, {self.email}, {self.first_name}, {self.last_name}, {self.logged_in_before}, {self.type}, {self.gpa}, {self.special_registration}, {self.status})'
@@ -94,7 +92,7 @@ class Instructor(User):
     discipline = db.Column(db.String(20), nullable=False)
     status = db.Column(db.String, nullable=False, default='GOOD STANDING')
 
-    sections = db.relationship('CourseSection', back_populates='instructor')
+    courses = db.relationship('Course', back_populates='instructor')
 
     def __repr__(self):
         return f'Instructor({self.username}, {self.email}, {self.first_name}, {self.last_name}, {self.logged_in_before}, {self.type}, {self.discipline}, {self.status})'
@@ -111,77 +109,49 @@ class Major(db.Model):
         return f'Major({self.major})'
 
 
-class Semester(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    semester_name = db.Column(db.String(8), nullable=False)
-    year = db.Column(db.Integer, nullable=False)
-
-    sections = db.relationship('CourseSection', back_populates='semester')
-    semester_period = db.relationship('SemesterPeriod', back_populates='current_semester')
-
-    def __repr__(self):
-        return f'Semester({self.semester_name}, {self.year})'
-
-    def __str__(self):
-        return f'{self.semester_name} {self.year}'.title()
-
-
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=False)
     course_name = db.Column(db.String(50), nullable=False)
-    avg_rating = db.Column(db.Float)
-
-    def __repr__(self):
-        return f'Course({self.course_name}, {self.avg_rating})'
-
-    def __str__(self):
-        return f'{self.id} {self.course_name}'.title()
-
-
-class CourseSection(db.Model):
-    __tablename__ = 'course_section'
-    id = db.Column(db.Integer, primary_key=True)
-    course_code = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
-    section_size = db.Column(db.Integer, nullable = False)
+    capacity = db.Column(db.Integer, nullable = False)
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
     day = db.Column(db.String(9), nullable=False)
     is_full = db.Column(db.Boolean, nullable=False, default=False)
-    semester_id = db.Column(db.Integer, db.ForeignKey('semester.id'), nullable=False)
     instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id'), nullable=False)
-
-    course = db.relationship('Course', backref='section')
-    semester = db.relationship('Semester', back_populates='sections')
-    instructor = db.relationship('Instructor', back_populates='sections')
-    students_enrolled = db.relationship('StudentCourseEnrollment', back_populates='section')
-    students_waitlisted = db.relationship('Waitlist', back_populates='courses')
+    avg_rating = db.Column(db.Float)
+    
+    instructor = db.relationship('Instructor', back_populates='courses')
+    students_enrolled = db.relationship('StudentCourseEnrollment', back_populates='course')
+    students_waitlisted = db.relationship('Waitlist', back_populates='course')
 
     def __repr__(self):
-        return f'CourseSection({self.course_code}, {self.section_size}, {self.start_time}, {self.end_time}, {self.day})'
+        return f'Course({self.id}, {self.course_name}, {self.capacity}, {self.start_time}, {self.end_time}, {self.day}, {self.avg_rating})'
+
+    def __str__(self):
+        return f'{self.id} {self.course_name}'.title()
 
 
 class StudentCourseEnrollment(db.Model):
     __tablename__ = 'student_course_enrollment'
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
-    course_section_id = db.Column(db.Integer, db.ForeignKey('course_section.id'), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
     grade = db.Column(db.String(1))
 
     student = db.relationship('Student', back_populates='courses_enrolled')
-    section = db.relationship('CourseSection', back_populates='students_enrolled')
+    course = db.relationship('Course', back_populates='students_enrolled')
 
     def __repr__(self):
-        return f'StudentCourseEnrollment({self.student_id}, {self.course_section_id}, {self.grade})'
-
+        return f'StudentCourseEnrollment({self.student_id}, {self.course_id}, {self.grade})'
 
 
 class Waitlist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
-    course_section_id = db.Column(db.Integer, db.ForeignKey('course_section.id'), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
 
-    students = db.relationship('Student', back_populates='courses_waitlisted')
-    courses = db.relationship('CourseSection', back_populates='students_waitlisted')
+    student = db.relationship('Student', back_populates='courses_waitlisted')
+    course = db.relationship('Course', back_populates='students_waitlisted')
 
     def __repr__(self):
         return f'Waitlist({self.student_id}, {self.course_section_id})'
@@ -201,9 +171,11 @@ class CourseReview(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     course_code = db.Column(db.Integer,  nullable=False)
     content = db.Column(db.Text, nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    taboo_word_count = db.Column(db.Integer, nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
 
-    students = db.relationship('Student', backref='author', lazy=True)
+    author = db.relationship('Student', back_populates='reviews')
 
     def __repr__(self):
         return f'CourseReview({self.course_code}, {self.student_id})'

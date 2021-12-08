@@ -47,7 +47,7 @@
         </ul>
         {% for enrolled in courses_taken %}
             <ul class="list-group list-group-horizontal-xl container_ul">
-                <li class="list-group-item modified_li medium_font">{{enrolled.section.course}}</li>
+                <li class="list-group-item modified_li medium_font">{{enrolled.course}}</li>
                 <li class="list-group-item modified_li medium_font">{{enrolled.grade}}</li>
             </ul>
         {% endfor %}
@@ -87,8 +87,11 @@
         {% for enrolled in current_courses %}
             <ul class="list-group list-group-horizontal-sm container_ul">
                 <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
-                    <span class="text-left">{{enrolled.section.course}}</span>
-                    <button class="btn text-white bg-ebony">Drop</button>
+                    <span class="text-left">{{enrolled.course}}</span>
+                    <div class="mb-1">
+                        <a href="/review_course/{{enrolled.course.id}}"><button class="btn text-white bg-ebony">Review</button></a>
+                        <a href="/student_dash/drop_section/{{enrolled.id}}"><button class="btn text-white bg-ebony">Drop</button></a>
+                    </div>
                 </li>
             </ul>
         {% endfor %}

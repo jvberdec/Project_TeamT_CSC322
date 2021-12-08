@@ -190,11 +190,11 @@ def statistics_page():
     return render_template("statistics_page.html")
 
 
-@app.route("/student_dash")
+@app.route("/student_dash", methods=['POST', 'GET'])
 @login_required
 def student_dash():
     if current_user.is_authenticated and current_user.type == "student":
-        period = SemesterPeriod.query.first()
+        period = Period.query.first()
         student = Student.query.filter_by(id=current_user.id).first()
         courses_taken = student.courses_enrolled.filter(StudentCourseEnrollment.grade != None).all()
         current_courses = student.courses_enrolled.filter(StudentCourseEnrollment.grade == None).all()
@@ -211,19 +211,81 @@ def student_dash():
         return redirect(url_for('home'))
 
 
+@app.route("/student_dash/drop_section/<int:index>", methods=['POST', 'GET'])
+@login_required
+def drop_section(index):
+    current_period = Period.query.first().current_period
+    section = StudentCourseEnrollment.query.filter_by(id=index).first()
+
+    if current_period == 'course registration':
+        db.session.delete(section)
+        db.session.commit()
+    elif current_period == 'course running':
+        section.grade = 'W'
+        db.session.commit()
+
+    return redirect(url_for('student_dash'))
+
+
+def replace(match):
+    word = match.group()
+    censor_words = CensorWord.query.all()
+    censor_words = [censor.word for censor in censor_words]
+    if word.lower() in censor_words:
+        return '*' * len(word)
+    else:
+        return word
+
+
+@app.route("/review_course/<int:index>", methods=['POST', 'GET'])
+@login_required
+def review_course(index):
+    print(current_user.id)
+    course_review_form = CourseReviewForm()
+    if course_review_form.validate_on_submit():
+        review_exists = CourseReview.query.filter_by(course_code=index, student_id=current_user.id).first()
+        if review_exists:
+            flash('Already reviewed this course. Cannot submit another review', 'warning')
+        else:
+            review_text = course_review_form.review_text.data.strip()
+            word_list = [word.strip(punctuation) for word in review_text.lower().split()]
+            censor_words = CensorWord.query.all()
+            censor_words = [censor.word for censor in censor_words]
+            taboo_words_count = sum(any(censor_word == word for censor_word in censor_words) for word in word_list)
+            review_text = re.sub(r'\b\w*\b', replace, review_text, flags=re.I|re.U)
+
+            course = ''
+            if taboo_words_count >= 1:
+                course = Course.query.filter_by(id=index).first()
+                warning_message = f'First warning for {course} review due to at least 1 to 2 taboo words detected.'
+                issue_warning(current_user.id, warning_message)
+            if taboo_words_count >= 3:
+                warning_message = f'Second warning for {course} review due to at least 3 taboo words detected. Review will not be posted to school website.'
+                issue_warning(current_user.id, warning_message)
+                print(warning_message)
+
+            course_review = CourseReview(course_code=index, 
+                                         content=review_text, 
+                                         rating=course_review_form.star_rating.data,
+                                         taboo_word_count=taboo_words_count, 
+                                         student_id=current_user.id)
+            db.session.add(course_review)
+            db.session.commit()
+            flash('Review successfully submitted', 'success')
+
+    return render_template('review_course.html', title='Review Course', form=course_review_form)
+
+
 @app.route("/instructor_dash", methods=['POST', 'GET'])
 @login_required
 def instructor_dash():
     if current_user.is_authenticated and current_user.type == "instructor":
-        period = SemesterPeriod.query.first()
-        semester_period = SemesterPeriod.query.first()
-        current_semester_id = semester_period.semester_id
+        period = Period.query.first()
         instructor = Instructor.query.filter_by(id=current_user.id).first()
 
         return render_template('instructor_dash.html', 
                                title='Instructor Dashboard', 
-                               instructor_sections=instructor.sections, 
-                               current_semester_id=current_semester_id,
+                               instructor_courses=instructor.courses, 
                                current_period=period)
 
     else:
@@ -246,15 +308,14 @@ def accept_from_waitlist(index):
 
 @app.route("/registrar_default_dash", methods=['POST', 'GET'])
 @login_required
-def registrar_default_dash():
-    change_period_form = ChangePeriodForm()
-    period = SemesterPeriod.query.first()
-    if change_period_form.validate_on_submit():
-        period.current_period = change_period_form.period.data
-        db.session.commit()
-        flash('Period changed successfully!', 'success')
-    
+def registrar_default_dash(): 
     if current_user.is_authenticated and current_user.type == "registrar":
+        change_period_form = ChangePeriodForm()
+        period = Period.query.first()
+        if change_period_form.validate_on_submit():
+            period.current_period = change_period_form.period.data
+            db.session.commit()
+            flash('Period changed successfully!', 'success')
         return render_template('registrar_dash.html', title='Registrar Dashboard', current_period=period)
     else:
         flash("You're not allowed to view that page!", 'danger')
@@ -264,19 +325,19 @@ def registrar_default_dash():
 @app.route("/registrar_default_dash/next_period", methods=['POST', 'GET'])
 @login_required
 def next_period():
-    semester_period = SemesterPeriod.query.first()
+    period = Period.query.first()
 
-    if semester_period.current_period == 'class set-up':
-        semester_period.current_period = 'course registration'
+    if period.current_period == 'class set-up':
+        period.current_period = 'course registration'
 
-    elif semester_period.current_period == 'course registration':
-        semester_period.current_period = 'class running'
+    elif period.current_period == 'course registration':
+        period.current_period = 'class running'
 
-    elif semester_period.current_period == 'class running':
-        semester_period.current_period = 'grading'
+    elif period.current_period == 'class running':
+        period.current_period = 'grading'
         
-    elif semester_period.current_period == 'grading':
-        semester_period.current_period = 'class set-up'
+    elif period.current_period == 'grading':
+        period.current_period = 'class set-up'
 
     db.session.commit()
     return redirect(url_for('registrar_default_dash'))   
@@ -285,118 +346,108 @@ def next_period():
 @app.route("/registrar_class_setup", methods=['POST', 'GET'])
 @login_required
 def registrar_class_setup():
-    create_course_form = CreateCourseForm()
     class_setup_form = ClassSetUpForm()
-    
-    if create_course_form.validate_on_submit():
-        course = Course(id=create_course_form.course_code.data, course_name=create_course_form.course_name.data.strip())
-        db.session.add(course)
-        db.session.commit()
-
-        flash('Course submitted successfully!', 'success')
-        return redirect(url_for('registrar_class_setup'))
 
     if class_setup_form.validate_on_submit():
-        start_time_data=class_setup_form.start_time.data
-        end_time_data=class_setup_form.end_time.data
-        overlap = False
-        possible_overlap_section = CourseSection.query.filter_by(instructor_id=class_setup_form.instructor_name.data.id,
-                                                                 day=class_setup_form.day.data).all()
-
-        if possible_overlap_section:
-            for section in possible_overlap_section:
-                if (((start_time_data >= section.start_time) and (start_time_data <= section.end_time)) or 
-                    ((end_time_data >= section.start_time) and (end_time_data <= section.end_time))):
-                    overlap = True
-
-        if start_time_data > end_time_data:
-            flash('Start time must be before end time', 'danger')
-        elif overlap:
-            flash('Overlapping section. Please double check instructor, times, and day', 'danger')
+        existing_course = Course.query.filter_by(id=class_setup_form.course_code.data).first()
+        if existing_course:
+            flash('Course already exists', 'warning')
         else:
-            current_semester = SemesterPeriod.query.first()
-            section = CourseSection(course_code=class_setup_form.course.data.id,
-                                    section_size=class_setup_form.class_size.data,
-                                    start_time=class_setup_form.start_time.data,
-                                    end_time=class_setup_form.end_time.data,
-                                    day=class_setup_form.day.data,
-                                    semester_id=current_semester.id,
-                                    instructor_id=class_setup_form.instructor_name.data.id)
+            start_time_data=class_setup_form.start_time.data
+            end_time_data=class_setup_form.end_time.data
+            overlap = False
+            possible_overlap_course = Course.query.filter_by(instructor_id=class_setup_form.instructor_name.data.id,
+                                                             day=class_setup_form.day.data).all()
 
-            db.session.add(section)
-            db.session.commit()
-            flash('Course submitted successfully!', 'success')
+            if possible_overlap_course:
+                for course in possible_overlap_course:
+                    if (((start_time_data >= course.start_time) and (start_time_data <= course.end_time)) or 
+                        ((end_time_data >= course.start_time) and (end_time_data <= course.end_time))):
+                        overlap = True
+
+            if start_time_data > end_time_data:
+                flash('Start time must be before end time', 'danger')
+            elif overlap:
+                flash('Overlapping section. Please double check instructor, times, and day', 'danger')
+            else:
+                course = Course(id=class_setup_form.course_code.data,
+                                course_name=class_setup_form.course_name.data.title(),
+                                capacity=class_setup_form.class_size.data,
+                                start_time=class_setup_form.start_time.data,
+                                end_time=class_setup_form.end_time.data,
+                                day=class_setup_form.day.data,
+                                instructor_id=class_setup_form.instructor_name.data.id)
+
+                db.session.add(course)
+                db.session.commit()
+                flash('Course submitted successfully!', 'success')
 
         return redirect(url_for('registrar_class_setup'))
 
-    return render_template('create_course_section.html', title='Class Set-up', create_course_form=create_course_form,  
-                                                                               class_setup_form=class_setup_form)
+    return render_template('create_course_section.html', title='Class Set-up', class_setup_form=class_setup_form)
 
 
 @app.route("/student_course_reg", methods=['POST', 'GET'])
 @login_required
 def student_course_reg():
     student_class_enroll_form = StudentClassEnrollForm()
-    section_results = None
+    course_results = None
     student = Student.query.filter_by(id=current_user.id).first()
-    sections_enrolled_query = student.courses_enrolled
+    courses_enrolled_query = student.courses_enrolled
     waitlist_joined_query = student.courses_waitlisted
-    current_semester_id = SemesterPeriod.query.first().semester_id
 
     if student_class_enroll_form.validate_on_submit():
         if student_class_enroll_form.class_name.data and student_class_enroll_form.instructor_name.data:
-            section_results = CourseSection.query.filter_by(course_code=student_class_enroll_form.class_name.data.id, 
-                                                            instructor_id=student_class_enroll_form.instructor_name.data.id,
-                                                            semester_id=current_semester_id).order_by(CourseSection.start_time).all()
+            course_results = Course.query.filter_by(id=student_class_enroll_form.class_name.data.id, 
+                                                    instructor_id=student_class_enroll_form.instructor_name.data.id,).order_by(Course.start_time).all()
         
         elif student_class_enroll_form.class_name.data:
-            section_results = CourseSection.query.filter_by(course_code=student_class_enroll_form.class_name.data.id,
-                                                            semester_id=current_semester_id).order_by(CourseSection.start_time).all()
+            course_results = Course.query.filter_by(id=student_class_enroll_form.class_name.data.id).order_by(Course.start_time).all()
 
         elif student_class_enroll_form.instructor_name.data:
-            section_results = CourseSection.query.filter_by(instructor_id=student_class_enroll_form.instructor_name.data.id,
-                                                            semester_id=current_semester_id).order_by(CourseSection.start_time).all()
+            course_results = Course.query.filter_by(instructor_id=student_class_enroll_form.instructor_name.data.id).order_by(Course.start_time).all()
 
         else:
-            section_results = CourseSection.query.filter_by(semester_id=current_semester_id).order_by(CourseSection.start_time).all()
+            course_results = Course.query.order_by(Course.start_time).all()
         
     return render_template('enroll.html', title='Student Course Registration', form=student_class_enroll_form, 
-                                                                               section_results=section_results,
-                                                                               sections_enrolled=sections_enrolled_query,
+                                                                               course_results=course_results,
+                                                                               courses_enrolled=courses_enrolled_query,
                                                                                waitlist_joined=waitlist_joined_query)
 
 
 @app.route("/student_course_reg/<int:index>", methods=['POST', 'GET'])
 @login_required
-def student_section_enroll(index):
+def student_course_enroll(index):
     overlap = False
-    section = CourseSection.query.filter_by(id=index).first()
-    course_already_taken = StudentCourseEnrollment.query.filter(StudentCourseEnrollment.section.has(course_code=section.course_code)).first()
+    course = Course.query.filter_by(id=index).first()
+    student = Student.query.filter_by(id=current_user.id).first()
+    course_already_taken = student.courses_enrolled.filter(StudentCourseEnrollment.course.has(id=course.id)).first()
 
-    possible_overlap_sections = StudentCourseEnrollment.query.filter(StudentCourseEnrollment.student_id==current_user.id,
-                                                                     StudentCourseEnrollment.section.has(day=section.day),
-                                                                     or_(StudentCourseEnrollment.grade == None,    
-                                                                         StudentCourseEnrollment.grade == 'F')) \
-                                                             .join(CourseSection).order_by(CourseSection.start_time).all()
+    possible_overlap_courses = StudentCourseEnrollment.query.filter(StudentCourseEnrollment.student_id==current_user.id,
+                                                                    StudentCourseEnrollment.course.has(day=course.day),
+                                                                    or_(StudentCourseEnrollment.grade == None,    
+                                                                        StudentCourseEnrollment.grade == 'F')) \
+                                                            .join(Course).order_by(Course.start_time).all()
 
-    if possible_overlap_sections:
-            for s in possible_overlap_sections:
-                if (((section.start_time >= s.section.start_time) and (section.start_time <= s.section.end_time)) or 
-                    ((section.end_time >= s.section.start_time) and (section.end_time <= s.section.end_time))):
+    if possible_overlap_courses:
+            for c in possible_overlap_courses:
+                if (((course.start_time >= c.course.start_time) and (course.start_time <= c.course.end_time)) or 
+                    ((course.end_time >= c.course.start_time) and (course.end_time <= c.course.end_time))):
                     overlap=True
 
     if StudentCourseEnrollment.query.filter_by(student_id=current_user.id, grade=None).count() >= 3:
         flash('Already enrolled in 4 courses. Cannot enroll in anymore', 'warning')
     elif course_already_taken:
-        flash('Already taken or enrolled in course. Please choose a different one', 'warning')
+        flash('Already taken or currently enrolled in course. Please choose a different one', 'warning')
     elif overlap:
         flash("Can't enroll in course. Time conflicts with another course.", 'warning')
     else:
-        student_section_enrollment = StudentCourseEnrollment(student_id=current_user.id, course_section_id=index)
-        section_enrollment_count = StudentCourseEnrollment.query.filter_by(course_section_id=index).count()
+        student_section_enrollment = StudentCourseEnrollment(student_id=current_user.id, course_id=index)
+        course_enrollment_count = StudentCourseEnrollment.query.filter_by(course_id=index).count()
 
-        if section_enrollment_count >= (section.section_size - 1):
-            section.is_full = True    
+        if course_enrollment_count >= (course.capacity - 1):
+            course.is_full = True    
 
         db.session.add(student_section_enrollment)
         db.session.commit()
@@ -407,7 +458,7 @@ def student_section_enroll(index):
 @app.route("/join_waitlist/<int:index>", methods=['POST', 'GET'])
 @login_required
 def join_waitlist(index):
-    student_section_waitlisted = Waitlist(student_id=current_user.id, course_section_id=index)
+    student_section_waitlisted = Waitlist(student_id=current_user.id, course_id=index)
     db.session.add(student_section_waitlisted)
     db.session.commit()
     flash('Waitlist joined', 'success')
@@ -425,14 +476,23 @@ def view_courses():
     return render_template('view_courses.html', title='View Courses')
 
 
+def issue_warning(user_id, warning):
+    warning = Warning(user_id=user_id, warning=warning)
+    db.session.add(warning)
+    db.session.commit()
+
+
 @app.route("/warned_stu_instr", methods=['POST', 'GET'])
 @login_required
 def warned_stu_instr():
     warning_form = WarningForm()
     if warning_form.validate_on_submit():
+        issue_warning(warning_form.warned_user.data.id, warning_form.warning_text.data)
+        '''
         warning = Warning(user_id=warning_form.warned_user.data.id, warning=warning_form.warning_text.data)
         db.session.add(warning)
         db.session.commit()
+        '''
         flash('Warning created successfully!', 'success')
     return render_template('warned_stu_instr.html', title='Warnings', form=warning_form)
 
@@ -459,9 +519,7 @@ def student_graduation():
     if courses_passed < 8:
         flash('Have not passed 8 courses yet. Warning issued', 'danger')
         warning_message = 'Reckless graduation application'
-        warning = Warning(user_id=current_user.id, warning=warning_message)
-        db.session.add(warning)
-        db.session.commit()
+        issue_warning(current_user.id, warning_message)
     else:
         flash("Graduation application successfully submitted!", 'success')
     
@@ -612,16 +670,6 @@ def instructor_complaint():
 
 
 #------------------------------------------------------------------------------------
-@app.route("/<name>")
-@login_required
-def user(name):
-    return f"Hello {name}!"
-
-
-@app.route("/admin")
-@login_required
-def admin():
-    return 'admin'
 
 
 @app.route("/logout")

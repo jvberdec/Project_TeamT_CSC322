@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+    <a class="nav-item nav-link" href="{{url_for('statistics_page')}}">Statistics</a>
+    <a class="nav-item nav-link" href="{{url_for('student_dash')}}">Dashboard</a>
+    <a class="nav-item nav-link" href="{{url_for('logout')}}">Sign Out</a>
+{% endblock %}
+
+{% block content %}
+<div class="container marketing">
+    <div class="animate__animated animate__fadeIn animate__slow text-center mt-5 mb-5">
+        <i class="fas fa-exclamation-circle fa-3x"></i>
+        <h1 class="font-weight-bolder">Course Review Form</h1>
+    </div>
+
+    <form method="POST" class="card bg-blur p-3 mt-3" style="border-radius: 10px; width: 50%; margin: 0 auto;">
+      {{ form.hidden_tag() }}
+      <fieldset class="form-group">
+            {% for field in form %}
+                {% if (field.type != 'SubmitField') and (field.type != 'CSRFTokenField') %}
+                    <div class="form-group">
+                        {{ field.label(class="form-control-label") }}
+                        {% if field.errors %}
+                            {{ field(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in field.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ field(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+      </fieldset>
+      <div class="form-group">
+        {{ form.submit(class="btn btn-lg text-white bg-ebony") }}
+      </div>
+    </form>
+</div>
+{% endblock content %}
