@@ -194,6 +194,7 @@ def statistics_page():
 @login_required
 def student_dash():
     if current_user.is_authenticated and current_user.type == "student":
+        period = SemesterPeriod.query.first()
         student = Student.query.filter_by(id=current_user.id).first()
         courses_taken = student.courses_enrolled.filter(StudentCourseEnrollment.grade != None).all()
         current_courses = student.courses_enrolled.filter(StudentCourseEnrollment.grade == None).all()
@@ -203,7 +204,8 @@ def student_dash():
                                title='Student Dashboard', 
                                courses_taken=courses_taken, 
                                current_courses=current_courses,
-                               warnings=warnings)
+                               warnings=warnings,
+                               current_period=period)
     else:
         flash("You're not allowed to view that page!", 'danger')
         return redirect(url_for('home'))
@@ -213,11 +215,16 @@ def student_dash():
 @login_required
 def instructor_dash():
     if current_user.is_authenticated and current_user.type == "instructor":
+        period = SemesterPeriod.query.first()
         semester_period = SemesterPeriod.query.first()
         current_semester_id = semester_period.semester_id
         instructor = Instructor.query.filter_by(id=current_user.id).first()
 
-        return render_template('instructor_dash.html', title='Instructor Dashboard', instructor_sections=instructor.sections, current_semester_id=current_semester_id)
+        return render_template('instructor_dash.html', 
+                               title='Instructor Dashboard', 
+                               instructor_sections=instructor.sections, 
+                               current_semester_id=current_semester_id,
+                               current_period=period)
 
     else:
         flash("You're not allowed to view that page!", 'danger')
@@ -248,10 +255,31 @@ def registrar_default_dash():
         flash('Period changed successfully!', 'success')
     
     if current_user.is_authenticated and current_user.type == "registrar":
-        return render_template('registrar_dash.html', title='Registrar Dashboard', form=change_period_form, current_period=period)
+        return render_template('registrar_dash.html', title='Registrar Dashboard', current_period=period)
     else:
         flash("You're not allowed to view that page!", 'danger')
-        return redirect(url_for('home'))         
+        return redirect(url_for('home'))      
+
+
+@app.route("/registrar_default_dash/next_period", methods=['POST', 'GET'])
+@login_required
+def next_period():
+    semester_period = SemesterPeriod.query.first()
+
+    if semester_period.current_period == 'class set-up':
+        semester_period.current_period = 'course registration'
+
+    elif semester_period.current_period == 'course registration':
+        semester_period.current_period = 'class running'
+
+    elif semester_period.current_period == 'class running':
+        semester_period.current_period = 'grading'
+        
+    elif semester_period.current_period == 'grading':
+        semester_period.current_period = 'class set-up'
+
+    db.session.commit()
+    return redirect(url_for('registrar_default_dash'))   
 
 
 @app.route("/registrar_class_setup", methods=['POST', 'GET'])

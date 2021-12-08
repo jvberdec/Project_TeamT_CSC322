@@ -14,7 +14,7 @@
                 <div class="animate__animated animate__bounce animate__fast card bg-blur shadow-lg welcome-card p-3">
                     <div class="card-heading">
                         <h1 class="text-center text-white">Registrar Dashboard</h1>
-                        <h4 class="text-center">Currently in the {{ current_period }} Period</h3>
+                        <h4 class="text-center">Currently in the {{ current_period }} Period</h4>
                         <h4 class="text-center text-white">___________</h4>
                     </div>
                 </div>
@@ -31,27 +31,13 @@
                     <i class="fas fa-exchange-alt fa-3x"></i>
                     <h1 class="display-4">Change Period</h1>
                 </div>
-                <form method="POST" class="card bg-blur p-3 mt-3" style="border-radius: 10px; width: 50%; margin: 0 auto;">
-                    {{ form.hidden_tag() }}
-                    <fieldset class="form-group">
-                        <div class="form-group">
-                            {{ form.period.label(class="form-control-label") }}
-                            {% if form.period.errors %}
-                                {{ form.period(class="form-control form-control-lg is-invalid") }}
-                                <div class="invalid-feedback">
-                                    {% for error in form.period.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                {{ form.period(class="form-control form-control-lg") }}
-                            {% endif %}
-                        </div>
-                    </fieldset>
-                    <div class="form-group">
-                        {{ form.submit(class="btn btn-lg text-white bg-ebony") }}
+                <div class="card text-white card_border bg-ebony mx-auto mb-3" style="width: 18rem;">
+                    <div class="card-body">
+                    <h5 class="card-title text-center">
+                        <a href="/registrar_default_dash/next_period" class="btn text-white"><strong>Move To Next Period</strong></a>              
+                    </h5>               
                     </div>
-                </form>
+                </div>
             </div>
         </div>
 
