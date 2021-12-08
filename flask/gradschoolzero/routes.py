@@ -280,17 +280,34 @@ def review_course(index):
 @login_required
 def instructor_dash():
     if current_user.is_authenticated and current_user.type == "instructor":
-        period = SchoolInfo.query.first()
+        school_info = SchoolInfo.query.first()
         instructor = Instructor.query.filter_by(id=current_user.id).first()
 
         return render_template('instructor_dash.html', 
                                title='Instructor Dashboard', 
                                instructor_courses=instructor.courses, 
-                               current_period=period)
+                               school_info=school_info)
 
     else:
         flash("You're not allowed to view that page!", 'danger')
         return redirect(url_for('home'))
+
+
+@app.route("/instructor_dash/submit_grade/<int:index>", methods=['POST', 'GET'])
+@login_required
+def submit_grade(index):
+    if request.method == 'POST':
+        grade = request.form['grade']
+        grade = grade.upper()
+        if grade not in ['A', 'B', 'C', 'D', 'F']:
+            flash("Invalid grade. Letter grade must be one of the following: 'A', 'B', 'C', 'D', or 'F'.", 'warning')
+        else:
+            student_course_enrolled = StudentCourseEnrollment.query.filter_by(id=index).first()
+            student_course_enrolled.grade = grade
+            db.session.commit()
+            flash('Grade successfully submitted', 'success')
+
+    return redirect(url_for('instructor_dash'))
 
 
 @app.route("/instructor_dash/accept_from_waitlist/<int:index>", methods=['POST', 'GET'])
@@ -663,10 +680,6 @@ def instructor_complaint():
         db.session.commit()
         flash('Complaint created successfully!', 'success')
     return render_template('instructor_complaint.html', title='Instructor Complaint', form=instructor_complaint_form)
-
-
-
-#------------------------------------------------------------------------------------
 
 
 @app.route("/logout")

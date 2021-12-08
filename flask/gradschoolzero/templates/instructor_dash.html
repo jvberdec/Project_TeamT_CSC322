@@ -17,7 +17,7 @@
               <div class="animate__animated animate__bounce animate__fast card bg-blur shadow-lg welcome-instructor-card p-3">
                   <div class="card-heading">
                       <h1 class="text-center text-white">Instructor Dashboard</h1>
-                      <h4 class="text-center">Currently in the {{ current_period }} Period</h4>
+                      <h4 class="text-center">Currently in the {{ school_info }} Period</h4>
                       <h4 class="text-center text-white">___________</h4>
                   </div>
               </div>
@@ -47,15 +47,22 @@
             <div id="collapse{{course.id}}" class="collapse" aria-labelledby="heading{{course.id}}" data-parent="#accordionExample">
                 <div class="card-body bg-ebony text-white">
                     {% for student_enrolled in course.students_enrolled %}
-                        <li class="d-flex justify-content-between align-items-center">
-                            <span class="text-ebony mb-1">{{student_enrolled.student}}</span>
-                            <div class="mb-1">
-                                <form method="POST" action="#">
-                                    <input type="text" class="text-box" name="grade" id="grade" style="margin: 1px;" placeholder="Grade">
-                                    <input type="button" value="Assign Grade" name="gradeSubmit" id="gradeSubmit" class="btn text-ebony bg-white" style="margin: 1px;">
-                                </form>
-                            </div>
-                        </li>
+                        {% if student_enrolled.semester == school_info.current_semester %}
+                            <li class="d-flex justify-content-between align-items-center">
+                                <span class="text-ebony mb-1">{{student_enrolled.student}}</span>
+                                {% if student_enrolled.grade is none %}
+                                    <div class="mb-1">
+                                        <form method="POST" action="/instructor_dash/submit_grade/{{student_enrolled.id}}">
+                                            <input type="text" class="text-box" name="grade" id="grade" style="margin: 1px;" placeholder="Grade">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </form>
+                                    </div>
+                                {% else %}
+                                    <span class="text-ebony mb-1">{{student_enrolled.grade}}</span>
+                                {% endif %}                                    
+                                
+                            </li>
+                        {% endif %}
                     {% endfor %}
                     
                     {% if course.students_waitlisted %}

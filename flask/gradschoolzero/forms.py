@@ -50,7 +50,7 @@ class ClassSetUpForm(FlaskForm):
     start_time = TimeField('Start Time (Hours:Minutes)', format='%H:%M', validators=[DataRequired()])
     end_time = TimeField('End Time (Hours:Minutes)', format='%H:%M', validators=[DataRequired()])
     day = SelectField('Day', choices=days_list)
-    submit = SubmitField('Create Section')
+    submit = SubmitField('Create Course')
 
 
 class ChangePeriodForm(FlaskForm):
