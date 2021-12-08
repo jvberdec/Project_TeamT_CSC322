@@ -420,13 +420,25 @@ def warned_stu_instr():
 def registrar_grading_period():
     return render_template('course_grading.html', title='Class Running')
 
-@app.route("/student_graduation")
+
+@app.route("/student_dash/student_graduation")
 @login_required
 def student_graduation():
-    student_graduation_form = StudentGraduationForm()
-    if student_graduation_form.validate_on_submit():
-        flash("Form submitted successfully! You'll be notified with a decision. ", 'success')
-    return render_template('graduation_form.html', title='Graduation Form', form=student_graduation_form)
+    courses_passed = StudentCourseEnrollment.query.filter(StudentCourseEnrollment.student_id==current_user.id, 
+                                                          StudentCourseEnrollment.grade!=None,
+                                                          StudentCourseEnrollment.grade!='F',
+                                                          StudentCourseEnrollment.grade!='W').count()
+    if courses_passed < 8:
+        flash('Have not passed 8 courses yet. Warning issued', 'danger')
+        warning_message = 'Reckless graduation application'
+        warning = Warning(user_id=current_user.id, warning=warning_message)
+        db.session.add(warning)
+        db.session.commit()
+    else:
+        flash("Graduation application successfully submitted!", 'success')
+    
+    return redirect(url_for('student_dash'))
+
 
 @app.route("/registrar_view_applicants")
 @login_required
