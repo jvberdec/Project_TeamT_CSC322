@@ -211,7 +211,7 @@ class CourseReview(db.Model):
 
 class Complaint(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    comlaint = db.Column(db.Text, nullable=False)
+    complaint = db.Column(db.Text, nullable=False)
     date_filed = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     complainee_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     filer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

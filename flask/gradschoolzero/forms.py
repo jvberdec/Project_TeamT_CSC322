@@ -85,25 +85,6 @@ def all_sections():
 
 
 class StudentClassEnrollForm(FlaskForm):
-    #these lists will have to be populated from the database
-    class_list = [  ('science', 'Science'),
-                    ('math', 'Math'),
-                    ('cs_science', 'Computer Science'),
-                    ('English', 'English'),
-                    ('philosophy', 'Philosophy'),
-                ]
-
-    instructor_list = [  ('bob_builder', 'Bob Builder'),
-                        ('bobby_brown', 'Bobby Brown'),
-                        ('bobby_bobby', 'Bobby Bobby'),
-                        ('bob_bob', 'Bob Bob'),
-                        ('builder_bob', 'Builder Bob'),
-                    ]
-
-    section_list = [    ('section_a', 'Section A (11-12pm)'),
-                        ('section_b', 'Section B (2-3:40pm)'),
-                        ('section_c', 'Section C (5-6:30pm)'),
-                    ]
     class_name = QuerySelectField('Course Name', query_factory=all_courses, allow_blank=True)
     instructor_name = QuerySelectField('Instructor Name', query_factory=all_instructors, allow_blank=True)
     #section_name = QuerySelectField('Section', validators=[DataRequired()], query_factory=all_sections)
@@ -120,29 +101,16 @@ class WarningForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class ComplaintForm(FlaskForm):
-    username = StringField('Your Username', validators=[DataRequired(), Length(min=2, max=20)])
     complaint_text = TextAreaField('Complaint Text', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 
 class StudentComplaintForm(ComplaintForm):
-    instructor_list = [  ('bob_builder', 'Bob Builder'),
-                        ('bobby_bobby', 'Bobby Bobby'),
-                        ('bob_bob', 'Bob Bob'),
-                        ('builder_bob', 'Builder Bob'),
-                    ]
+    complainee_username = StringField('Complainee username', validators=[DataRequired(), Length(min=2, max=20)])
+    user_type = SelectField(u"User type of person you're complaining about", 
+                            choices=[('student', 'Student'), ('instructor', 'Instructor')], 
+                            validators=[DataRequired()])
 
-    student_list = [  ('student1', 'Student1'),
-                        ('student2', 'Student2'),
-                        ('Student3', 'Student3'),      
-                    ]
-
-    instructor_list.extend(student_list)
-    all_users = instructor_list[:]
-
-    complaint_name = SelectField("Name of person you're complaining about", choices=all_users, validators=[DataRequired(), Length(min=2, max=20)])
-    user_type = SelectField(u"User type of person you're complaining about", choices=[('student', 'Student'), ('instructor', 'Instructor')], 
-                                                                             validators=[DataRequired()])
 
 class InstructorComplaintForm(ComplaintForm):
     student_list = [  ('student1', 'Student1'),

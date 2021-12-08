@@ -539,12 +539,25 @@ def student_app_delete(index):
         db.session.commit()
         return redirect(url_for('registrar_view_applicants'))
 
-@app.route("/student_complaint")
+@app.route("/student_complaint", methods=['POST', 'GET'])
 @login_required
 def student_complaint():
     student_complaint_form = StudentComplaintForm()
     if student_complaint_form.validate_on_submit():
-        flash('Complaint created successfully!', 'success')
+        complainee_user = User.query.filter_by(username=student_complaint_form.complainee_username.data, 
+                                               type=student_complaint_form.user_type.data).first()
+        if not complainee_user:
+            flash('Input data does not match our records. Please double check', 'warning')
+        elif complainee_user.id == current_user.id:
+            flash('Cannot file complaint against yourself', 'warning')
+        else:
+            complaint = Complaint(complaint=student_complaint_form.complaint_text.data,
+                                  complainee_id=complainee_user.id,
+                                  filer_id=current_user.id)
+            db.session.add(complaint)
+            db.session.commit()
+            flash('Complaint filed successfully. Registrar will review.', 'success')
+        
     return render_template('student_complaint.html', title='Student Complaint', form=student_complaint_form)
 
 
