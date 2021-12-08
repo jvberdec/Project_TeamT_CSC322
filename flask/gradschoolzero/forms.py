@@ -4,7 +4,7 @@ from wtforms import StringField, DecimalField, PasswordField, SubmitField
 from wtforms import BooleanField, SelectField, DateField, TimeField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, NumberRange, ValidationError, EqualTo
 from wtforms_sqlalchemy.fields import QuerySelectField
-from gradschoolzero.models import Applicant, User, Course, Instructor
+from gradschoolzero.models import Applicant, User, Course, Instructor, Student
 
 
 class ApplicationForm(FlaskForm):
@@ -92,12 +92,12 @@ class StudentComplaintForm(ComplaintForm):
                             validators=[DataRequired()])
 
 
+def all_students():
+    return Student.query.order_by(Student.first_name)
+
+
 class InstructorComplaintForm(ComplaintForm):
-    student_list = [  ('student1', 'Student1'),
-                        ('student2', 'Student2'),
-                        ('Student3', 'Student3'),
-                    ]
-    complaint_name = SelectField("Name of person you're complaining about", choices=student_list, validators=[DataRequired(), Length(min=2, max=20)])
+    student = QuerySelectField('Student Name', validators=[DataRequired()], query_factory=all_students)
 
 
 class StudentGraduationForm(FlaskForm):

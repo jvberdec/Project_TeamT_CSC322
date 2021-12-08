@@ -14,51 +14,29 @@
     </div>
 
     <form method="POST" class="card bg-blur p-3 mt-3" style="border-radius: 10px; width: 50%; margin: 0 auto;">
-      {{ form.hidden_tag() }}
-      <fieldset class="form-group">
-          <div class="form-group">
-              {{ form.username.label(class="form-control-label") }}
-              {% if form.username.errors %}
-                  {{ form.username(class="form-control form-control-lg is-invalid") }}
-                  <div class="invalid-feedback">
-                      {% for error in form.username.errors %}
-                          <span>{{ error }}</span>
-                      {% endfor %}
-                  </div>
-              {% else %}
-                  {{ form.username(class="form-control form-control-lg") }}
-              {% endif %}
-          </div>
-          <div class="form-group">
-            {{ form.complaint_name.label(class="form-control-label") }}
-            {% if form.complaint_name.errors %}
-                {{ form.complaint_name(class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.complaint_name.errors %}
-                        <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-            {% else %}
-                {{ form.complaint_name(class="form-control form-control-lg") }}
-            {% endif %}
-          </div>
-          <div class="form-group">
-              {{ form.complaint_text.label(class="form-control-label") }}
-              {% if form.complaint_text.errors %}
-                  {{ form.complaint_text(class="form-control form-control-lg is-invalid") }}
-                  <div class="invalid-feedback">
-                      {% for error in form.complaint_text.errors %}
-                          <span>{{ error }}</span>
-                      {% endfor %}
-                  </div>
-              {% else %}
-                  {{ form.complaint_text(class="form-control form-control-lg") }}
-              {% endif %}
-          </div>
-      </fieldset>
-      <div class="form-group">
-        {{ form.submit(class="btn btn-lg text-white bg-ebony") }}
-      </div>
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            {% for field in form %}
+                {% if (field.type != 'SubmitField') and (field.type != 'CSRFTokenField') %}
+                    <div class="form-group">
+                        {{ field.label(class="form-control-label") }}
+                        {% if field.errors %}
+                            {{ field(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in field.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ field(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-lg text-white bg-ebony") }}
+        </div>
     </form>
 </div>
 {% endblock content %}

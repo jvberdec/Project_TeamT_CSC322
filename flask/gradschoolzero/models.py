@@ -8,13 +8,15 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-class Period(db.Model):
-    __tablename__ = 'semester_period'
+class SchoolInfo(db.Model):
+    __tablename__ = 'school_info'
     id = db.Column(db.Integer, primary_key=True)
-    current_period = db.Column(db.String(20), nullable=False, default='class set-up')
+    current_period = db.Column(db.String(20), nullable=False)
+    capacity = db.Column(db.Integer, nullable=False)
+    current_semester = db.Column(db.String(11), nullable=False)
 
     def __repr__(self):
-        return f'Period({self.current_period}, {self.semester_id})'
+        return f'Period({self.current_period}, {self.capacity})'
 
     def __str__(self):
         return f"{self.current_period.replace('_', ' ').title()}"
@@ -119,6 +121,7 @@ class Course(db.Model):
     is_full = db.Column(db.Boolean, nullable=False, default=False)
     instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id'), nullable=False)
     avg_rating = db.Column(db.Float)
+    avg_gpa = db.Column(db.Float)
     
     instructor = db.relationship('Instructor', back_populates='courses')
     students_enrolled = db.relationship('StudentCourseEnrollment', back_populates='course')
@@ -137,12 +140,13 @@ class StudentCourseEnrollment(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
     grade = db.Column(db.String(1))
+    semester = db.Column(db.String(11), nullable=False)
 
     student = db.relationship('Student', back_populates='courses_enrolled')
     course = db.relationship('Course', back_populates='students_enrolled')
 
     def __repr__(self):
-        return f'StudentCourseEnrollment({self.student_id}, {self.course_id}, {self.grade})'
+        return f'StudentCourseEnrollment({self.student_id}, {self.course_id}, {self.grade}, {self.semester})'
 
 
 class Waitlist(db.Model):

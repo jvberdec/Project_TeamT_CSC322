@@ -194,7 +194,7 @@ def statistics_page():
 @login_required
 def student_dash():
     if current_user.is_authenticated and current_user.type == "student":
-        period = Period.query.first()
+        period = SchoolInfo.query.first()
         student = Student.query.filter_by(id=current_user.id).first()
         courses_taken = student.courses_enrolled.filter(StudentCourseEnrollment.grade != None).all()
         current_courses = student.courses_enrolled.filter(StudentCourseEnrollment.grade == None).all()
@@ -214,14 +214,14 @@ def student_dash():
 @app.route("/student_dash/drop_section/<int:index>", methods=['POST', 'GET'])
 @login_required
 def drop_section(index):
-    current_period = Period.query.first().current_period
-    section = StudentCourseEnrollment.query.filter_by(id=index).first()
+    current_period = SchoolInfo.query.first().current_period
+    course_enrolled = StudentCourseEnrollment.query.filter_by(id=index).first()
 
     if current_period == 'course registration':
-        db.session.delete(section)
+        db.session.delete(course_enrolled)
         db.session.commit()
     elif current_period == 'course running':
-        section.grade = 'W'
+        course_enrolled.grade = 'W'
         db.session.commit()
 
     return redirect(url_for('student_dash'))
@@ -280,7 +280,7 @@ def review_course(index):
 @login_required
 def instructor_dash():
     if current_user.is_authenticated and current_user.type == "instructor":
-        period = Period.query.first()
+        period = SchoolInfo.query.first()
         instructor = Instructor.query.filter_by(id=current_user.id).first()
 
         return render_template('instructor_dash.html', 
@@ -311,7 +311,7 @@ def accept_from_waitlist(index):
 def registrar_default_dash(): 
     if current_user.is_authenticated and current_user.type == "registrar":
         change_period_form = ChangePeriodForm()
-        period = Period.query.first()
+        period = SchoolInfo.query.first()
         if change_period_form.validate_on_submit():
             period.current_period = change_period_form.period.data
             db.session.commit()
@@ -325,19 +325,19 @@ def registrar_default_dash():
 @app.route("/registrar_default_dash/next_period", methods=['POST', 'GET'])
 @login_required
 def next_period():
-    period = Period.query.first()
+    school_info = SchoolInfo.query.first()
 
-    if period.current_period == 'class set-up':
-        period.current_period = 'course registration'
+    if school_info.current_period == 'class set-up':
+        school_info.current_period = 'course registration'
 
-    elif period.current_period == 'course registration':
-        period.current_period = 'class running'
+    elif school_info.current_period == 'course registration':
+        school_info.current_period = 'class running'
 
-    elif period.current_period == 'class running':
-        period.current_period = 'grading'
+    elif school_info.current_period == 'class running':
+        school_info.current_period = 'grading'
         
-    elif period.current_period == 'grading':
-        period.current_period = 'class set-up'
+    elif school_info.current_period == 'grading':
+        school_info.current_period = 'class set-up'
 
     db.session.commit()
     return redirect(url_for('registrar_default_dash'))   
@@ -443,7 +443,8 @@ def student_course_enroll(index):
     elif overlap:
         flash("Can't enroll in course. Time conflicts with another course.", 'warning')
     else:
-        student_section_enrollment = StudentCourseEnrollment(student_id=current_user.id, course_id=index)
+        current_semester = SchoolInfo.query.first().current_semester
+        student_section_enrollment = StudentCourseEnrollment(student_id=current_user.id, course_id=index, semester=current_semester)
         course_enrollment_count = StudentCourseEnrollment.query.filter_by(course_id=index).count()
 
         if course_enrollment_count >= (course.capacity - 1):
@@ -465,11 +466,6 @@ def join_waitlist(index):
     return redirect(url_for('student_course_reg'))
 
 
-# @app.route("/registrar_course_reg")
-# #@login_required
-# def registrar_course_reg():
-#     return render_template('course_reg.html', title='Class Registration')
-
 @app.route("/view_courses")
 @login_required
 def view_courses():
@@ -488,11 +484,6 @@ def warned_stu_instr():
     warning_form = WarningForm()
     if warning_form.validate_on_submit():
         issue_warning(warning_form.warned_user.data.id, warning_form.warning_text.data)
-        '''
-        warning = Warning(user_id=warning_form.warned_user.data.id, warning=warning_form.warning_text.data)
-        db.session.add(warning)
-        db.session.commit()
-        '''
         flash('Warning created successfully!', 'success')
     return render_template('warned_stu_instr.html', title='Warnings', form=warning_form)
 
@@ -659,11 +650,17 @@ def student_complaint():
     return render_template('student_complaint.html', title='Student Complaint', form=student_complaint_form)
 
 
-@app.route("/instructor_complaint")
+@app.route("/instructor_complaint", methods=['POST', 'GET'])
 @login_required
 def instructor_complaint():
     instructor_complaint_form = InstructorComplaintForm()
     if instructor_complaint_form.validate_on_submit():
+        print(instructor_complaint_form.student.data.id)
+        instructor_complaint = Complaint(complaint=instructor_complaint_form.complaint_text.data,
+                                         complainee_id=instructor_complaint_form.student.data.id,
+                                         filer_id=current_user.id)
+        db.session.add(instructor_complaint)
+        db.session.commit()
         flash('Complaint created successfully!', 'success')
     return render_template('instructor_complaint.html', title='Instructor Complaint', form=instructor_complaint_form)
 
