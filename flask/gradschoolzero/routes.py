@@ -227,11 +227,6 @@ def drop_section(index):
 
     return redirect(url_for('student_dash'))
 
-@app.route("/statistics2")
-def statistics2():
-    return render_template('statistics_page2.html') 
-
-
 def replace(match):
     word = match.group()
     censor_words = CensorWord.query.all()
