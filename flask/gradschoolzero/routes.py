@@ -184,18 +184,24 @@ def instructor_app():
 
     return render_template('instructor_app.html', title='Instructor Application', form=instructor_app_form)
 
-@app.route("/statistics_page", methods=['POST', 'GET'])
+@app.route("/statistics_page")
 def statistics_page():
-    if request.method == 'POST':
-        return redirect(url_for('index'))
-    return render_template("statistics_page.html")
+    highest_rated = Course.query.filter(Course.avg_rating != None).order_by(Course.avg_rating.desc()).limit(5).all()
+    lowest_rated = Course.query.filter(Course.avg_rating != None).order_by(Course.avg_rating).limit(5).all()
+    top_students = Student.query.order_by(Student.gpa.desc()).limit(5).all()
+    reviews = CourseReview.query.filter(CourseReview.taboo_word_count <= 2).all()
+    return render_template("statistics_page.html", 
+                           highest_rated=highest_rated, 
+                           lowest_rated=lowest_rated, 
+                           top_students=top_students, 
+                           reviews=reviews)
 
 
 @app.route("/student_dash", methods=['POST', 'GET'])
 @login_required
 def student_dash():
     if current_user.is_authenticated and current_user.type == "student":
-        period = SchoolInfo.query.first()
+        school_info = SchoolInfo.query.first()
         student = Student.query.filter_by(id=current_user.id).first()
         courses_taken = student.courses_enrolled.filter(StudentCourseEnrollment.grade != None).all()
         current_courses = student.courses_enrolled.filter(StudentCourseEnrollment.grade == None).all()
@@ -206,7 +212,8 @@ def student_dash():
                                courses_taken=courses_taken, 
                                current_courses=current_courses,
                                warnings=warnings,
-                               current_period=period)
+                               school_info=school_info,
+                               student=student)
     else:
         flash("You're not allowed to view that page!", 'danger')
         return redirect(url_for('home'))
@@ -241,6 +248,7 @@ def drop_section(index):
         db.session.commit()
 
     return redirect(url_for('student_dash'))
+
 
 def replace(match):
     word = match.group()
@@ -301,7 +309,7 @@ def instructor_dash():
 
         return render_template('instructor_dash.html', 
                                title='Instructor Dashboard', 
-                               instructor_courses=instructor.courses, 
+                               instructor_courses=instructor.courses.all(), 
                                school_info=school_info,
                                warnings=warnings)
 
@@ -379,6 +387,19 @@ def change_capacity():
     return redirect(url_for('registrar_default_dash'))
 
 
+@app.route("/registrar_default_dash/add_censor_word/", methods=['POST', 'GET'])
+@login_required
+def add_censor_word():
+    if request.method == 'POST':
+        censor_word = request.form['censorWord']
+        censor_word = censor_word.strip().lower()
+        taboo_word = CensorWord(word=censor_word)
+        db.session.add(taboo_word)
+        db.session.commit()
+        print(censor_word)
+    return redirect(url_for('registrar_default_dash'))
+
+
 def calculate_gpa(student_course_enrollment_grade):
     points = 0
     grade_dict = {'A': 4,
@@ -408,7 +429,7 @@ def next_period():
 
     elif school_info.current_period == 'course registration':
         school_info.current_period = 'class running'
-        courses = Course.query.all()
+        courses = Course.query.filter(Course.status != 'NOT SET').all()
         for course in courses:
             # Checks if course enrollment is < 5.
             # if it is, then the course is canceled
@@ -457,10 +478,10 @@ def next_period():
         
         grade_list = ['A', 'B', 'C', 'D', 'F']
 
-        # issues warning to iunstructor if grading deadline missed
+        # issues warning to instructor if grading deadline missed
         instructors = Instructor.query.filter_by(status='GOOD STANDING').all()
         for instructor in instructors:
-            assigned_courses = instructor.courses
+            assigned_courses = instructor.courses.all()
             missed_grading_deadline = False
             for course in assigned_courses:
                 no_grade = course.students_enrolled.filter_by(semester=school_info.current_semester, grade=None).first()
@@ -533,7 +554,7 @@ def next_period():
         
         current_semester = str(year) + season
         school_info.current_semester = current_semester
-        courses = Course.query.filter(Course.status != 'NOT SET')
+        courses = Course.query.filter(Course.status != 'NOT SET').all()
         for course in courses:
             course.status = 'NOT SET'
         

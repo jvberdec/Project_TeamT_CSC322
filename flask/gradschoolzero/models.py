@@ -98,7 +98,7 @@ class Instructor(User):
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     discipline = db.Column(db.String(20), nullable=False)
 
-    courses = db.relationship('Course', back_populates='instructor')
+    courses = db.relationship('Course', back_populates='instructor', lazy='dynamic')
 
     def __repr__(self):
         return f'Instructor({self.username}, {self.email}, {self.first_name}, {self.last_name}, {self.logged_in_before}, {self.type}, {self.discipline}, {self.status})'

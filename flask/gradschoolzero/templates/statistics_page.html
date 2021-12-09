@@ -28,81 +28,45 @@
             <br>
           
             <div class="container">
-              <ul class="list-group list-group-horizontal-xl container_ul">
-                  <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 540px;">COURSE NAME</li>
-                  <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 540px;">AVERAGE STAR RATING</li>
-              </ul>
-              <ul class="list-group list-group-horizontal-xl container_ul">
-                  <li class="list-group-item modified_li medium_font" style="width: 540px;">Algorithms</li>
-                  <li class="list-group-item modified_li medium_font" style="width: 540px;">5.0</li>
-              </ul>
-              <ul class="list-group list-group-horizontal-xl container_ul">
-                  <li class="list-group-item modified_li medium_font"style="width: 540px;">Data Structures</li>
-                  <li class="list-group-item modified_li medium_font"style="width: 540px;">4.8</li>
-              </ul>
-              <ul class="list-group list-group-horizontal-xl container_ul">
-                  <li class="list-group-item modified_li medium_font"style="width: 540px;">Database Systems</li>
-                  <li class="list-group-item modified_li medium_font"style="width: 540px;">4.5</li>
-              </ul>
-              <ul class="list-group list-group-horizontal-xl container_ul">
-                <li class="list-group-item modified_li medium_font"style="width: 540px;">Machine Learning</li>
-                <li class="list-group-item modified_li medium_font"style="width: 540px;">4.4</li>
-            </ul>
-            <ul class="list-group list-group-horizontal-xl container_ul">
-                <li class="list-group-item modified_li medium_font"style="width: 540px;">Operating Systems</li>
-                <li class="list-group-item modified_li medium_font"style="width: 540px;">4.4</li>
-            </ul>
-            <ul class="list-group list-group-horizontal-xl container_ul">
-                <li class="list-group-item modified_li medium_font"style="width: 540px;">Assembly Language</li>
-                <li class="list-group-item modified_li medium_font"style="width: 540px;">4.2</li>
-            </ul>
-          </div>
-          
-          </div>  
-
-          <br>
-          <br>
-          <br>
-
-          <div class="lowest--ranking">
-
-            <div class="pricing-header px-2 py-2 pb-md-2 mx-auto text-center">
-                <h3 class="display-4">LOWEST RANKING</h3>
+                <ul class="list-group list-group-horizontal-xl container_ul">
+                    <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 540px;">COURSE NAME</li>
+                    <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 540px;">AVERAGE STAR RATING</li>
+                </ul>
+                {% for course in highest_rated %}
+                    <ul class="list-group list-group-horizontal-xl container_ul">
+                        <li class="list-group-item modified_li medium_font" style="width: 540px;">{{course}}</li>
+                        <li class="list-group-item modified_li medium_font" style="width: 540px;">{{course.avg_rating}}</li>
+                    </ul>
+                {% endfor %}
             </div>
+            
+            </div>  
+
             <br>
+            <br>
+            <br>
+
+            <div class="lowest--ranking">
+
+                <div class="pricing-header px-2 py-2 pb-md-2 mx-auto text-center">
+                    <h3 class="display-4">LOWEST RANKING</h3>
+                </div>
+                <br>
+            
+                <div class="container">
+                    <ul class="list-group list-group-horizontal-xl container_ul">
+                        <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 540px;">COURSE NAME</li>
+                        <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 540px;">AVERAGE STAR RATING</li>
+                    </ul>
+                    {% for course in lowest_rated %}
+                        <ul class="list-group list-group-horizontal-xl container_ul">
+                            <li class="list-group-item modified_li medium_font" style="width: 540px;">{{course}}</li>
+                            <li class="list-group-item modified_li medium_font" style="width: 540px;">{{course.avg_rating}}</li>
+                        </ul>
+                    {% endfor %}
+                </div>
           
-            <div class="container">
-              <ul class="list-group list-group-horizontal-xl container_ul">
-                  <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 540px;">COURSE NAME</li>
-                  <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 540px;">AVERAGE STAR RATING</li>
-              </ul>
-              <ul class="list-group list-group-horizontal-xl container_ul">
-                  <li class="list-group-item modified_li medium_font" style="width: 540px;">Introduction to Java</li>
-                  <li class="list-group-item modified_li medium_font" style="width: 540px;">4.0</li>
-              </ul>
-              <ul class="list-group list-group-horizontal-xl container_ul">
-                  <li class="list-group-item modified_li medium_font"style="width: 540px;">Introduction to Computer Science</li>
-                  <li class="list-group-item modified_li medium_font"style="width: 540px;">3.8</li>
-              </ul>
-              <ul class="list-group list-group-horizontal-xl container_ul">
-                  <li class="list-group-item modified_li medium_font"style="width: 540px;">Artifical Intelligence</li>
-                  <li class="list-group-item modified_li medium_font"style="width: 540px;">3.7</li>
-              </ul>
-              <ul class="list-group list-group-horizontal-xl container_ul">
-                <li class="list-group-item modified_li medium_font"style="width: 540px;">Theoretical Computer Science</li>
-                <li class="list-group-item modified_li medium_font"style="width: 540px;">3.1</li>
-            </ul>
-            <ul class="list-group list-group-horizontal-xl container_ul">
-                <li class="list-group-item modified_li medium_font"style="width: 540px;">Python and Machine Learning</li>
-                <li class="list-group-item modified_li medium_font"style="width: 540px;">2.2</li>
-            </ul>
-            <ul class="list-group list-group-horizontal-xl container_ul">
-                <li class="list-group-item modified_li medium_font"style="width: 540px;">Probability and Statistics</li>
-                <li class="list-group-item modified_li medium_font"style="width: 540px;">1.8</li>
-            </ul>
-          </div>
-          
-          </div>  
+            </div>  
           <br>
           <br>
           <br>
@@ -115,34 +79,16 @@
     <br>
   
     <div class="container">
-      <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 540px;">NAME</li>
-          <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 540px;">GPA</li>
-      </ul>
-      <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li medium_font" style="width: 540px;">Jianting Zhang</li>
-          <li class="list-group-item modified_li medium_font" style="width: 540px;">4.0</li>
-      </ul>
-      <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li medium_font"style="width: 540px;">William Skeith</li>
-          <li class="list-group-item modified_li medium_font"style="width: 540px;">3.8</li>
-      </ul>
-      <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li medium_font"style="width: 540px;">Jie Wei</li>
-          <li class="list-group-item modified_li medium_font"style="width: 540px;">3.7</li>
-      </ul>
-      <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font"style="width: 540px;">Zaid Al-Mashadani</li>
-        <li class="list-group-item modified_li medium_font"style="width: 540px;">3.6</li>
-    </ul>
-    <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font"style="width: 540px;">Michael Vulis</li>
-        <li class="list-group-item modified_li medium_font"style="width: 540px;">3.5</li>
-    </ul>
-    <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font"style="width: 540px;">Ahmet Yuksel</li>
-        <li class="list-group-item modified_li medium_font"style="width: 540px;">3.1</li>
-    </ul>
+        <ul class="list-group list-group-horizontal-xl container_ul">
+            <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 540px;">NAME</li>
+            <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 540px;">GPA</li>
+        </ul>
+        {% for student in top_students %}
+        <ul class="list-group list-group-horizontal-xl container_ul">
+            <li class="list-group-item modified_li medium_font" style="width: 540px;">{{student}}</li>
+            <li class="list-group-item modified_li medium_font" style="width: 540px;">{{student.gpa}}</li>
+        </ul>
+        {% endfor %}
   </div>
   
   </div>  
@@ -159,38 +105,18 @@
     <br>
   
     <div class="container">
-      <ul class="list-group list-group-horizontal-xl container_ul">
-          
-        <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 540px;">COURSE NAME</li>
-        <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 540px;">REVIEWS</li>
-        <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="min-width: 120px;">Rating</li>
-          
-      </ul>
-      <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li medium_font " style="width: 540px;">Python and Machine Learning</li>
-          <li class="list-group-item modified_li medium_font " style="width: 540px;">I learned a lot from this class.</li>
-          <li class="list-group-item modified_li medium_font" style="min-width: 120px;">1.8</li>
-      </ul>
-      <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li medium_font"style="width: 540px;">Algorithms</li>
-          <li class="list-group-item modified_li medium_font"style="width: 540px;">This is the best computer science class our professor can offer.</li>
-          <li class="list-group-item modified_li medium_font" style="min-width: 120px;">1.8</li>
-      </ul>
-      <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li medium_font"style="width: 540px;">Data Structures</li>
-          <li class="list-group-item modified_li medium_font"style="width: 540px;">The lectures helped me to improve my problem solving skills.</li>
-          <li class="list-group-item modified_li medium_font" style="min-width: 120px;">1.8</li>
-      </ul>
-      <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font"style="width: 540px;">Artificial Intelligence</li>
-        <li class="list-group-item modified_li medium_font"style="width: 540px;">The lecture materials are very heavy. We needed more time to understand each chapters. The lecture materials are very heavy. We needed more time to understand each chapters.</li>
-        <li class="list-group-item modified_li medium_font" style="min-width: 120px;">1.8</li>
-    </ul>
-    <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font"style="width: 540px;">Assembly Language</li>
-        <li class="list-group-item modified_li medium_font"style="width: 540px;">The projects are very helpful and I learned a lot.</li>
-        <li class="list-group-item modified_li medium_font" style="min-width: 120px;">1.8</li>
-    </ul>
+        <ul class="list-group list-group-horizontal-xl container_ul">
+            <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 540px;">COURSE NAME</li>
+            <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 540px;">REVIEWS</li>
+            <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="min-width: 120px;">Rating</li>
+        </ul>
+        {% for review in reviews %}
+        <ul class="list-group list-group-horizontal-xl container_ul">
+            <li class="list-group-item modified_li medium_font " style="width: 540px;">{{review.course}}</li>
+            <li class="list-group-item modified_li medium_font " style="width: 540px;">{{review.content}}</li>
+            <li class="list-group-item modified_li medium_font" style="min-width: 120px;">{{review.rating}}</li>
+        </ul>
+        {% endfor %}
   </div>
   
   </div>  
