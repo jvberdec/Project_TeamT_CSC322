@@ -440,7 +440,7 @@ def next_period():
         students = Student.query.filter_by(status='GOOD STANDING').all()
         for student in students:
             # checks if the student is enrolled in < 2 courses.
-            # if they are, them they are issued a warning. 
+            # if they are, then they are issued a warning. 
             courses_enrolled_count = student.courses_enrolled.filter_by(semester=school_info.current_semester).count()
             if courses_enrolled_count < 2:
                 issue_warning(student.id, 'Currently enrolled in < 2 courses')
