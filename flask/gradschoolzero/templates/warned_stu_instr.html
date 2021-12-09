@@ -99,5 +99,61 @@
             </div>
         </div>
     </div>
+
+    <div class="container ">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1 class="mx-auto text-center text-white pb-3">Student Complaints</h1>
+                <div class="accordion p-3 mt-3" id="accordionExample">
+                    {% for student in students %}
+                        {% if student.complaints_filed %}
+                            <div class="card lg-shadow">
+                                <div class="card-header bg-ebony" id="heading{{student.id + 100}}">
+                                    <h2 class="mb-0">
+                                    <button class="btn btn-block text-white text-left" style="box-shadow: 0 0 0 0rem rgb(0 123 255 / 25%)" type="button" data-toggle="collapse" data-target="#collapse{{student.id + 100}}" aria-expanded="true" aria-controls="collapse{{student.id + 100}}">
+                                        {{student}}
+                                    </button>
+                                    </h2>
+                                </div>
+                                <div id="collapse{{student.id + 100}}" class="collapse" aria-labelledby="heading{{student.id + 100}}" data-parent="#accordionExample">
+                                    <div class="card-body">
+                                        {% for complaint in student.complaints_filed %}
+                                            <p>{{complaint.complaint}}</p>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <h1 class="mx-auto text-center text-white pb-3">Instructor Complaints</h1>
+                <div class="accordion p-3 mt-3" id="accordionExample">
+                    {% for instructor in instructors %}
+                        {% if instructor.complaints_filed %}
+                        <div class="card lg-shadow">
+                            <div class="card-header bg-ebony" id="heading{{instructor.id + 100}}">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-block text-white text-left" style="box-shadow: 0 0 0 0rem rgb(0 123 255 / 25%)" type="button" data-toggle="collapse" data-target="#collapse{{instructor.id + 100}}" aria-expanded="true" aria-controls="collapse{{instructor.id + 100}}">
+                                    {{instructor}}
+                                    </button>
+                                </h2>
+                            </div>
+                            <div id="collapse{{instructor.id + 100}}" class="collapse" aria-labelledby="heading{{instructor.id + 100}}" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    {% for warning in instructor.warnings %}
+                                        <p>{{complaint.complaint}}</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock content %}

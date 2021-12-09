@@ -14,7 +14,7 @@ class SchoolInfo(db.Model):
     __tablename__ = 'school_info'
     id = db.Column(db.Integer, primary_key=True)
     current_period = db.Column(db.String(20), nullable=False)
-    capacity = db.Column(db.Integer, nullable=False)
+    capacity = db.Column(db.Integer, nullable=False, default=10)
     current_semester = db.Column(db.String(11), nullable=False)
 
     def __repr__(self):

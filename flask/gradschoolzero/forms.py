@@ -80,16 +80,13 @@ class WarningForm(FlaskForm):
     warning_text = TextAreaField('Warning Text', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+
 class ComplaintForm(FlaskForm):
     complaint_text = TextAreaField('Complaint Text', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
-
 class StudentComplaintForm(ComplaintForm):
-    complainee_username = StringField('Complainee username', validators=[DataRequired(), Length(min=2, max=20)])
-    user_type = SelectField(u"User type of person you're complaining about", 
-                            choices=[('student', 'Student'), ('instructor', 'Instructor')], 
-                            validators=[DataRequired()])
+    complainee = QuerySelectField('Select person to file a complaint against', validators=[DataRequired()], query_factory=all_users_except_registrar)
 
 
 def all_students():

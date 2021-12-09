@@ -35,6 +35,29 @@
     </div>
 
     <hr class="featurette-divider">
+        <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+            <i class="far fa-user-circle fa-3x"></i>
+            <h1 class="display-4">Your Account</h1>
+        </div>
+        <div class="container">
+            <div class="card text-center p-2 bg-blur shadow-lg" style="width: 50%; border-radius: 10px; margin: 0 auto;">
+                <img
+                    class="rounded-circle m-auto"
+                    src="../static/images/placeholder.png"
+                    alt="placeholder"
+                    width="140"
+                    height="140"
+                />
+                <h2>{{student}}</h2>
+                <p>ID: {{student.empl_id}}</p>
+                <p>Username: {{student.username}}</p>
+                <p>GPA: {{student.gpa}}</p>
+                <p>Special registration: {{student.special_registration}}</p>
+                <p>Honor roll uses: {{student.honor_roll_count}}</p>
+            </div>
+        </div>
+
+    <hr class="featurette-divider">
 
     <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
         <i class="fas fa-book-open fa-3x"></i>
@@ -67,8 +90,12 @@
                 <li class="list-group-item d-flex justify-content-between align-items-center lead strong_font" style="width: 50%">
                     <span class="text-left">{{enrolled.course}}</span>
                     <div class="mb-1">
+                        {% if school_info.current_period == 'class running' or school_info.current_period == 'grading' %}
                         <a href="/review_course/{{enrolled.course.id}}"><button class="btn text-white bg-ebony">Review</button></a>
+                        {% endif %}
+                        {% if school_info.current_period == 'class running' or school_info.current_period == 'course registration' %}
                         <a href="/student_dash/drop_section/{{enrolled.id}}"><button class="btn text-white bg-ebony">Drop</button></a>
+                        {% endif %}
                     </div>
                 </li>
             </ul>
@@ -103,7 +130,9 @@
             <ul class="list-group list-group-horizontal-sm container_ul">
                 <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center lead medium_font" style="width: 50%">
                     <span class="text-left">{{warning.warning}}</span>
-                    <a href="/student_dash/dismiss_warning/{{warning.id}}"><button class="btn text-white bg-ebony btn-outline-white">Dismiss</button></a> 
+                    {% if student.honor_roll_count %}
+                    <a href="/student_dash/dismiss_warning/{{warning.id}}"><button class="btn text-white bg-ebony btn-outline-white">Dismiss</button></a>
+                    {% endif %}
                 </li>
             </ul>
         {% endfor %}

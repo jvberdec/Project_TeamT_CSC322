@@ -120,32 +120,40 @@ def student_app():
 
     student_app_form = StudentApplicationForm()
     if student_app_form.validate_on_submit():
-        applicant_applied = StudentApplicant.query.filter_by(first_name=student_app_form.first_name.data.strip(), 
-                                                    last_name=student_app_form.last_name.data.strip(),
-                                                    email=student_app_form.email.data.strip(), 
-                                                    dob=student_app_form.dob.data).first()
-        
-        applicant_enrolled = User.query.filter_by(first_name=student_app_form.first_name.data.strip(), 
-                                                last_name=student_app_form.last_name.data.strip(),
-                                                email=student_app_form.email.data.strip()).first()
+        school_info = SchoolInfo.query.first()
+        student_count = Student.query.filter_by(status='GOOD STANDING').count()
 
-        if (applicant_applied is None) and (applicant_enrolled is None):
-            student_applicant = StudentApplicant(first_name=student_app_form.first_name.data.strip(), 
+        if student_app_form.gpa.data >= 3.0 and student_count <= school_info.capacity:
+            applicant_applied = StudentApplicant.query.filter_by(first_name=student_app_form.first_name.data.strip(), 
+                                                        last_name=student_app_form.last_name.data.strip(),
+                                                        email=student_app_form.email.data.strip(), 
+                                                        dob=student_app_form.dob.data).first()
+            
+            applicant_enrolled = User.query.filter_by(first_name=student_app_form.first_name.data.strip(), 
                                                     last_name=student_app_form.last_name.data.strip(),
-                                                    email=student_app_form.email.data.strip(), 
-                                                    dob=student_app_form.dob.data,
-                                                    gpa=student_app_form.gpa.data)
-            db.session.add(student_applicant)
-            db.session.commit()
-            flash('Application filed successfully! You will be notified via email of our decision.', 'success')
+                                                    email=student_app_form.email.data.strip()).first()
 
-            return redirect(url_for('login'))
-        elif applicant_applied:
-            flash("You've already applied!", 'danger')
-            return redirect(url_for('home'))
-        elif applicant_enrolled:
-            flash("You are already enrolled!", 'danger')
-            return redirect(url_for('home'))
+            if (applicant_applied is None) and (applicant_enrolled is None):
+                student_applicant = StudentApplicant(first_name=student_app_form.first_name.data.strip(), 
+                                                        last_name=student_app_form.last_name.data.strip(),
+                                                        email=student_app_form.email.data.strip(), 
+                                                        dob=student_app_form.dob.data,
+                                                        gpa=student_app_form.gpa.data)
+                db.session.add(student_applicant)
+                db.session.commit()
+                flash('Application filed successfully! You will be notified via email of our decision.', 'success')
+
+                return redirect(url_for('login'))
+            elif applicant_applied:
+                flash("You've already applied!", 'danger')
+                return redirect(url_for('home'))
+            elif applicant_enrolled:
+                flash("You are already enrolled!", 'danger')
+                return redirect(url_for('home'))
+        elif student_app_form.gpa.data < 3.0:
+            flash('Unfortunately you do not meet GPA requirements')
+        else:
+            flash('School capacity has been met. Not currently accepting applications')
 
     return render_template('student_app.html', title='Student Application', form=student_app_form)
 
@@ -311,7 +319,8 @@ def instructor_dash():
                                title='Instructor Dashboard', 
                                instructor_courses=instructor.courses.all(), 
                                school_info=school_info,
-                               warnings=warnings)
+                               warnings=warnings,
+                               instructor=instructor)
 
     else:
         flash("You're not allowed to view that page!", 'danger')
@@ -360,10 +369,9 @@ def registrar_default_dash():
             school_info.current_period = change_period_form.period.data
             db.session.commit()
             flash('Period changed successfully!', 'success')
-        print(school_info.current_period)
         return render_template('registrar_dash.html', 
                                title='Registrar Dashboard', 
-                               current_period=school_info.current_period, 
+                               school_info=school_info, 
                                students=students,
                                instructors=instructors)
     else:
@@ -879,8 +887,7 @@ def student_app_delete(index):
 def student_complaint():
     student_complaint_form = StudentComplaintForm()
     if student_complaint_form.validate_on_submit():
-        complainee_user = User.query.filter_by(username=student_complaint_form.complainee_username.data, 
-                                               type=student_complaint_form.user_type.data).first()
+        complainee_user = User.query.filter_by(id=student_complaint_form.complainee.data.id).first()
         if not complainee_user:
             flash('Input data does not match our records. Please double check', 'warning')
         elif complainee_user.id == current_user.id:
