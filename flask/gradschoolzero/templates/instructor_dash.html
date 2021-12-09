@@ -9,187 +9,184 @@
 {% block content %}
 <div class="container marketing">
 
-  <div class="courses">
+    <div class="courses">
 
-  <div class="instructor-container mt-3" >
-      <div class="row justify-content-center align-items-end">
-          <div class="col-sm-4">
-              <div class="animate__animated animate__bounce animate__fast card bg-blur shadow-lg welcome-instructor-card p-3">
-                  <div class="card-heading">
-                      <h1 class="text-center text-white">Instructor Dashboard</h1>
-                      <h4 class="text-center">Currently in the {{ school_info }} Period</h4>
-                      <h4 class="text-center text-white">___________</h4>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-
-  <hr class="featurette-divider">
-
-    <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
-        <i class="fas fa-atom fa-4x"></i>
-        <h1 class="display-4">CURRENT COURSES</h1>
-    </div>
-
-    <div class="accordion p-3 mt-3" id="accordionExample">
-        {% for course in instructor_courses %}
-            <div class="card lg-shadow">
-                <div class="card-header bg-white" id="heading{{course.id}}">
-                    <h2 class="mb-0">
-                        <button class="btn btn-block text-ebony text-left strong_font" style="box-shadow: 0 0 0 0rem rgb(0 123 255 / 25%)" type="button" data-toggle="collapse" data-target="#collapse{{course.id}}" aria-expanded="true" aria-controls="collapse{{course.id}}">
-                            {{course}}
-                            <h6>Start Time: {{course.start_time.strftime("%I:%M%p")}}, End Time: {{course.end_time.strftime("%I:%M%p")}}, Capacity: {{course.capacity}}, Students Enrolled: {{course.students_enrolled|length}}</h6>
-                        </button>
-                    </h2>         
-                </div> 
-            </div>
-            <div id="collapse{{course.id}}" class="collapse" aria-labelledby="heading{{course.id}}" data-parent="#accordionExample">
-                <div class="card-body bg-ebony text-white">
-                    {% for student_enrolled in course.students_enrolled %}
-                        {% if student_enrolled.semester == school_info.current_semester %}
-                            <li class="d-flex justify-content-between align-items-center">
-                                <span class="text-ebony mb-1">{{student_enrolled.student}}</span>
-                                {% if student_enrolled.grade is none %}
-                                    <div class="mb-1">
-                                        <form method="POST" action="/instructor_dash/submit_grade/{{student_enrolled.id}}">
-                                            <input type="text" class="text-box" name="grade" id="grade" style="margin: 1px;" placeholder="Grade">
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                        </form>
-                                    </div>
-                                {% else %}
-                                    <span class="text-ebony mb-1">{{student_enrolled.grade}}</span>
-                                {% endif %}                                    
-                                
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                    
-                    {% if course.students_waitlisted %}
-                    <hr class="featurette-divider2">
-                    {% endif %}
-                    
-                    {% for student_waitlisted in course.students_waitlisted %}
-                        <li class="d-flex justify-content-between align-items-center">
-                            <span class="text-ebony mb-1">{{student_waitlisted.student}}</span>
-                            <div class="mb-1">
-                                <a href="/instructor_dash/accept_from_waitlist/{{student_waitlisted.id}}"><button class="bg-ebony btn btn-outline-white btn-md text-white">Remove from Waitlist</button></a>
-                            </div>
-                        </li>
-                    {% endfor %}
+        <div class="instructor-container mt-3" >
+            <div class="row justify-content-center align-items-end">
+                <div class="col-sm-4">
+                    <div class="animate__animated animate__bounce animate__fast card bg-blur shadow-lg welcome-instructor-card p-3">
+                        <div class="card-heading">
+                            <h1 class="text-center text-white">Instructor Dashboard</h1>
+                            <h4 class="text-center">Currently in the {{ school_info }} Period</h4>
+                            <h4 class="text-center text-white">___________</h4>
+                        </div>
+                    </div>
                 </div>
             </div>
-        {% endfor%}
+        </div>
+
+    <hr class="featurette-divider">
+
+        <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+            <i class="fas fa-atom fa-4x"></i>
+            <h1 class="display-4">CURRENT COURSES</h1>
+        </div>
+
+        <div class="accordion p-3 mt-3" id="accordionExample">
+            {% for course in instructor_courses %}
+                <div class="card lg-shadow">
+                    <div class="card-header bg-white" id="heading{{course.id}}">
+                        <h2 class="mb-0">
+                            <button class="btn btn-block text-ebony text-left strong_font" style="box-shadow: 0 0 0 0rem rgb(0 123 255 / 25%)" type="button" data-toggle="collapse" data-target="#collapse{{course.id}}" aria-expanded="true" aria-controls="collapse{{course.id}}">
+                                {{course}}
+                                <h6>Start Time: {{course.start_time.strftime("%I:%M%p")}}, End Time: {{course.end_time.strftime("%I:%M%p")}}, Capacity: {{course.capacity}}, Students Enrolled: {{course.students_enrolled|length}}</h6>
+                            </button>
+                        </h2>         
+                    </div> 
+                </div>
+                <div id="collapse{{course.id}}" class="collapse" aria-labelledby="heading{{course.id}}" data-parent="#accordionExample">
+                    <div class="card-body bg-ebony text-white">
+                        {% for student_enrolled in course.students_enrolled %}
+                            {% if student_enrolled.semester == school_info.current_semester %}
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span class="text-ebony mb-1">{{student_enrolled.student}}</span>
+                                    {% if student_enrolled.grade is none %}
+                                        <div class="mb-1">
+                                            <form method="POST" action="/instructor_dash/submit_grade/{{student_enrolled.id}}">
+                                                <input type="text" class="text-box" name="grade" id="grade" style="margin: 1px;" placeholder="Grade">
+                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                            </form>
+                                        </div>
+                                    {% else %}
+                                        <span class="text-ebony mb-1">{{student_enrolled.grade}}</span>
+                                    {% endif %}
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if course.students_waitlisted %}
+                        <hr class="featurette-divider2">
+                        {% endif %}
+                        
+                        {% for student_waitlisted in course.students_waitlisted %}
+                            <li class="d-flex justify-content-between align-items-center">
+                                <span class="text-ebony mb-1">{{student_waitlisted.student}}</span>
+                                <div class="mb-1">
+                                    <a href="/instructor_dash/accept_from_waitlist/{{student_waitlisted.id}}"><button class="bg-ebony btn btn-outline-white btn-md text-white">Remove from Waitlist</button></a>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor%}
 
 
- 
-  <hr class="featurette-divider">
+    
+        <hr class="featurette-divider">
 
-  <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
-      <i class="fas fa-book-open fa-4x"></i>
-      <h1 class="display-4">COURSE RANKING</h1>
-  </div>
+        <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+            <i class="fas fa-book-open fa-4x"></i>
+            <h1 class="display-4">COURSE RANKING</h1>
+        </div>
 
-  <div class="float-parent-element">
-    <div class="float-child-element">
-      <div class="container">
-      <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li lead strong_font bg-ebony text-white">HIGHEST RATED</li>
-          <li class="list-group-item modified_li lead strong_font bg-ebony text-white">RATE</li>
-      </ul>
-      <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li medium_font">Software Engineering</li>
-          <li class="list-group-item modified_li medium_font">98%</li>
-      </ul>
-      <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li medium_font">Algorithms</li>
-          <li class="list-group-item modified_li medium_font">98%</li>
-      </ul>
-      <ul class="list-group list-group-horizontal-xl container_ul">
-          <li class="list-group-item modified_li medium_font">Data Structures</li>
-          <li class="list-group-item modified_li medium_font">97.5%</li>
-      </ul>
-  </div>
-  </div>
+        <div class="float-parent-element">
+            <div class="float-child-element">
+                <div class="container">
+                    <ul class="list-group list-group-horizontal-xl container_ul">
+                        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">HIGHEST RATED</li>
+                        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">RATE</li>
+                    </ul>
+                    <ul class="list-group list-group-horizontal-xl container_ul">
+                        <li class="list-group-item modified_li medium_font">Software Engineering</li>
+                        <li class="list-group-item modified_li medium_font">98%</li>
+                    </ul>
+                    <ul class="list-group list-group-horizontal-xl container_ul">
+                        <li class="list-group-item modified_li medium_font">Algorithms</li>
+                        <li class="list-group-item modified_li medium_font">98%</li>
+                    </ul>
+                    <ul class="list-group list-group-horizontal-xl container_ul">
+                        <li class="list-group-item modified_li medium_font">Data Structures</li>
+                        <li class="list-group-item modified_li medium_font">97.5%</li>
+                    </ul>
+                </div>
+            </div>
 
-  <div class="float-child-element">
+            <div class="float-child-element">
+                <div class="container">
+                    <ul class="list-group list-group-horizontal-xl container_ul">
+                        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">LOWEST RATED</li>
+                        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">RATE</li>
+                    </ul>
+                    <ul class="list-group list-group-horizontal-xl container_ul">
+                        <li class="list-group-item modified_li medium_font">Operating Systems</li>
+                        <li class="list-group-item modified_li medium_font">96%</li>
+                    </ul>
+                    <ul class="list-group list-group-horizontal-xl container_ul">
+                        <li class="list-group-item modified_li medium_font">Database Systems</li>
+                        <li class="list-group-item modified_li medium_font">95%</li>
+                    </ul>
+                    <ul class="list-group list-group-horizontal-xl container_ul">
+                        <li class="list-group-item modified_li medium_font">Intro to Machine Learning</li>
+                        <li class="list-group-item modified_li medium_font">95%</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="students">
+        <hr class="featurette-honors-divider">
+        <hr class="featurette-divider">
+        <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+            <i class="fas fa-user-graduate fa-4x"></i>
+            <h1 class="display-4">TOP HONORS STUDENTS</h1>
+        </div>
+
     <div class="container">
-    <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">LOWEST RATED</li>
-        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">RATE</li>
-    </ul>
-    <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font">Operating Systems</li>
-        <li class="list-group-item modified_li medium_font">96%</li>
-    </ul>
-    <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font">Database Systems</li>
-        <li class="list-group-item modified_li medium_font">95%</li>
-    </ul>
-    <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font">Intro to Machine Learning</li>
-        <li class="list-group-item modified_li medium_font">95%</li>
-    </ul>
-</div>
-</div>
+        <ul class="list-group list-group-horizontal-xl container_ul">
+            <li class="list-group-item modified_li lead strong_font bg-ebony text-white">STUDENT NAME</li>
+            <li class="list-group-item modified_li lead strong_font bg-ebony text-white">GPA</li>
+            <li class="list-group-item modified_li lead strong_font bg-ebony text-white">MAJOR</li>
+            <li class="list-group-item modified_li lead strong_font bg-ebony text-white">COURSE ENROLLED</li>
+        </ul>
+        <ul class="list-group list-group-horizontal-xl container_ul">
+            <li class="list-group-item modified_li medium_font">John Doe</li>
+            <li class="list-group-item modified_li medium_font">99.5%</li>
+            <li class="list-group-item modified_li medium_font">COMPUTER SCIENCE</li>
+            <li class="list-group-item modified_li medium_font">CSC 32200</li>
+        </ul>
+        <ul class="list-group list-group-horizontal-xl container_ul">
+            <li class="list-group-item modified_li medium_font">Tamara Eisenberg</li>
+            <li class="list-group-item modified_li medium_font">99.5%</li>
+            <li class="list-group-item modified_li medium_font">COMPUTER SCIENCE</li>
+            <li class="list-group-item modified_li medium_font">CSC 32200</li>
+        </ul>
+        <ul class="list-group list-group-horizontal-xl container_ul">
+            <li class="list-group-item modified_li medium_font">Jacquline Fernandez</li>
+            <li class="list-group-item modified_li medium_font">99.4%</li>
+            <li class="list-group-item modified_li medium_font">COMPUTER SCIENCE</li>
+            <li class="list-group-item modified_li medium_font">CSC 32200</li>
+        </ul>
+    </div>
 
-</div>
-</div>
-<div class="students">
-  <hr class="featurette-honors-divider">
-  <hr class="featurette-divider">
-  <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
-      <i class="fas fa-user-graduate fa-4x"></i>
-      <h1 class="display-4">TOP HONORS STUDENTS</h1>
-  </div>
+    </div>  
 
-  <div class="container">
-    <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">STUDENT NAME</li>
-        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">GPA</li>
-        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">MAJOR</li>
-        <li class="list-group-item modified_li lead strong_font bg-ebony text-white">COURSE ENROLLED</li>
-    </ul>
-    <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font">John Doe</li>
-        <li class="list-group-item modified_li medium_font">99.5%</li>
-        <li class="list-group-item modified_li medium_font">COMPUTER SCIENCE</li>
-        <li class="list-group-item modified_li medium_font">CSC 32200</li>
-    </ul>
-    <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font">Tamara Eisenberg</li>
-        <li class="list-group-item modified_li medium_font">99.5%</li>
-        <li class="list-group-item modified_li medium_font">COMPUTER SCIENCE</li>
-        <li class="list-group-item modified_li medium_font">CSC 32200</li>
-    </ul>
-    <ul class="list-group list-group-horizontal-xl container_ul">
-        <li class="list-group-item modified_li medium_font">Jacquline Fernandez</li>
-        <li class="list-group-item modified_li medium_font">99.4%</li>
-        <li class="list-group-item modified_li medium_font">COMPUTER SCIENCE</li>
-        <li class="list-group-item modified_li medium_font">CSC 32200</li>
-    </ul>
-</div>
+    <hr class="featurette-divider">
+        <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+            <i class="fas fa-exclamation-circle fa-4x"></i>
+            <h1 class="display-4">WARNINGS</h1>
+        </div>
 
-</div>  
-
-<hr class="featurette-divider">
-  <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
-      <i class="fas fa-exclamation-circle fa-4x"></i>
-      <h1 class="display-4">WARNINGS</h1>
-  </div>
-
-  <div class="container">
-      <ul class="list-group list-group-horizontal-sm container_ul">
-          <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center lead medium_font" style="width: 50%">
-              <span class="text-left">Post Project Details for Project II</span>
-          </li>
-      </ul>
-      <ul class="list-group list-group-horizontal-sm container_ul">
-          <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center lead medium_font" style="width: 50%">
-              <span class="text-left">Grade Midterm II</span>
-          </li>
-      </ul>
-  </div>
+        <div class="container">
+            {% for warning in warnings %}
+                <ul class="list-group list-group-horizontal-sm container_ul">
+                    <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center lead medium_font" style="width: 50%">
+                        <span class="text-left">{{warning.warning}}</span>
+                    </li>
+                </ul>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 
 {% endblock content %}
