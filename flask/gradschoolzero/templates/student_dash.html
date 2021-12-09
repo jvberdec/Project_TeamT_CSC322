@@ -42,39 +42,16 @@
 
     <div class="container">
         <ul class="list-group list-group-horizontal-xl container_ul">
-            <li class="list-group-item modified_li lead strong_font bg-ebony text-white">CLASS NAME</li>
-            <li class="list-group-item modified_li lead strong_font bg-ebony text-white">GRADE</li>
+            <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 200px;">CLASS NAME</li>
+            <li class="list-group-item modified_li lead strong_font bg-ebony text-white" style="width: 120px;">GRADE</li>
         </ul>
         {% for enrolled in courses_taken %}
             <ul class="list-group list-group-horizontal-xl container_ul">
-                <li class="list-group-item modified_li medium_font">{{enrolled.course}}</li>
-                <li class="list-group-item modified_li medium_font">{{enrolled.grade}}</li>
+                <li class="list-group-item modified_li medium_font" style="width: 200px;">{{enrolled.course}}</li>
+                <li class="list-group-item modified_li medium_font" style="width: 120px;">{{enrolled.grade}}</li>
             </ul>
         {% endfor %}
     </div>
-
-    <!-- <hr class="featurette-divider">
-
-    {% if courses %}
-    <div class="accordion p-3 mt-3" id="accordionExample">
-        {% for course in courses %}
-        <div class="card lg-shadow mx-auto" style="width: 50%;">
-          <div class="card-header bg-ebony" id="courseHeader{{course.id}}">
-            <h2 class="mb-0">
-              <button class="btn btn-block text-white text-center text-left" style="box-shadow: 0 0 0 0rem rgb(0 123 255 / 25%)" type="button" data-toggle="collapse" data-target="#collapse{{course.id}}" aria-expanded="true" aria-controls="collapse{{course.id}}">
-                Science: the search for the truth
-              </button>
-            </h2>
-          </div>
-          <div id="collapse{{course.id}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-            <div class="card-body">
-              <p class="text-center">Grade: A</p>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %} -->
 
     <hr class="featurette-divider">
 
