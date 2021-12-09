@@ -151,9 +151,9 @@ def student_app():
                 flash("You are already enrolled!", 'danger')
                 return redirect(url_for('home'))
         elif student_app_form.gpa.data < 3.0:
-            flash('Unfortunately you do not meet GPA requirements')
+            flash('Unfortunately you do not meet GPA requirements', 'danger')
         else:
-            flash('School capacity has been met. Not currently accepting applications')
+            flash('School capacity has been met. Not currently accepting applications', 'warning')
 
     return render_template('student_app.html', title='Student Application', form=student_app_form)
 
