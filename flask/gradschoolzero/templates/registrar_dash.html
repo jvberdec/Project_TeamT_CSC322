@@ -43,6 +43,22 @@
 
         <hr class="featurette-divider">
 
+            <div class="container">
+                <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+                    <i class="far fa-arrow-alt-circle-up fa-3x"></i>
+                    <h1 class="display-4">Change Capacity</h1>
+                </div>
+                <form method="POST" action="/registrar_default_dash/change_capacity/" class="card bg-blur p-3 mt-3" style="width: 50%; margin: 0 auto; border-radius: 10px;">
+                    <div class="form-group">
+                        <label for="capacity">New Capacity</label>
+                        <input type="number" class="form-control" name="capacity" id="capacity" placeholder="new capacity must be a number">
+                    </div>
+                    <button class="btn btn-lg text-white bg-ebony">Submit</button>
+                </form>
+            </div>
+
+        <hr class="featurette-divider">
+
         <div class="row">
             <div class="col-sm-12">
                 <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
@@ -95,12 +111,13 @@
         </div>
 
         <hr class="featurette-divider">
-        <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
-            <i class="fas fa-user-graduate fa-3x"></i>
-            <h1 class="display-4">Students</h1>
-        </div>
-        <div class="container">
-            {% for student in students %}
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+                    <i class="fas fa-user-graduate fa-3x"></i>
+                    <h1 class="display-4">Students</h1>
+                </div>
+                {% for student in students %}
                 <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
                     <div class="card-body">
                         <h5 class="card-title">
@@ -115,7 +132,29 @@
                         </h5>               
                     </div>
                 </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
+            <div class="col-sm-6">
+                <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
+                    <i class="fas fa-chalkboard-teacher fa-3x"></i>
+                    <h1 class="display-4">Instructors</h1>
+                </div>
+                {% for instructor in instructors %}
+                <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {{instructor}}                
+                            <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
+                            <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
+                                <p>Username: {{instructor.username}}</p>
+                                <p>ID: {{instructor.empl_id}}</p>
+                                <p>Status: {{instructor.status}}</p>
+                            </div>
+                        </h5>               
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>

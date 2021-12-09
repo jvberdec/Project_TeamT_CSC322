@@ -212,6 +212,21 @@ def student_dash():
         return redirect(url_for('home'))
 
 
+@app.route("/student_dash/dismiss_warning/<int:index>", methods=['POST', 'GET'])
+@login_required
+def dismiss_warning(index):
+    student = Student.query.filter_by(id=current_user.id).first()
+    if student.honor_roll_count >= 1:
+        student.honor_roll_count -= 1
+        warning = Warning.query.filter_by(id=index).first()
+        db.session.delete(warning)
+        db.session.commit()
+        flash('Warning successfully dismissed', 'success')
+    else:
+        flash('No honor roll placements to use to dismiss warning', 'warning')
+    return redirect(url_for('student_dash'))
+
+
 @app.route("/student_dash/drop_section/<int:index>", methods=['POST', 'GET'])
 @login_required
 def drop_section(index):
@@ -330,6 +345,7 @@ def accept_from_waitlist(index):
 def registrar_default_dash(): 
     if current_user.is_authenticated and current_user.type == "registrar":
         students = Student.query.filter(Student.status != 'DISMISSED', Student.status != 'GRADUATED').all()
+        instructors = Instructor.query.all()
         change_period_form = ChangePeriodForm()
         school_info = SchoolInfo.query.first()
         if change_period_form.validate_on_submit():
@@ -337,10 +353,30 @@ def registrar_default_dash():
             db.session.commit()
             flash('Period changed successfully!', 'success')
         print(school_info.current_period)
-        return render_template('registrar_dash.html', title='Registrar Dashboard', current_period=school_info.current_period, students=students)
+        return render_template('registrar_dash.html', 
+                               title='Registrar Dashboard', 
+                               current_period=school_info.current_period, 
+                               students=students,
+                               instructors=instructors)
     else:
         flash("You're not allowed to view that page!", 'danger')
-        return redirect(url_for('home'))      
+        return redirect(url_for('home'))
+
+
+@app.route("/registrar_default_dash/change_capacity/", methods=['POST', 'GET'])
+@login_required
+def change_capacity():
+    if request.method == 'POST':
+        capacity = request.form['capacity']
+        capacity = int(capacity)
+        print(capacity)
+        if capacity >= 1:
+            school_info = SchoolInfo.query.first()
+            school_info.capacity = capacity
+            db.session.commit()
+        else:
+            flash('Value must be >= 1', 'warning')
+    return redirect(url_for('registrar_default_dash'))
 
 
 def calculate_gpa(student_course_enrollment_grade):
@@ -352,11 +388,12 @@ def calculate_gpa(student_course_enrollment_grade):
                   'F': 0}
 
     grades = [enrollment.grade for enrollment in student_course_enrollment_grade]
-    for grade in grades:
-        points += grade_dict[grade]
+    if grades:
+        for grade in grades:
+            points += grade_dict[grade]
 
-    gpa = points / len(grades)
-    gpa = round(gpa, 2)
+        gpa = points / len(grades)
+        gpa = round(gpa, 2)
     
     return gpa
 
@@ -417,13 +454,13 @@ def next_period():
         
     elif school_info.current_period == 'grading':
         school_info.current_period = 'class set-up'
-        ''''
+        
         grade_list = ['A', 'B', 'C', 'D', 'F']
 
         # issues warning to iunstructor if grading deadline missed
         instructors = Instructor.query.filter_by(status='GOOD STANDING').all()
         for instructor in instructors:
-            assigned_courses = instructor.courses.all()
+            assigned_courses = instructor.courses
             missed_grading_deadline = False
             for course in assigned_courses:
                 no_grade = course.students_enrolled.filter_by(semester=school_info.current_semester, grade=None).first()
@@ -440,42 +477,49 @@ def next_period():
         courses = Course.query.all()
         for course in courses:
             reviews = course.reviews
-            review_rating = [review.rating for review in reviews]
-            points = 0
-            for rating in review_rating:
-                points += rating
-            
-            avg_rating = points / len(review_rating)
-
-            if avg_rating < 2:
+            if reviews:
+                review_rating = [review.rating for review in reviews]
+                points = 0
+                for rating in review_rating:
+                    points += rating
+                
+                avg_rating = points / len(review_rating)
                 course.avg_rating = avg_rating
-                issue_warning(course.instructor.id, f'{course} average rating below 2')
+
+                if avg_rating < 2:
+                    
+                    issue_warning(course.instructor.id, f'{course} average rating below 2')
         
         # determine course gpa
-        courses = Course.query.filter(Course.status not in ['CANCELED', 'NOT SET']).all()
+        '''
+        courses = Course.query.filter(Course.status != 'CANCELED', Course.status != 'NOT SET').all()
         for course in courses:
             students_enrolled = course.students_enrolled.filter(StudentCourseEnrollment.semester == school_info.current_semester,
-                                                                StudentCourseEnrollment.grade in grade_list).all()
+                                                                StudentCourseEnrollment.grade.in_(grade_list)).all()
             course_gpa_avg = calculate_gpa(students_enrolled)
             if course_gpa_avg > 3.5 or course_gpa_avg < 2.5:
                 # insert code to have instructor be questioned by registrar
                 pass
+        '''
 
         # determine student gpa
         students = Student.query.filter_by(status='GOOD STANDING').all()
         for student in students:
-            student_courses_enrolled_overall = student.courses_enrolled.filter(StudentCourseEnrollment.grade in grade_list).all()
+            student_courses_enrolled_overall = student.courses_enrolled.filter(StudentCourseEnrollment.grade.in_(grade_list)).all()
             student_courses_enrolled_semester = student.courses_enrolled.filter(StudentCourseEnrollment.semester == school_info.current_semester,
-                                                                                StudentCourseEnrollment.grade in grade_list).all()
-            overall_gpa = calculate_gpa(student_courses_enrolled_overall)
-            semester_gpa = calculate_gpa(student_courses_enrolled_semester)
+                                                                                StudentCourseEnrollment.grade.in_(grade_list)).all()
 
-            if overall_gpa < 2.0:
-                student.status = 'DISMISSED'
-            elif overall_gpa >= 2.0 and overall_gpa <= 2.25:
-                issue_warning(student.id, 'Low GPA')
-            elif semester_gpa > 3.75 or overall_gpa > 3.5:
-                student.honor_roll_count += 1            
+            if student_courses_enrolled_overall:
+                overall_gpa = calculate_gpa(student_courses_enrolled_overall)
+                semester_gpa = calculate_gpa(student_courses_enrolled_semester)
+                student.gpa = overall_gpa
+
+                if overall_gpa < 2.0:
+                    student.status = 'DISMISSED'
+                elif overall_gpa >= 2.0 and overall_gpa <= 2.25:
+                    issue_warning(student.id, 'Low GPA')
+                elif semester_gpa > 3.75 or overall_gpa > 3.5:
+                    student.honor_roll_count += 1            
 
         current_semester = school_info.current_semester
         year = current_semester[:4]
@@ -492,7 +536,7 @@ def next_period():
         courses = Course.query.filter(Course.status != 'NOT SET')
         for course in courses:
             course.status = 'NOT SET'
-        '''
+        
 
     db.session.commit()
     return redirect(url_for('registrar_default_dash'))   
@@ -656,11 +700,13 @@ def issue_warning(user_id, warning):
 @app.route("/warned_stu_instr", methods=['POST', 'GET'])
 @login_required
 def warned_stu_instr():
+    students = Student.query.filter(Student.status != 'DISMISSED', Student.status != 'GRADUATED').all()
+    instructors = Instructor.query.all()
     warning_form = WarningForm()
     if warning_form.validate_on_submit():
-        issue_warning(warning_form.warned_user.data.id, warning_form.warning_text.data)
+        issue_warning(warning_form.warned_user.data.id, warning_form.warning_text.data.strip())
         flash('Warning created successfully!', 'success')
-    return render_template('warned_stu_instr.html', title='Warnings', form=warning_form)
+    return render_template('warned_stu_instr.html', title='Warnings', form=warning_form, students=students, instructors=instructors)
 
 
 @app.route("/registrar_grading_period")
