@@ -59,7 +59,7 @@
                         <h2 class="mb-0">
                             <button class="btn btn-block text-ebony text-left strong_font" style="box-shadow: 0 0 0 0rem rgb(0 123 255 / 25%)" type="button" data-toggle="collapse" data-target="#collapse{{course.id}}" aria-expanded="true" aria-controls="collapse{{course.id}}">
                                 {{course}}
-                                <h6>Start Time: {{course.start_time.strftime("%I:%M%p")}}, End Time: {{course.end_time.strftime("%I:%M%p")}}, Capacity: {{course.capacity}}, Students Enrolled: {{course.students_enrolled|length}}</h6>
+                                <h6>Start Time: {{course.start_time.strftime("%I:%M%p")}}, End Time: {{course.end_time.strftime("%I:%M%p")}}, Capacity: {{course.capacity}}, Students Enrolled: {{course.students_enrolled.count()}}</h6>
                             </button>
                         </h2>         
                     </div> 
