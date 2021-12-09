@@ -14,7 +14,7 @@
                 <div class="animate__animated animate__bounce animate__fast card bg-blur shadow-lg welcome-card p-3">
                     <div class="card-heading">
                         <h1 class="text-center text-white">Registrar Dashboard</h1>
-                        <h4 class="text-center">Currently in the {{ current_period }} Period</h4>
+                        <h4 class="text-center">Currently in the {{ current_period.title() }} Period</h4>
                         <h4 class="text-center text-white">___________</h4>
                     </div>
                 </div>
@@ -25,7 +25,7 @@
     <hr class="featurette-divider">
 
     <div class="container ">
-        <div class="row">
+        <div class="container">
             <div class="col-sm-12">
                 <div class="pricing-header px-3 py-3 pb-md-4 mx-auto text-center">
                     <i class="fas fa-exchange-alt fa-3x"></i>
@@ -49,7 +49,7 @@
                     <i class="fas fa-chalkboard-teacher fa-3x"></i>
                     <h1 class="display-4">Registrar Pages</h1>
                 </div>
-
+                
                 <div class="card text-white card_border bg-ebony mx-auto mb-3" style="width: 18rem;">
                     <div class="card-body">
                     <h5 class="card-title text-center">
@@ -58,13 +58,15 @@
                     </div>
                 </div>
 
-                <div class="card text-white card_border bg-ebony mx-auto mb-3" style="width: 18rem;">
-                    <div class="card-body">
-                    <h5 class="card-title text-center">
-                        <a href="{{url_for('registrar_class_setup')}}" class="btn text-white"><strong>Create Course Section</strong></a>              
-                    </h5>               
+                {% if current_period == 'class set-up' %}
+                    <div class="card text-white card_border bg-ebony mx-auto mb-3" style="width: 18rem;">
+                        <div class="card-body">
+                        <h5 class="card-title text-center">
+                            <a href="{{url_for('registrar_class_setup')}}" class="btn text-white"><strong>Create Course Section</strong></a>              
+                        </h5>               
+                        </div>
                     </div>
-                </div>
+                {% endif %}
 
                 <div class="card text-white card_border bg-ebony mx-auto mb-3" style="width: 18rem;">
                     <div class="card-body">
@@ -97,141 +99,24 @@
             <i class="fas fa-user-graduate fa-3x"></i>
             <h1 class="display-4">Students</h1>
         </div>
-        <div class="row">
-            <div class="col-sm-6">
-              <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
-                <div class="card-body">
-                <h5 class="card-title">
-                    Bob the Builder                
-                    <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
-                    <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
-                        <p>Email: bob@builder.com</p>
-                        <p>GPA: 4.0</p>
-                    </div>
-                </h5>               
-                </div>
-              </div>
-
-              <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
-                <div class="card-body">
-                <h5 class="card-title">
-                    Bob the Builder                
-                    <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
-                    <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
-                        <p>Email: bob@builder.com</p>
-                        <p>GPA: 4.0</p>
-                    </div>
-                </h5>               
-                </div>
-              </div>
-
-              <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
-                <div class="card-body">
-                <h5 class="card-title">
-                    Bob the Builder                
-                    <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
-                    <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
-                        <p>Email: bob@builder.com</p>
-                        <p>GPA: 4.0</p>
-                    </div>
-                </h5>               
-                </div>
-              </div>
-              
-              <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
-                <div class="card-body">
-                <h5 class="card-title">
-                    Bob the Builder                
-                    <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
-                    <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
-                        <p>Email: bob@builder.com</p>
-                        <p>GPA: 4.0</p>
-                    </div>
-                </h5>               
-                </div>
-              </div>
-
-              <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
-                <div class="card-body">
-                <h5 class="card-title">
-                    Bob the Builder                
-                    <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
-                    <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
-                        <p>Email: bob@builder.com</p>
-                        <p>GPA: 4.0</p>
-                    </div>
-                </h5>               
-                </div>
-              </div>
-            </div>
-
-            <div class="col-sm-6">
+        <div class="container">
+            {% for student in students %}
                 <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
-                  <div class="card-body">
-                  <h5 class="card-title">
-                      Bob the Builder                
-                      <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
-                      <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
-                          <p>Email: bob@builder.com</p>
-                          <p>GPA: 4.0</p>
-                      </div>
-                  </h5>               
-                  </div>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {{student}}                
+                            <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
+                            <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
+                                <p>Username: {{student.username}}</p>
+                                <p>ID: {{student.empl_id}}</p>
+                                <p>Status: {{student.status}}</p>
+                                <p>GPA: {{student.gpa}}</p>
+                            </div>
+                        </h5>               
+                    </div>
                 </div>
-  
-                <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
-                  <div class="card-body">
-                  <h5 class="card-title">
-                      Bob the Builder                
-                      <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
-                      <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
-                          <p>Email: bob@builder.com</p>
-                          <p>GPA: 4.0</p>
-                      </div>
-                  </h5>               
-                  </div>
-                </div>
-  
-                <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
-                  <div class="card-body">
-                  <h5 class="card-title">
-                      Bob the Builder                
-                      <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
-                      <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
-                          <p>Email: bob@builder.com</p>
-                          <p>GPA: 4.0</p>
-                      </div>
-                  </h5>               
-                  </div>
-                </div>
-                
-                <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
-                  <div class="card-body">
-                  <h5 class="card-title">
-                      Bob the Builder                
-                      <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
-                      <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
-                          <p>Email: bob@builder.com</p>
-                          <p>GPA: 4.0</p>
-                      </div>
-                  </h5>               
-                  </div>
-                </div>
-  
-                <div class="card text-white bg-ebony mx-auto mb-1" style="width: 18rem;">
-                  <div class="card-body">
-                  <h5 class="card-title">
-                      Bob the Builder                
-                      <a  class="btn text-white dropdown-toggle" style="float:right;"role="button" data-toggle="dropdown" aria-expanded="false"></a>
-                      <div class="dropdown-menu dropdown-menu-right p-4 text-muted" style="max-width: 200px;">
-                          <p>Email: bob@builder.com</p>
-                          <p>GPA: 4.0</p>
-                      </div>
-                  </h5>               
-                  </div>
-                </div>
-              </div>
-            </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock content %}

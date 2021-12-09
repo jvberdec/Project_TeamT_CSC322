@@ -1,4 +1,6 @@
 from datetime import datetime, date
+
+from sqlalchemy.sql.schema import ForeignKey
 from gradschoolzero import db, login_manager
 from flask_login import UserMixin
 
@@ -53,12 +55,15 @@ class InstructorApplicant(Applicant):
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    empl_id = db.Column(db.Integer)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), nullable=False)
     password = db.Column(db.String(60), nullable=False)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     logged_in_before = db.Column(db.Boolean, nullable=False, default=False)
+    status = db.Column(db.String(20), nullable=False, default='GOOD STANDING')
+    suspension_end_semester = db.Column(db.String(11))
     type = db.Column(db.String(10), nullable=False)
 
     warnings = db.relationship('Warning', back_populates='user')
@@ -76,7 +81,7 @@ class Student(User):
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     gpa = db.Column(db.Float, nullable=False)
     special_registration = db.Column(db.Boolean, nullable=False, default=False)
-    status = db.Column(db.String(20), nullable=False, default='GOOD STANDING')
+    honor_roll_count = db.Column(db.Integer, nullable=False, default=0)
 
     reviews = db.relationship('CourseReview', back_populates='author')
     courses_enrolled = db.relationship('StudentCourseEnrollment', back_populates='student', lazy='dynamic')
@@ -92,7 +97,6 @@ class Student(User):
 class Instructor(User):
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     discipline = db.Column(db.String(20), nullable=False)
-    status = db.Column(db.String, nullable=False, default='GOOD STANDING')
 
     courses = db.relationship('Course', back_populates='instructor')
 
@@ -114,7 +118,8 @@ class Major(db.Model):
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=False)
     course_name = db.Column(db.String(50), nullable=False)
-    capacity = db.Column(db.Integer, nullable = False)
+    capacity = db.Column(db.Integer, nullable=False, default=0)
+    number_enrolled = db.Column(db.Integer, nullable=False)
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
     day = db.Column(db.String(9), nullable=False)
@@ -122,10 +127,12 @@ class Course(db.Model):
     instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id'), nullable=False)
     avg_rating = db.Column(db.Float)
     avg_gpa = db.Column(db.Float)
+    status = db.Column(db.String(8), nullable=False, default='NOT SET')
     
     instructor = db.relationship('Instructor', back_populates='courses')
-    students_enrolled = db.relationship('StudentCourseEnrollment', back_populates='course')
+    students_enrolled = db.relationship('StudentCourseEnrollment', back_populates='course', lazy='dynamic')
     students_waitlisted = db.relationship('Waitlist', back_populates='course')
+    reviews = db.relationship('CourseReview', back_populates='course')
 
     def __repr__(self):
         return f'Course({self.id}, {self.course_name}, {self.capacity}, {self.start_time}, {self.end_time}, {self.day}, {self.avg_rating})'
@@ -173,12 +180,13 @@ class CensorWord(db.Model):
 class CourseReview(db.Model):
     __tablename__ = 'course_review'
     id = db.Column(db.Integer, primary_key=True)
-    course_code = db.Column(db.Integer,  nullable=False)
+    course_code = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
     content = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=False)
     taboo_word_count = db.Column(db.Integer, nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
 
+    course = db.relationship('Course', back_populates='reviews')
     author = db.relationship('Student', back_populates='reviews')
 
     def __repr__(self):
