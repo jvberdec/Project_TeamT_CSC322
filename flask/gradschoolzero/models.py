@@ -119,7 +119,7 @@ class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=False)
     course_name = db.Column(db.String(50), nullable=False)
     capacity = db.Column(db.Integer, nullable=False, default=0)
-    number_enrolled = db.Column(db.Integer, nullable=False)
+    number_enrolled = db.Column(db.Integer, nullable=False, default=0)
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
     day = db.Column(db.String(9), nullable=False)

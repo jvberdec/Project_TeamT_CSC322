@@ -371,25 +371,24 @@ def next_period():
 
     elif school_info.current_period == 'course registration':
         school_info.current_period = 'class running'
-        '''
         courses = Course.query.all()
         for course in courses:
             # Checks if course enrollment is < 5.
             # if it is, then the course is canceled
-            course_enrollment_count = course.students_enrolled.filter_by(semester=school_info.current_semester).count()
+            course_enrollment_count = course.number_enrolled
             if course_enrollment_count < 5:
                 course.status = 'CANCELED'
-                        
+                 
         students = Student.query.filter_by(status='GOOD STANDING').all()
         for student in students:
             # checks if the student is enrolled in < 2 courses.
             # if they are, them they are issued a warning. 
-            courses_enrolled_count = student.course_enrolled.filter_by(semester=school_info.current_semester).count()
+            courses_enrolled_count = student.courses_enrolled.filter_by(semester=school_info.current_semester).count()
             if courses_enrolled_count < 2:
                 issue_warning(student.id, 'Currently enrolled in < 2 courses')
             # checks if any of the student's courses have been canceled.
             # if is has, then they are given the special registration period.
-            canceled_course = student.course_enrolled.filter_by(status='CANCELED').first()
+            canceled_course = student.courses_enrolled.filter(StudentCourseEnrollment.course.has(status='CANCELED')).first()
             if canceled_course:
                 student.special_registration = True
 
@@ -397,7 +396,6 @@ def next_period():
         canceled_enrollment = StudentCourseEnrollment.query.filter(StudentCourseEnrollment.course.has(status='CANCELED')).all()
         for canceled in canceled_enrollment:
             db.session.delete(canceled)
-
         instructors = Instructor.query.filter_by(status='GOOD STANDING').all()
         for instructor in instructors:
             # Checks if any of the instructor's courses have been canceled.
@@ -408,15 +406,18 @@ def next_period():
             if canceled_courses_count >= 1:
                 issue_warning(instructor.id, 'You have at least one canceled course')  
             elif assigned_courses_count == canceled_courses_count:
-                instructor.status = 'SUSPENDED'      
-        '''
+                instructor.status = 'SUSPENDED'   
+
     elif school_info.current_period == 'class running':
         school_info.current_period = 'grading'
+
+        students = Student.query.filter_by(special_registration=True).all()
+        for student in students:
+            student.special_registration = False
         
     elif school_info.current_period == 'grading':
         school_info.current_period = 'class set-up'
-        '''
-
+        ''''
         grade_list = ['A', 'B', 'C', 'D', 'F']
 
         # issues warning to iunstructor if grading deadline missed
@@ -430,7 +431,7 @@ def next_period():
                     missed_grading_deadline = True
             if missed_grading_deadline:
                 issue_warning(instructor.id, 'Missed grading deadline')
-
+        
         student_course_enrollment_no_grade = StudentCourseEnrollment.query.filter_by(grade=None).all()
         for enrollment in student_course_enrollment_no_grade:
             enrollment.grade = 'N'
@@ -488,7 +489,7 @@ def next_period():
         
         current_semester = str(year) + season
         school_info.current_semester = current_semester
-        courses = Course.query.all()
+        courses = Course.query.filter(Course.status != 'NOT SET')
         for course in courses:
             course.status = 'NOT SET'
         '''
@@ -564,17 +565,23 @@ def student_course_reg():
 
     if student_class_enroll_form.validate_on_submit():
         if student_class_enroll_form.class_name.data and student_class_enroll_form.instructor_name.data:
-            course_results = Course.query.filter_by(id=student_class_enroll_form.class_name.data.id, 
-                                                    instructor_id=student_class_enroll_form.instructor_name.data.id,).order_by(Course.start_time).all()
+            course_results = Course.query.filter(Course.id == student_class_enroll_form.class_name.data.id, 
+                                                 Course.instructor_id == student_class_enroll_form.instructor_name.data.id,
+                                                 Course.status != 'CANCELED',
+                                                 Course.status != 'NOT SET').order_by(Course.start_time).all()
         
         elif student_class_enroll_form.class_name.data:
-            course_results = Course.query.filter_by(id=student_class_enroll_form.class_name.data.id).order_by(Course.start_time).all()
+            course_results = Course.query.filter(Course.id == student_class_enroll_form.class_name.data.id,
+                                                 Course.status != 'CANCELED',
+                                                 Course.status != 'NOT SET').order_by(Course.start_time).all()
 
         elif student_class_enroll_form.instructor_name.data:
-            course_results = Course.query.filter_by(instructor_id=student_class_enroll_form.instructor_name.data.id).order_by(Course.start_time).all()
+            course_results = Course.query.filter(Course.instructor_id == student_class_enroll_form.instructor_name.data.id,
+                                                 Course.status != 'CANCELED',
+                                                 Course.status != 'NOT SET').order_by(Course.start_time).all()
 
         else:
-            course_results = Course.query.order_by(Course.start_time).all()
+            course_results = Course.query.filter(Course.status != 'CANCELED', Course.status != 'NOT SET').order_by(Course.start_time).all()
         
     return render_template('enroll.html', title='Student Course Registration', form=student_class_enroll_form, 
                                                                                course_results=course_results,
