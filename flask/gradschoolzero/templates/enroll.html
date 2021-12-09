@@ -56,7 +56,7 @@
                         <div class="text-center">
                             <button  class="bg-ebony btn btn-outline-white btn-md text-white" style="width: 10rem;">Already Enrolled</button>
                         </div>
-                    {% elif course.is_full %}
+                    {% elif course.status == 'CLOSED' %}
                         {% if waitlist_joined.filter_by(course_id=course.id).first() %}
                             <div class="text-center">
                                 <button  class="bg-ebony btn btn-outline-white btn-md text-white" style="width: 10rem;">Waitlist Joined</button>

@@ -1,8 +1,9 @@
 from secrets import choice
 from string import ascii_letters, digits, punctuation
 import re
-from flask import redirect, url_for, render_template, request, session, flash
-from werkzeug.wrappers import response
+from flask import redirect, url_for, render_template, flash, request
+from wtforms import validators 
+#from werkzeug.wrappers import response
 from gradschoolzero import app, db, bcrypt, mail
 from gradschoolzero.forms import *
 from gradschoolzero.models import *
@@ -183,18 +184,24 @@ def instructor_app():
 
     return render_template('instructor_app.html', title='Instructor Application', form=instructor_app_form)
 
-@app.route("/statistics_page", methods=['POST', 'GET'])
+@app.route("/statistics_page")
 def statistics_page():
-    if request.method == 'POST':
-        return redirect(url_for('index'))
-    return render_template("statistics_page.html")
+    highest_rated = Course.query.filter(Course.avg_rating != None).order_by(Course.avg_rating.desc()).limit(5).all()
+    lowest_rated = Course.query.filter(Course.avg_rating != None).order_by(Course.avg_rating).limit(5).all()
+    top_students = Student.query.order_by(Student.gpa.desc()).limit(5).all()
+    reviews = CourseReview.query.filter(CourseReview.taboo_word_count <= 2).all()
+    return render_template("statistics_page.html", 
+                           highest_rated=highest_rated, 
+                           lowest_rated=lowest_rated, 
+                           top_students=top_students, 
+                           reviews=reviews)
 
 
 @app.route("/student_dash", methods=['POST', 'GET'])
 @login_required
 def student_dash():
     if current_user.is_authenticated and current_user.type == "student":
-        period = SchoolInfo.query.first()
+        school_info = SchoolInfo.query.first()
         student = Student.query.filter_by(id=current_user.id).first()
         courses_taken = student.courses_enrolled.filter(StudentCourseEnrollment.grade != None).all()
         current_courses = student.courses_enrolled.filter(StudentCourseEnrollment.grade == None).all()
@@ -205,10 +212,26 @@ def student_dash():
                                courses_taken=courses_taken, 
                                current_courses=current_courses,
                                warnings=warnings,
-                               current_period=period)
+                               school_info=school_info,
+                               student=student)
     else:
         flash("You're not allowed to view that page!", 'danger')
         return redirect(url_for('home'))
+
+
+@app.route("/student_dash/dismiss_warning/<int:index>", methods=['POST', 'GET'])
+@login_required
+def dismiss_warning(index):
+    student = Student.query.filter_by(id=current_user.id).first()
+    if student.honor_roll_count >= 1:
+        student.honor_roll_count -= 1
+        warning = Warning.query.filter_by(id=index).first()
+        db.session.delete(warning)
+        db.session.commit()
+        flash('Warning successfully dismissed', 'success')
+    else:
+        flash('No honor roll placements to use to dismiss warning', 'warning')
+    return redirect(url_for('student_dash'))
 
 
 @app.route("/student_dash/drop_section/<int:index>", methods=['POST', 'GET'])
@@ -282,11 +305,13 @@ def instructor_dash():
     if current_user.is_authenticated and current_user.type == "instructor":
         school_info = SchoolInfo.query.first()
         instructor = Instructor.query.filter_by(id=current_user.id).first()
+        warnings = instructor.warnings
 
         return render_template('instructor_dash.html', 
                                title='Instructor Dashboard', 
-                               instructor_courses=instructor.courses, 
-                               school_info=school_info)
+                               instructor_courses=instructor.courses.all(), 
+                               school_info=school_info,
+                               warnings=warnings)
 
     else:
         flash("You're not allowed to view that page!", 'danger')
@@ -327,16 +352,71 @@ def accept_from_waitlist(index):
 @login_required
 def registrar_default_dash(): 
     if current_user.is_authenticated and current_user.type == "registrar":
+        students = Student.query.filter(Student.status != 'DISMISSED', Student.status != 'GRADUATED').all()
+        instructors = Instructor.query.all()
         change_period_form = ChangePeriodForm()
-        period = SchoolInfo.query.first()
+        school_info = SchoolInfo.query.first()
         if change_period_form.validate_on_submit():
-            period.current_period = change_period_form.period.data
+            school_info.current_period = change_period_form.period.data
             db.session.commit()
             flash('Period changed successfully!', 'success')
-        return render_template('registrar_dash.html', title='Registrar Dashboard', current_period=period)
+        print(school_info.current_period)
+        return render_template('registrar_dash.html', 
+                               title='Registrar Dashboard', 
+                               current_period=school_info.current_period, 
+                               students=students,
+                               instructors=instructors)
     else:
         flash("You're not allowed to view that page!", 'danger')
-        return redirect(url_for('home'))      
+        return redirect(url_for('home'))
+
+
+@app.route("/registrar_default_dash/change_capacity/", methods=['POST', 'GET'])
+@login_required
+def change_capacity():
+    if request.method == 'POST':
+        capacity = request.form['capacity']
+        capacity = int(capacity)
+        print(capacity)
+        if capacity >= 1:
+            school_info = SchoolInfo.query.first()
+            school_info.capacity = capacity
+            db.session.commit()
+        else:
+            flash('Value must be >= 1', 'warning')
+    return redirect(url_for('registrar_default_dash'))
+
+
+@app.route("/registrar_default_dash/add_censor_word/", methods=['POST', 'GET'])
+@login_required
+def add_censor_word():
+    if request.method == 'POST':
+        censor_word = request.form['censorWord']
+        censor_word = censor_word.strip().lower()
+        taboo_word = CensorWord(word=censor_word)
+        db.session.add(taboo_word)
+        db.session.commit()
+        print(censor_word)
+    return redirect(url_for('registrar_default_dash'))
+
+
+def calculate_gpa(student_course_enrollment_grade):
+    points = 0
+    grade_dict = {'A': 4,
+                  'B': 3,
+                  'C': 2,
+                  'D': 1,
+                  'F': 0}
+
+    grades = [enrollment.grade for enrollment in student_course_enrollment_grade]
+    if grades:
+        for grade in grades:
+            points += grade_dict[grade]
+
+        gpa = points / len(grades)
+        gpa = round(gpa, 2)
+    
+    return gpa
 
 
 @app.route("/registrar_default_dash/next_period", methods=['POST', 'GET'])
@@ -349,12 +429,135 @@ def next_period():
 
     elif school_info.current_period == 'course registration':
         school_info.current_period = 'class running'
+        courses = Course.query.filter(Course.status != 'NOT SET').all()
+        for course in courses:
+            # Checks if course enrollment is < 5.
+            # if it is, then the course is canceled
+            course_enrollment_count = course.number_enrolled
+            if course_enrollment_count < 5:
+                course.status = 'CANCELED'
+                 
+        students = Student.query.filter_by(status='GOOD STANDING').all()
+        for student in students:
+            # checks if the student is enrolled in < 2 courses.
+            # if they are, them they are issued a warning. 
+            courses_enrolled_count = student.courses_enrolled.filter_by(semester=school_info.current_semester).count()
+            if courses_enrolled_count < 2:
+                issue_warning(student.id, 'Currently enrolled in < 2 courses')
+            # checks if any of the student's courses have been canceled.
+            # if is has, then they are given the special registration period.
+            canceled_course = student.courses_enrolled.filter(StudentCourseEnrollment.course.has(status='CANCELED')).first()
+            if canceled_course:
+                student.special_registration = True
+
+        # Unenrolls student from canceled course
+        canceled_enrollment = StudentCourseEnrollment.query.filter(StudentCourseEnrollment.course.has(status='CANCELED')).all()
+        for canceled in canceled_enrollment:
+            db.session.delete(canceled)
+        instructors = Instructor.query.filter_by(status='GOOD STANDING').all()
+        for instructor in instructors:
+            # Checks if any of the instructor's courses have been canceled.
+            # If any of their courses have been canceled, then they are issued a warning
+            # If all of their courses have been canceled, then they are suspended.
+            assigned_courses_count = instructor.courses.count()
+            canceled_courses_count = instructor.courses.filter_by(status='CANCELED').count()
+            if canceled_courses_count >= 1:
+                issue_warning(instructor.id, 'You have at least one canceled course')  
+            elif assigned_courses_count == canceled_courses_count:
+                instructor.status = 'SUSPENDED'   
 
     elif school_info.current_period == 'class running':
         school_info.current_period = 'grading'
+
+        students = Student.query.filter_by(special_registration=True).all()
+        for student in students:
+            student.special_registration = False
         
     elif school_info.current_period == 'grading':
         school_info.current_period = 'class set-up'
+        
+        grade_list = ['A', 'B', 'C', 'D', 'F']
+
+        # issues warning to instructor if grading deadline missed
+        instructors = Instructor.query.filter_by(status='GOOD STANDING').all()
+        for instructor in instructors:
+            assigned_courses = instructor.courses.all()
+            missed_grading_deadline = False
+            for course in assigned_courses:
+                no_grade = course.students_enrolled.filter_by(semester=school_info.current_semester, grade=None).first()
+                if no_grade:
+                    missed_grading_deadline = True
+            if missed_grading_deadline:
+                issue_warning(instructor.id, 'Missed grading deadline')
+        
+        student_course_enrollment_no_grade = StudentCourseEnrollment.query.filter_by(grade=None).all()
+        for enrollment in student_course_enrollment_no_grade:
+            enrollment.grade = 'N'
+
+        # determines avg rating of course
+        courses = Course.query.all()
+        for course in courses:
+            reviews = course.reviews
+            if reviews:
+                review_rating = [review.rating for review in reviews]
+                points = 0
+                for rating in review_rating:
+                    points += rating
+                
+                avg_rating = points / len(review_rating)
+                course.avg_rating = avg_rating
+
+                if avg_rating < 2:
+                    
+                    issue_warning(course.instructor.id, f'{course} average rating below 2')
+        
+        # determine course gpa
+        '''
+        courses = Course.query.filter(Course.status != 'CANCELED', Course.status != 'NOT SET').all()
+        for course in courses:
+            students_enrolled = course.students_enrolled.filter(StudentCourseEnrollment.semester == school_info.current_semester,
+                                                                StudentCourseEnrollment.grade.in_(grade_list)).all()
+            course_gpa_avg = calculate_gpa(students_enrolled)
+            if course_gpa_avg > 3.5 or course_gpa_avg < 2.5:
+                # insert code to have instructor be questioned by registrar
+                pass
+        '''
+
+        # determine student gpa
+        students = Student.query.filter_by(status='GOOD STANDING').all()
+        for student in students:
+            student_courses_enrolled_overall = student.courses_enrolled.filter(StudentCourseEnrollment.grade.in_(grade_list)).all()
+            student_courses_enrolled_semester = student.courses_enrolled.filter(StudentCourseEnrollment.semester == school_info.current_semester,
+                                                                                StudentCourseEnrollment.grade.in_(grade_list)).all()
+
+            if student_courses_enrolled_overall:
+                overall_gpa = calculate_gpa(student_courses_enrolled_overall)
+                semester_gpa = calculate_gpa(student_courses_enrolled_semester)
+                student.gpa = overall_gpa
+
+                if overall_gpa < 2.0:
+                    student.status = 'DISMISSED'
+                elif overall_gpa >= 2.0 and overall_gpa <= 2.25:
+                    issue_warning(student.id, 'Low GPA')
+                elif semester_gpa > 3.75 or overall_gpa > 3.5:
+                    student.honor_roll_count += 1            
+
+        current_semester = school_info.current_semester
+        year = current_semester[:4]
+        season = current_semester[4:]
+
+        if season == 'fall':
+            season = 'spring'
+            year = int(year) + 1
+        else:
+            season = 'fall'
+        
+        current_semester = str(year) + season
+        school_info.current_semester = current_semester
+        courses = Course.query.filter(Course.status != 'NOT SET').all()
+        for course in courses:
+            course.status = 'NOT SET'
+        
 
     db.session.commit()
     return redirect(url_for('registrar_default_dash'))   
@@ -366,15 +569,17 @@ def registrar_class_setup():
     class_setup_form = ClassSetUpForm()
 
     if class_setup_form.validate_on_submit():
-        existing_course = Course.query.filter_by(id=class_setup_form.course_code.data).first()
+        existing_course = Course.query.filter_by(id=class_setup_form.course_code.data, status='OPEN').first()
         if existing_course:
-            flash('Course already exists', 'warning')
+            flash('Course already set up.', 'warning')
         else:
             start_time_data=class_setup_form.start_time.data
             end_time_data=class_setup_form.end_time.data
             overlap = False
-            possible_overlap_course = Course.query.filter_by(instructor_id=class_setup_form.instructor_name.data.id,
-                                                             day=class_setup_form.day.data).all()
+            possible_overlap_course = Course.query.filter(Course.instructor_id==class_setup_form.instructor_name.data.id,
+                                                          Course.day == class_setup_form.day.data,
+                                                          Course.status == 'OPEN',
+                                                          Course.id != class_setup_form.course_code.data).all()
 
             if possible_overlap_course:
                 for course in possible_overlap_course:
@@ -387,15 +592,25 @@ def registrar_class_setup():
             elif overlap:
                 flash('Overlapping section. Please double check instructor, times, and day', 'danger')
             else:
-                course = Course(id=class_setup_form.course_code.data,
-                                course_name=class_setup_form.course_name.data.title(),
-                                capacity=class_setup_form.class_size.data,
-                                start_time=class_setup_form.start_time.data,
-                                end_time=class_setup_form.end_time.data,
-                                day=class_setup_form.day.data,
-                                instructor_id=class_setup_form.instructor_name.data.id)
+                existing_course = Course.query.filter_by(id=class_setup_form.course_code.data, status='NOT SET').first()
+                if existing_course:
+                    existing_course.capacity = class_setup_form.class_size.data
+                    existing_course.start_time = class_setup_form.start_time.data
+                    existing_course.end_time = class_setup_form.end_time.data
+                    existing_course.day = class_setup_form.day.data
+                    existing_course.instructor_id = class_setup_form.instructor_name.data.id
+                    existing_course.status = 'OPEN'
+                else:
+                    course = Course(id=class_setup_form.course_code.data,
+                                    course_name=class_setup_form.course_name.data.title(),
+                                    capacity=class_setup_form.class_size.data,
+                                    start_time=class_setup_form.start_time.data,
+                                    end_time=class_setup_form.end_time.data,
+                                    day=class_setup_form.day.data,
+                                    instructor_id=class_setup_form.instructor_name.data.id,
+                                    status='OPEN')
+                    db.session.add(course)
 
-                db.session.add(course)
                 db.session.commit()
                 flash('Course submitted successfully!', 'success')
 
@@ -415,17 +630,23 @@ def student_course_reg():
 
     if student_class_enroll_form.validate_on_submit():
         if student_class_enroll_form.class_name.data and student_class_enroll_form.instructor_name.data:
-            course_results = Course.query.filter_by(id=student_class_enroll_form.class_name.data.id, 
-                                                    instructor_id=student_class_enroll_form.instructor_name.data.id,).order_by(Course.start_time).all()
+            course_results = Course.query.filter(Course.id == student_class_enroll_form.class_name.data.id, 
+                                                 Course.instructor_id == student_class_enroll_form.instructor_name.data.id,
+                                                 Course.status != 'CANCELED',
+                                                 Course.status != 'NOT SET').order_by(Course.start_time).all()
         
         elif student_class_enroll_form.class_name.data:
-            course_results = Course.query.filter_by(id=student_class_enroll_form.class_name.data.id).order_by(Course.start_time).all()
+            course_results = Course.query.filter(Course.id == student_class_enroll_form.class_name.data.id,
+                                                 Course.status != 'CANCELED',
+                                                 Course.status != 'NOT SET').order_by(Course.start_time).all()
 
         elif student_class_enroll_form.instructor_name.data:
-            course_results = Course.query.filter_by(instructor_id=student_class_enroll_form.instructor_name.data.id).order_by(Course.start_time).all()
+            course_results = Course.query.filter(Course.instructor_id == student_class_enroll_form.instructor_name.data.id,
+                                                 Course.status != 'CANCELED',
+                                                 Course.status != 'NOT SET').order_by(Course.start_time).all()
 
         else:
-            course_results = Course.query.order_by(Course.start_time).all()
+            course_results = Course.query.filter(Course.status != 'CANCELED', Course.status != 'NOT SET').order_by(Course.start_time).all()
         
     return render_template('enroll.html', title='Student Course Registration', form=student_class_enroll_form, 
                                                                                course_results=course_results,
@@ -462,10 +683,10 @@ def student_course_enroll(index):
     else:
         current_semester = SchoolInfo.query.first().current_semester
         student_section_enrollment = StudentCourseEnrollment(student_id=current_user.id, course_id=index, semester=current_semester)
-        course_enrollment_count = StudentCourseEnrollment.query.filter_by(course_id=index).count()
+        course.number_enrolled += 1
 
-        if course_enrollment_count >= (course.capacity - 1):
-            course.is_full = True    
+        if course.number_enrolled == course.capacity:
+            course.status = 'CLOSED'  
 
         db.session.add(student_section_enrollment)
         db.session.commit()
@@ -486,7 +707,9 @@ def join_waitlist(index):
 @app.route("/view_courses")
 @login_required
 def view_courses():
-    return render_template('view_courses.html', title='View Courses')
+    valid_courses = Course.query.filter(Course.status != 'CANCELED', Course.status != 'NOT SET').all()
+    canceled_courses = Course.query.filter_by(status='CANCELED')
+    return render_template('view_courses.html', title='View Courses', valid_courses=valid_courses, canceled_courses=canceled_courses)
 
 
 def issue_warning(user_id, warning):
@@ -498,17 +721,13 @@ def issue_warning(user_id, warning):
 @app.route("/warned_stu_instr", methods=['POST', 'GET'])
 @login_required
 def warned_stu_instr():
+    students = Student.query.filter(Student.status != 'DISMISSED', Student.status != 'GRADUATED').all()
+    instructors = Instructor.query.all()
     warning_form = WarningForm()
     if warning_form.validate_on_submit():
-        issue_warning(warning_form.warned_user.data.id, warning_form.warning_text.data)
+        issue_warning(warning_form.warned_user.data.id, warning_form.warning_text.data.strip())
         flash('Warning created successfully!', 'success')
-    return render_template('warned_stu_instr.html', title='Warnings', form=warning_form)
-
-
-# @app.route("/registrar_class_run_period")
-# #@login_required
-# def registrar_class_run_period():
-#     return render_template('course_running.html', title='Class Running')
+    return render_template('warned_stu_instr.html', title='Warnings', form=warning_form, students=students, instructors=instructors)
 
 
 @app.route("/registrar_grading_period")
@@ -529,6 +748,9 @@ def student_graduation():
         warning_message = 'Reckless graduation application'
         issue_warning(current_user.id, warning_message)
     else:
+        student = Student.query.filter_by(id=current_user.id)
+        student.status = 'GRADUATED'
+        db.session.commit()
         flash("Graduation application successfully submitted!", 'success')
     
     return redirect(url_for('student_dash'))
@@ -576,6 +798,9 @@ def student_app_accept(index):
     db.session.delete(applicant)
     db.session.commit()
 
+    student = Student.query.filter_by(username=generated_username).first()
+    student.empl_id = student.id + 1000
+    db.session.commit()
     return redirect(url_for('registrar_view_applicants'))
 
 
@@ -609,6 +834,10 @@ def instruc_app_accept(index):
 
     db.session.add(instructor_user)
     db.session.delete(applicant)
+    db.session.commit()
+
+    instructor = Instructor.query.filter_by(username=generated_username).first()
+    instructor.empl_id = instructor.id + 1000
     db.session.commit()
     return redirect(url_for('registrar_view_applicants'))
 

@@ -171,14 +171,11 @@ html,body {
 
 .modified_li {
   display: inline-block;
-  height: 100px;
-  width: 200px;
-  text-align:center;
-  padding: auto !important;
-}
-
-.list-group-item{
-  padding: 40px 20px !important;
+  text-align: center;
+  padding: 40px 20px;
+  word-wrap: break-word;
+  overflow: hidden;
+  vertical-align: middle;
 }
 
 

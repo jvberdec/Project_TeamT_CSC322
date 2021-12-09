@@ -6,3 +6,5 @@ env/
 flask/gradschoolzero/__pycache__/
 flask/gradschoolzero/site.db
 __pycache__/
+.env.swp
+.idea

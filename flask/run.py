@@ -8,7 +8,7 @@ if __name__ == "__main__":
     school_info = SchoolInfo.query.first()
 
     if registrar is None:
-        hashed_password = bcrypt.generate_password_hash(app.config['MAIL_PASSWORD']).decode('utf-8')
+        hashed_password = bcrypt.generate_password_hash(app.config['REGISTRAR_PASSWORD']).decode('utf-8')
         registrar = User(username='admin',
                          email=app.config['MAIL_USERNAME'],
                          password=hashed_password,
