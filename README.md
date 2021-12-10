@@ -4,8 +4,8 @@ During different semester periods, students will be able to enroll in classes ta
 
 ## Instructions To Run On Your Computer
 1. Set environment variables on your computer:
-    - `EMAIL_ADDR` to your email address
-    - `EMAIL_PASS` to your email password. May have to be app password if using 2FA
+    - `EMAIL_ADDR` to your email address.
+    - `EMAIL_PASS` to your email password. May have to use/create app password if using 2FA.
     - `REGISTRAR_PASS` to a password of your choice. This will be password for registrar login.
     
     Please note that the automated email feature is set to work with gmail. If you would like to use a different email provider, adjust lines 14 and 15 in `__init__.py`. Otherwise, there will be an error when the program tries to send an email. 
