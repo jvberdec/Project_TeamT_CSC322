@@ -442,7 +442,9 @@ def next_period():
             # Checks if course enrollment is < 5.
             # if it is, then the course is canceled
             course_enrollment_count = course.number_enrolled
-            if course_enrollment_count < 5:
+
+            # if 
+            if (course_enrollment_count < 5 and course.capacity >= 5) or (course_enrollment_count < course.capacity and course.capacity < 5):
                 course.status = 'CANCELED'
                  
         students = Student.query.filter_by(status='GOOD STANDING').all()
@@ -516,20 +518,20 @@ def next_period():
                 course.avg_rating = avg_rating
 
                 if avg_rating < 2:
-                    
                     issue_warning(course.instructor.id, f'{course} average rating below 2')
         
+
         # determine course gpa
-        '''
         courses = Course.query.filter(Course.status != 'CANCELED', Course.status != 'NOT SET').all()
         for course in courses:
             students_enrolled = course.students_enrolled.filter(StudentCourseEnrollment.semester == school_info.current_semester,
                                                                 StudentCourseEnrollment.grade.in_(grade_list)).all()
             course_gpa_avg = calculate_gpa(students_enrolled)
             if course_gpa_avg > 3.5 or course_gpa_avg < 2.5:
-                # insert code to have instructor be questioned by registrar
-                pass
-        '''
+                issue_warning(course.instructor.id, f'{course} avg gpa is greater than 3.5. Please see registrar.')
+            elif course_gpa_avg < 2.5:
+                issue_warning(course.instructor.id, f'{course} avg gpa is less than 2.5. Please see registrar.')
+
 
         # determine student gpa
         students = Student.query.filter_by(status='GOOD STANDING').all()
@@ -550,6 +552,7 @@ def next_period():
                 elif semester_gpa > 3.75 or overall_gpa > 3.5:
                     student.honor_roll_count += 1            
 
+        # Advance to next semester
         current_semester = school_info.current_semester
         year = current_semester[:4]
         season = current_semester[4:]

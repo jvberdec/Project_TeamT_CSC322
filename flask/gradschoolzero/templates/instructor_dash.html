@@ -70,32 +70,37 @@
                             {% if student_enrolled.semester == school_info.current_semester %}
                                 <li class="d-flex justify-content-between align-items-center">
                                     <span class="text-ebony mb-1">{{student_enrolled.student}}</span>
-                                    {% if student_enrolled.grade is none %}
-                                        <div class="mb-1">
-                                            <form method="POST" action="/instructor_dash/submit_grade/{{student_enrolled.id}}">
-                                                <input type="text" class="text-box" name="grade" id="grade" style="margin: 1px;" placeholder="Grade">
-                                                <button type="submit" class="btn btn-primary">Submit</button>
-                                            </form>
-                                        </div>
-                                    {% else %}
-                                        <span class="text-ebony mb-1">{{student_enrolled.grade}}</span>
+                                    {% if school_info.current_period == 'grading' %}
+                                        {% if student_enrolled.grade is none %}
+                                            <div class="mb-1">
+                                                <form method="POST" action="/instructor_dash/submit_grade/{{student_enrolled.id}}">
+                                                    <input type="text" class="text-box" name="grade" id="grade" style="margin: 1px;" placeholder="Grade">
+                                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                                </form>
+                                            </div>
+                                        {% else %}
+                                            <span class="text-ebony mb-1">{{student_enrolled.grade}}</span>
+                                        {% endif %}
                                     {% endif %}
+                                    
                                 </li>
                             {% endif %}
                         {% endfor %}
-                        
-                        {% if course.students_waitlisted %}
-                        <hr class="featurette-divider2">
+                        {% if school_info == 'course registration'%}
+                            {% if course.students_waitlisted %}
+                            <hr class="featurette-divider2">
+                            {% endif %}
+                            
+                            {% for student_waitlisted in course.students_waitlisted %}
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span class="text-ebony mb-1">{{student_waitlisted.student}}</span>
+                                    <div class="mb-1">
+                                        <a href="/instructor_dash/accept_from_waitlist/{{student_waitlisted.id}}"><button class="bg-ebony btn btn-outline-white btn-md text-white">Accept from Waitlist</button></a>
+                                    </div>
+                                </li>
+                            {% endfor %}
                         {% endif %}
                         
-                        {% for student_waitlisted in course.students_waitlisted %}
-                            <li class="d-flex justify-content-between align-items-center">
-                                <span class="text-ebony mb-1">{{student_waitlisted.student}}</span>
-                                <div class="mb-1">
-                                    <a href="/instructor_dash/accept_from_waitlist/{{student_waitlisted.id}}"><button class="bg-ebony btn btn-outline-white btn-md text-white">Remove from Waitlist</button></a>
-                                </div>
-                            </li>
-                        {% endfor %}
                     </div>
                 </div>
             {% endfor%}
